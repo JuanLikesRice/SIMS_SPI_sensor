@@ -1,0 +1,26 @@
+1. make sure you have:
+Make, gtkwave, and iverilog
+
+2. To run, cd into folder <if you do an ls you should see: 
+"ls
+ Makefile    memory_dump.hex   riscv32i-sim   sanity.hex   sim.vcd
+ dataMem.v   params.vh         riscv32iTB.v   sim.log     'steps to run' ">
+run 
+"make sim"
+<refer to image>
+
+if you want to run again do "make clean", then "make sim"
+
+if Make does not work:
+first run: 
+A: "iverilog -g2005-sv -s riscv32iTB  -o riscv32i-sim riscv32iTB.v dataMem.v"
+
+B: "./riscv32i-sim +VCDFILE=sim.vcd +VCDLEVEL=3 | tee sim.log"
+
+then if you have gtkwave:
+
+
+gtkwave sim.vcd
+
+
+
