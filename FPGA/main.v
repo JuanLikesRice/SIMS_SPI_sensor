@@ -8,6 +8,7 @@ output wire CS_b_wire,
 output wire  sample_CLK_out
 );
 
+wire MISO;
     FPGA fpga_inst (
         .clk(clk),
         .reset(reset),
@@ -18,6 +19,14 @@ output wire  sample_CLK_out
         .sample_CLK_out(sample_CLK_out)
     );
 
+	sensor_emulator sensor_emulator (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO)
+	);
+
 
 
 	// Your module goes here
@@ -27,7 +36,7 @@ endmodule
 
 
 
-module dataMem #(  parameter mem_size = 4096 ) (
+module sensor_emulator #(  parameter mem_size = 4096 ) (
 input wire clk,
 input wire reset, 
 input wire CS,
