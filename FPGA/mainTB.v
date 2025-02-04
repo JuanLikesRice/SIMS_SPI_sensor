@@ -13,13 +13,13 @@ module mainTB//;
     reg clk;
     reg reset;
     wire MOSI_to_sensor, MISO_from_sensor, SCLK_wire, CS_b_wire, sample_CLK_out;
-    // reg [63:0] Single_Instruction;
-    // reg [31:0] address;
-    // reg [31:0] storeData;
-    // wire [31:0] loadData_w;
-    // reg [15:0] data_to_send;
-    // reg CS, MOSI;
-    // wire CS, MOSI;
+    reg [63:0] Single_Instruction;
+    reg [31:0] address;
+    reg [31:0] storeData;
+    wire [31:0] loadData_w;
+    reg [15:0] data_to_send;
+    reg CS, MOSI;
+    //wire CS, MOSI;
 
 
 main
@@ -63,7 +63,7 @@ main
             $dumpvars(vcdlevel);
             end
 
-
+/*
     initial begin
         // data_to_send = 16'hA5F0; // Example data to send
         clk = 0;
@@ -75,6 +75,61 @@ main
         repeat (200) @(posedge clk);
         $finish;
     end
+*/
+
+    initial begin
+        data_to_send = 16'b01_010101_0101010_1; // Example data to send
+        clk = 0; // WAS 0
+        reset = 0;
+        CS = 1;
+        MOSI = 0;
+
+        repeat (5) @(posedge clk);
+        transmit_spi(data_to_send);
+        //data_to_send = 16'h0F0F; // Example data to send
+        transmit_spi(data_to_send);
+        //data_to_send = 16'h0F0F; // Example data to send
+        transmit_spi(data_to_send);
+        //data_to_send = 16'h0F0F; // Example data to send
+        transmit_spi(data_to_send);
+        //data_to_send = 16'h0F0F; // Example data to send
+        transmit_spi(data_to_send);
+        //data_to_send = 16'h0F0F; // Example data to send
+        transmit_spi(data_to_send);
+        //data_to_send = 16'h0F0F; // Example data to send
+        transmit_spi(data_to_send);
+        //repeat (1) @(posedge clk);
+
+        // repeat (1) @(posedge clk);
+
+
+        //repeat (1) @(posedge clk);
+
+        // repeat (1) @(posedge clk);
+
+        // transmit_spi(data_to_send, clk, CS, MOSI);
+        repeat (150) @(posedge clk);
+        $finish;
+    end
+
+    task transmit_spi(input [15:0] data_in);
+        integer i;
+        repeat (2) @(posedge clk);
+        begin
+            // Assert CS low to begin transmission
+            CS = 0;
+
+            for (i = 14; i >=0; i = i - 1) begin // USED TO BE 15
+                MOSI = data_in[i];
+                @(posedge clk);
+            end
+            repeat (1) @(posedge clk);
+            // Deassert CS to end transmission
+            CS = 1;
+        repeat (2) @(posedge clk);
+
+        end
+    endtask
 
 
 
