@@ -575,8 +575,8 @@ output reg  sample_CLK_out
 			FIFO_data_in <= 16'b0;
 			FIFO_write_to <= 1'b0;
 		end else begin
-			CS_b <= 1'b0;
-			SCLK <= 1'b0;
+			// CS_b <= 1'b0;
+			// SCLK <= 1'b0;
 			FIFO_data_in <= 16'b0;
 			FIFO_write_to <= 1'b0;
 
@@ -695,6 +695,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk1_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 0) begin				// sample clock goes high during channel 0 SPI command
 						sample_CLK_out <= 1'b1;
 					end else begin
@@ -744,6 +746,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk1_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					// Note: After selecting a new RAM_addr_rd, we must wait two clock cycles before reading from the RAM
 					if (channel == 31) begin
 						RAM_addr_rd <= aux_cmd_index_1;
@@ -762,6 +766,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk1_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					// Note: We only need to wait one clock cycle after selecting a new RAM_bank_sel_rd
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_A;
@@ -789,6 +795,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk1_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (channel == 31) begin
 						aux_cmd_A <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -815,6 +823,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk2_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_B;
 					end else if (channel == 32) begin
@@ -848,6 +858,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk2_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						aux_cmd_B <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -873,6 +885,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk2_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_C;
 					end else if (channel == 32) begin
@@ -899,6 +913,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk2_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (channel == 31) begin
 						aux_cmd_C <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -925,6 +941,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk3_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_D;
 					end else if (channel == 32) begin
@@ -958,6 +976,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk3_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						aux_cmd_D <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -982,6 +1002,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk3_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_E;
 					end else if (channel == 32) begin
@@ -1007,6 +1029,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk3_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (channel == 31) begin
 						aux_cmd_E <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -1032,6 +1056,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk4_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_F;
 					end else if (channel == 32) begin
@@ -1064,6 +1090,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk4_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						aux_cmd_F <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -1088,6 +1116,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk4_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_G;
 					end else if (channel == 32) begin
@@ -1113,6 +1143,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk4_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (channel == 31) begin
 						aux_cmd_G <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -1138,6 +1170,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk5_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_1_H;
 					end else if (channel == 32) begin
@@ -1170,6 +1204,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk5_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 31) begin
 						aux_cmd_H <= RAM_data_out_1;
 					end else if (channel == 32) begin
@@ -1194,6 +1230,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk5_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_12_en == 1'b1) begin
 						FIFO_data_in <= data_stream_12;
 						FIFO_write_to <= 1'b1;
@@ -1212,6 +1250,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk5_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_13_en == 1'b1) begin
 						FIFO_data_in <= data_stream_13;
 						FIFO_write_to <= 1'b1;
@@ -1230,6 +1270,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk6_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_14_en == 1'b1) begin
 						FIFO_data_in <= data_stream_14;
 						FIFO_write_to <= 1'b1;
@@ -1255,6 +1297,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk6_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_15_en == 1'b1) begin
 						FIFO_data_in <= data_stream_15;
 						FIFO_write_to <= 1'b1;
@@ -1272,6 +1316,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk6_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_16_en == 1'b1) begin
 						FIFO_data_in <= data_stream_16;
 						FIFO_write_to <= 1'b1;
@@ -1290,6 +1336,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk6_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_17_en == 1'b1) begin
 						FIFO_data_in <= data_stream_17;
 						FIFO_write_to <= 1'b1;
@@ -1308,6 +1356,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk7_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_18_en == 1'b1) begin
 						FIFO_data_in <= data_stream_18;
 						FIFO_write_to <= 1'b1;
@@ -1333,6 +1383,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk7_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_19_en == 1'b1) begin
 						FIFO_data_in <= data_stream_19;
 						FIFO_write_to <= 1'b1;
@@ -1350,6 +1402,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk7_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_20_en == 1'b1) begin
 						FIFO_data_in <= data_stream_20;
 						FIFO_write_to <= 1'b1;
@@ -1368,6 +1422,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk7_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_21_en == 1'b1) begin
 						FIFO_data_in <= data_stream_21;
 						FIFO_write_to <= 1'b1;
@@ -1386,6 +1442,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk8_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_22_en == 1'b1) begin
 						FIFO_data_in <= data_stream_22;
 						FIFO_write_to <= 1'b1;
@@ -1411,6 +1469,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk8_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_23_en == 1'b1) begin
 						FIFO_data_in <= data_stream_23;
 						FIFO_write_to <= 1'b1;
@@ -1428,6 +1488,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk8_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_24_en == 1'b1) begin
 						FIFO_data_in <= data_stream_24;
 						FIFO_write_to <= 1'b1;
@@ -1446,6 +1508,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk8_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_25_en == 1'b1) begin
 						FIFO_data_in <= data_stream_25;
 						FIFO_write_to <= 1'b1;
@@ -1464,6 +1528,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk9_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_26_en == 1'b1) begin
 						FIFO_data_in <= data_stream_26;
 						FIFO_write_to <= 1'b1;
@@ -1489,6 +1555,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk9_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_27_en == 1'b1) begin
 						FIFO_data_in <= data_stream_27;
 						FIFO_write_to <= 1'b1;
@@ -1506,6 +1574,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk9_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_28_en == 1'b1) begin
 						FIFO_data_in <= data_stream_28;
 						FIFO_write_to <= 1'b1;
@@ -1524,6 +1594,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk9_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_29_en == 1'b1) begin
 						FIFO_data_in <= data_stream_29;
 						FIFO_write_to <= 1'b1;
@@ -1542,6 +1614,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk10_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_30_en == 1'b1) begin
 						FIFO_data_in <= data_stream_30;
 						FIFO_write_to <= 1'b1;
@@ -1567,6 +1641,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk10_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (data_stream_31_en == 1'b1) begin
 						FIFO_data_in <= data_stream_31;
 						FIFO_write_to <= 1'b1;
@@ -1584,6 +1660,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk10_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					if (data_stream_32_en == 1'b1) begin
 						FIFO_data_in <= data_stream_32;
 						FIFO_write_to <= 1'b1;
@@ -1602,6 +1680,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk10_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[37] <= MISO_A1; in4x_A2[37] <= MISO_A2;
 					in4x_B1[37] <= MISO_B1; in4x_B2[37] <= MISO_B2;
@@ -1615,6 +1695,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk11_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					MOSI_A <= MOSI_cmd_A[5];
 					MOSI_B <= MOSI_cmd_B[5];
 					MOSI_C <= MOSI_cmd_C[5];
@@ -1635,6 +1717,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk11_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					in4x_A1[39] <= MISO_A1; in4x_A2[39] <= MISO_A2;
 					in4x_B1[39] <= MISO_B1; in4x_B2[39] <= MISO_B2;
 					in4x_C1[39] <= MISO_C1; in4x_C2[39] <= MISO_C2;
@@ -1647,6 +1731,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk11_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[40] <= MISO_A1; in4x_A2[40] <= MISO_A2;
 					in4x_B1[40] <= MISO_B1; in4x_B2[40] <= MISO_B2;
@@ -1660,6 +1746,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk11_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[41] <= MISO_A1; in4x_A2[41] <= MISO_A2;
 					in4x_B1[41] <= MISO_B1; in4x_B2[41] <= MISO_B2;
@@ -1673,6 +1761,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk12_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					MOSI_A <= MOSI_cmd_A[4];
 					MOSI_B <= MOSI_cmd_B[4];
 					MOSI_C <= MOSI_cmd_C[4];
@@ -1693,6 +1783,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk12_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					in4x_A1[43] <= MISO_A1; in4x_A2[43] <= MISO_A2;
 					in4x_B1[43] <= MISO_B1; in4x_B2[43] <= MISO_B2;
 					in4x_C1[43] <= MISO_C1; in4x_C2[43] <= MISO_C2;
@@ -1705,6 +1797,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk12_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[44] <= MISO_A1; in4x_A2[44] <= MISO_A2;
 					in4x_B1[44] <= MISO_B1; in4x_B2[44] <= MISO_B2;
@@ -1718,6 +1812,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk12_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[45] <= MISO_A1; in4x_A2[45] <= MISO_A2;
 					in4x_B1[45] <= MISO_B1; in4x_B2[45] <= MISO_B2;
@@ -1731,6 +1827,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk13_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					MOSI_A <= MOSI_cmd_A[3];
 					MOSI_B <= MOSI_cmd_B[3];
 					MOSI_C <= MOSI_cmd_C[3];
@@ -1751,6 +1849,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk13_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					in4x_A1[47] <= MISO_A1; in4x_A2[47] <= MISO_A2;
 					in4x_B1[47] <= MISO_B1; in4x_B2[47] <= MISO_B2;
 					in4x_C1[47] <= MISO_C1; in4x_C2[47] <= MISO_C2;
@@ -1763,6 +1863,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk13_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[48] <= MISO_A1; in4x_A2[48] <= MISO_A2;
 					in4x_B1[48] <= MISO_B1; in4x_B2[48] <= MISO_B2;
@@ -1776,6 +1878,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk13_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[49] <= MISO_A1; in4x_A2[49] <= MISO_A2;
 					in4x_B1[49] <= MISO_B1; in4x_B2[49] <= MISO_B2;
@@ -1789,6 +1893,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk14_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					MOSI_A <= MOSI_cmd_A[2];
 					MOSI_B <= MOSI_cmd_B[2];
 					MOSI_C <= MOSI_cmd_C[2];
@@ -1809,6 +1915,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk14_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					in4x_A1[51] <= MISO_A1; in4x_A2[51] <= MISO_A2;
 					in4x_B1[51] <= MISO_B1; in4x_B2[51] <= MISO_B2;
 					in4x_C1[51] <= MISO_C1; in4x_C2[51] <= MISO_C2;
@@ -1821,6 +1929,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk14_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[52] <= MISO_A1; in4x_A2[52] <= MISO_A2;
 					in4x_B1[52] <= MISO_B1; in4x_B2[52] <= MISO_B2;
@@ -1833,7 +1943,9 @@ output reg  sample_CLK_out
 					main_state <= ms_clk14_d;
 				end
 				
-				ms_clk14_d: begin	
+				ms_clk14_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;	
 					SCLK <= 1'b1;
 					in4x_A1[53] <= MISO_A1; in4x_A2[53] <= MISO_A2;
 					in4x_B1[53] <= MISO_B1; in4x_B2[53] <= MISO_B2;
@@ -1847,6 +1959,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk15_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					MOSI_A <= MOSI_cmd_A[1];
 					MOSI_B <= MOSI_cmd_B[1];
 					MOSI_C <= MOSI_cmd_C[1];
@@ -1867,6 +1981,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk15_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					in4x_A1[55] <= MISO_A1; in4x_A2[55] <= MISO_A2;
 					in4x_B1[55] <= MISO_B1; in4x_B2[55] <= MISO_B2;
 					in4x_C1[55] <= MISO_C1; in4x_C2[55] <= MISO_C2;
@@ -1879,6 +1995,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk15_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[56] <= MISO_A1; in4x_A2[56] <= MISO_A2;
 					in4x_B1[56] <= MISO_B1; in4x_B2[56] <= MISO_B2;
@@ -1892,6 +2010,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk15_d: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[57] <= MISO_A1; in4x_A2[57] <= MISO_A2;
 					in4x_B1[57] <= MISO_B1; in4x_B2[57] <= MISO_B2;
@@ -1905,6 +2025,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk16_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					MOSI_A <= MOSI_cmd_A[0];
 					MOSI_B <= MOSI_cmd_B[0];
 					MOSI_C <= MOSI_cmd_C[0];
@@ -1925,6 +2047,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk16_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					in4x_A1[59] <= MISO_A1; in4x_A2[59] <= MISO_A2;
 					in4x_B1[59] <= MISO_B1; in4x_B2[59] <= MISO_B2;
 					in4x_C1[59] <= MISO_C1; in4x_C2[59] <= MISO_C2;
@@ -1937,6 +2061,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk16_c: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b1;
 					SCLK <= 1'b1;
 					in4x_A1[60] <= MISO_A1; in4x_A2[60] <= MISO_A2;
 					in4x_B1[60] <= MISO_B1; in4x_B2[60] <= MISO_B2;
@@ -1950,7 +2076,9 @@ output reg  sample_CLK_out
 				end
 				
 				ms_clk16_d: begin
+					CS_b <= 1'b0;
 					SCLK <= 1'b1;
+					// SCLK <= 1'b1;
 					in4x_A1[61] <= MISO_A1; in4x_A2[61] <= MISO_A2;
 					in4x_B1[61] <= MISO_B1; in4x_B2[61] <= MISO_B2;
 					in4x_C1[61] <= MISO_C1; in4x_C2[61] <= MISO_C2;
@@ -1963,6 +2091,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk17_a: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (num_data_streams_enabled[1:0] != 2'b00 && channel == 34) begin
 						FIFO_data_in <= data_stream_filler;	// Send a 'filler' sample to keep number of samples divisible by four
 						FIFO_write_to <= 1'b1;
@@ -1988,6 +2118,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_clk17_b: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if ((num_data_streams_enabled[1:0] == 2'b10 || num_data_streams_enabled[1:0] == 2'b11) && channel == 34) begin
 						FIFO_data_in <= data_stream_filler;	// Send a 'filler' sample to keep number of samples divisible by four
 						FIFO_write_to <= 1'b1;
@@ -2005,6 +2137,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_cs_a: begin
+					// CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (num_data_streams_enabled[1:0] == 2'b11 && channel == 34) begin
 						FIFO_data_in <= data_stream_filler;	// Send a 'filler' sample to keep number of samples divisible by four
 						FIFO_write_to <= 1'b1;
@@ -2023,6 +2157,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_cs_b: begin
+					// CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 34) begin
 						FIFO_data_in <= data_stream_ADC_1;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
@@ -2041,6 +2177,8 @@ output reg  sample_CLK_out
 				end
 
 				ms_cs_c: begin
+					// CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 34) begin
 						FIFO_data_in <= data_stream_ADC_2;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
@@ -2059,11 +2197,11 @@ output reg  sample_CLK_out
 				end
 				
 				ms_cs_d: begin
+					SCLK <= 1'b0;
 					if (channel == 34) begin
 						FIFO_data_in <= data_stream_ADC_3;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
 					end					
-
 					CS_b <= 1'b1;
 					in4x_A1[67] <= MISO_A1; in4x_A2[67] <= MISO_A2;
 					in4x_B1[67] <= MISO_B1; in4x_B2[67] <= MISO_B2;
@@ -2081,7 +2219,7 @@ output reg  sample_CLK_out
 						FIFO_data_in <= data_stream_ADC_4;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
 					end					
-
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					in4x_A1[68] <= MISO_A1; in4x_A2[68] <= MISO_A2;
 					in4x_B1[68] <= MISO_B1; in4x_B2[68] <= MISO_B2;
@@ -2099,7 +2237,7 @@ output reg  sample_CLK_out
 						FIFO_data_in <= data_stream_ADC_5;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
 					end					
-
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					in4x_A1[69] <= MISO_A1; in4x_A2[69] <= MISO_A2;
 					in4x_B1[69] <= MISO_B1; in4x_B2[69] <= MISO_B2;
@@ -2117,7 +2255,7 @@ output reg  sample_CLK_out
 						FIFO_data_in <= data_stream_ADC_6;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
 					end					
-
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					in4x_A1[70] <= MISO_A1; in4x_A2[70] <= MISO_A2;
 					in4x_B1[70] <= MISO_B1; in4x_B2[70] <= MISO_B2;
@@ -2135,7 +2273,7 @@ output reg  sample_CLK_out
 						FIFO_data_in <= data_stream_ADC_7;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
 					end					
-
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					in4x_A1[71] <= MISO_A1; in4x_A2[71] <= MISO_A2;
 					in4x_B1[71] <= MISO_B1; in4x_B2[71] <= MISO_B2;
@@ -2153,7 +2291,7 @@ output reg  sample_CLK_out
 						FIFO_data_in <= data_stream_ADC_8;	// Write evaluation-board ADC samples
 						FIFO_write_to <= 1'b1;
 					end					
-
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					in4x_A1[72] <= MISO_A1; in4x_A2[72] <= MISO_A2;
 					in4x_B1[72] <= MISO_B1; in4x_B2[72] <= MISO_B2;
@@ -2171,7 +2309,7 @@ output reg  sample_CLK_out
 						FIFO_data_in <= data_stream_TTL_in;	// Write TTL inputs
 						FIFO_write_to <= 1'b1;
 					end					
-
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					in4x_A1[73] <= MISO_A1; in4x_A2[73] <= MISO_A2;
 					in4x_B1[73] <= MISO_B1; in4x_B2[73] <= MISO_B2;
@@ -2189,7 +2327,7 @@ output reg  sample_CLK_out
 						FIFO_data_in <= data_stream_TTL_out;	// Write current value of TTL outputs so users can reconstruct exact timings
 						FIFO_write_to <= 1'b1;
 					end					
-
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					result_A1 <= in_A1; result_A2 <= in_A2;
 					result_B1 <= in_B1; result_B2 <= in_B2;
@@ -2603,11 +2741,14 @@ output reg  sample_CLK_out
 					if (channel == 0) begin
 						timestamp <= timestamp + 1;
 					end
+					SCLK <= 1'b0;
 					CS_b <= 1'b1;			
 					main_state <= ms_cs_m;
 				end
 				
 				ms_cs_m: begin
+					// CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					if (channel == 34) begin
 						channel <= 0;
 					end else begin
@@ -2636,6 +2777,8 @@ output reg  sample_CLK_out
 				end
 				
 				ms_finish_256bit_word_0: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 				    if (word_counter_16bit != 4'b0000) begin
 				        FIFO_data_in <= 16'b0;
 				        FIFO_write_to <= 1'b1;
@@ -2646,11 +2789,16 @@ output reg  sample_CLK_out
 				end
 				
 				ms_finish_256bit_word_1: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
+	
 				    // Wait for 1 clock cycle to give time for counter to increment before returning to ms_finish_256bit_word_0
 				    main_state <= ms_finish_256bit_word_0;
 				end
 								
 				default: begin
+					CS_b <= 1'b0;
+					SCLK <= 1'b0;
 					main_state <= ms_wait;
 				end
 				
