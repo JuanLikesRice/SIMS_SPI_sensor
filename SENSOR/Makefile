@@ -3,7 +3,7 @@
 SHELL := /bin/bash -o pipefail
 
 DUT ?= main.v
-IVERILOG ?= /usr/bin/iverilog
+IVERILOG ?= iverilog
 
 all: sim 
 

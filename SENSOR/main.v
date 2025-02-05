@@ -9,6 +9,7 @@ output wire  sample_CLK_out
 );
 
 wire MISO;
+
     FPGA fpga_inst (
         .clk(clk),
         .reset(reset),
@@ -98,16 +99,17 @@ initial begin
 
     MOSI_current_reg = 16'b0;
     MOSI_stored_reg = 16'b0;
+	MISO_reg = 16'b0;
     bit_count = 5'b0;
-    cycle_count = 8'b0;
+    //cycle_count = 8'b0;
 end
 
 assign MISO = MISO_reg;
 
 // cycle_count block
-always @ (negedge CS) begin
-    cycle_count <= cycle_count + 1;
-end
+//always @ (negedge CS) begin
+//    cycle_count <= cycle_count + 1;
+//end
 
 // Command tracking and storing block
 always @ (posedge clk or posedge reset) begin
@@ -122,54 +124,55 @@ always @ (posedge clk or posedge reset) begin
         if (bit_count < 16) begin
             bit_count <= bit_count + 1; // Increment after CS high and posedge after 1 cycle
         end else begin // MOSI_current_reg's 16 bits are filled with a full command
-            bit_count <= 5'b0;
-                if (cycle_count < 3) // for the first two command cycles
-                    MISO_reg <= 16'hFFFF; // DUMMY value for the first two command cycles where MOSI_stored_reg is undefined
-                 else begin
-                    MOSI_stored_reg = MOSI_current_reg;
-                    MOSI_current_reg = 16'b0;
+            bit_count <= 5'b00001;
+		//if (cycle_count < 3) // for the first two command cycles
+		//if (MOSI_stored_reg == 16'b0)
+			//MISO_reg <= 16'hFFFF; // DUMMY value for the first two command cycles where MOSI_stored_reg is undefined
+			//else begin
+			MOSI_stored_reg <= MOSI_current_reg; // block or nonblock?
+			MOSI_current_reg <= 16'b0;
 
-                    // MISO library
-                    case (MOSI_current_reg[13:8]) 
-                        0:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        1:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        2:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        3:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        4:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        5:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        6:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        7:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        8:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        9:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        10:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        11:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        12:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        13:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        14:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        15:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        16:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        17:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        18:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        19:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        20:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        21:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        22:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        23:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        24:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        25:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        26:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        27:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        28:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        29:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        30:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        31:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-                        32:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-                        33:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-                        34:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-                        default: MISO_reg <= 16'b0; // MOSI_cmd <= 16'b0;
-                    endcase
-                end
-    
+			// MISO library
+			case (MOSI_current_reg[13:8]) 
+				0:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				1:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				2:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				3:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				4:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				5:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				6:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				7:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				8:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				9:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				10:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				11:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				12:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				13:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				14:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				15:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				16:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				17:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				18:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				19:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				20:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				21:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				22:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				23:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				24:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				25:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				26:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				27:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				28:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				29:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				30:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				31:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				32:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+				33:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+				34:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+				default: MISO_reg <= 16'b0; // MOSI_cmd <= 16'b0;
+			endcase
+		//end
+
             $display("bit_count %d MOSI_current_reg %b",bit_count, MOSI_current_reg); // Fix MOSI_current_reg
 
             // MOSI -> MISO decoder
