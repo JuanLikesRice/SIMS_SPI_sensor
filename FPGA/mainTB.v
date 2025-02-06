@@ -36,20 +36,7 @@ main
     .SCLK_wire(SCLK_wire),
     .CS_b_wire(CS_b_wire),
     .sample_CLK_out(sample_CLK_out)
-    // .(),
     );
-
-
-// input wire clk,
-// input wire reset, 
-// input wire CS,
-// input wire MOSI,
-// output wire MISO,
-// output wire SCLK_wire,
-// output reg sample_CLK_out
-
-
-
 
     always #5 clk = ~clk; // 100 MHz clock
 
@@ -63,92 +50,32 @@ main
             $dumpvars(vcdlevel);
             end
 
-/*
+    parameter transmission_cycles = 5;
+
     initial begin
-        // data_to_send = 16'hA5F0; // Example data to send
-        clk = 0;
+        clk = 0;         
         reset = 1;
-        // MOSI = 0;
-        // CS = 1;
-        repeat (1) @(posedge clk);
+        repeat ( 8) @(posedge clk);
         reset = 0;
-        repeat (200) @(posedge clk);
-        $finish;
-    end
-*/
-
-    initial begin
-        data_to_send = 16'b01_010101_0101010_1; // Example data to send
-        clk = 0; // WAS 0
-        reset = 0;
-        CS = 1;
-        MOSI = 0;
-
-        repeat (5) @(posedge clk);
-        transmit_spi(data_to_send);
-        //data_to_send = 16'h0F0F; // Example data to send
-        transmit_spi(data_to_send);
-        //data_to_send = 16'h0F0F; // Example data to send
-        transmit_spi(data_to_send);
-        //data_to_send = 16'h0F0F; // Example data to send
-        transmit_spi(data_to_send);
-        //data_to_send = 16'h0F0F; // Example data to send
-        transmit_spi(data_to_send);
-        //data_to_send = 16'h0F0F; // Example data to send
-        transmit_spi(data_to_send);
-        //data_to_send = 16'h0F0F; // Example data to send
-        transmit_spi(data_to_send);
-        //repeat (1) @(posedge clk);
-
-        // repeat (1) @(posedge clk);
-
-
-        //repeat (1) @(posedge clk);
-
-        // repeat (1) @(posedge clk);
-
-        // transmit_spi(data_to_send, clk, CS, MOSI);
-        repeat (150) @(posedge clk);
+        repeat (81*transmission_cycles) @(posedge clk);
         $finish;
     end
 
-    task transmit_spi(input [15:0] data_in);
-        integer i;
-        repeat (2) @(posedge clk);
-        begin
-            // Assert CS low to begin transmission
-            CS = 0;
+    reg [31:0] Cycle_count;
 
-            for (i = 14; i >=0; i = i - 1) begin // USED TO BE 15
-                MOSI = data_in[i];
-                @(posedge clk);
-            end
-            repeat (1) @(posedge clk);
-            // Deassert CS to end transmission
-            CS = 1;
-        repeat (2) @(posedge clk);
-
-        end
-    endtask
+always @(posedge clk) begin
+//     $display("Time: %3d\thalt: %d\tisTakenBranch: %d\tnextPC: %d\tpc_po: %d",$time, halt_pi, isTakenBranch_pi, PC, pc_po);
+  	 if (reset)
+	    Cycle_count  <= 32'h0;
+      //Starting memory address, this logic must be changed later
+	 else 
+ 	    // if (change_PC_condition | ~halt_i)  begin
+            Cycle_count <= Cycle_count + 1;
+	// end
+  end
 
 
 
-
-    // task transmit_spi(input [15:0] data_in);
-    //     integer i;
-    //     begin
-    //         // Assert CS low to begin transmission
-    //         CS = 0;
-
-    //         for (i = 15; i >=0; i = i - 1) begin
-    //             MOSI = data_in[i];
-    //             @(posedge clk);
-    //         end
-
-    //         // Deassert CS to end transmission
-    //         CS = 1;
-    //     end
-    // endtask
 
 endmodule
 
