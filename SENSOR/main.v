@@ -63,53 +63,51 @@ reg [15:0] MOSI_current_reg;
 reg [15:0] MOSI_stored_reg;
 reg [15:0] MISO_reg;
 reg [4:0] bit_count;
-reg [7:0] cycle_count;
-reg [7:0] oc_reg [63:0]; // 64 long reg file, byte long each -> stores on-chip registers
+//reg [7:0] cycle_count;
+reg [7:0] read_reg [63:0]; // 64 long reg file, byte long each -> stores on-chip READ-only registers
+reg [15:0] conv_reg [31:0]; // 32 long reg file, 
 
-// one register that is taking in current command
-// one register that is storing it for the next cycle
-
+// Populate reg file values and zero other registers
 integer i;
-
 initial begin
+	// CONVERT Reg File Initialization
+	for (i=0; i < 33; i=i+1)begin 
+            conv_reg[i] <= i;  
+    end
+
+    // READ-Only Reg File Initialization
     // On-chip registers:
     // 0 - 39
     for (i=0; i < 40; i=i+1)begin 
-            oc_reg[i] <= i;  
+            read_reg[i] <= i;  
     end
 
     // On-chip Read Only registers:
     // 40 - 44
-    oc_reg[40] = 8'b01001001; // I 
-    oc_reg[41] = 8'b01001110; // N
-    oc_reg[42] = 8'b01010100; // T
-    oc_reg[43] = 8'b01000001; // A
-    oc_reg[44] = 8'b01001110; // N
+    read_reg[40] = 8'b01001001; // I 
+    read_reg[41] = 8'b01001110; // N
+    read_reg[42] = 8'b01010100; // T
+    read_reg[43] = 8'b01000001; // A
+    read_reg[44] = 8'b01001110; // N
 
     // 45 - 59
     for (i=45; i < 60; i=i+1)begin 
-            oc_reg[i] <= i;  
+            read_reg[i] <= i;  
     end
 
     // 60 - 63
-    oc_reg[60] = 8'b00000001;
-    oc_reg[61] = 8'b00100000;
-    oc_reg[62] = 8'b00010000; // maybe should be 64 but datasheet gave only two options (32 or 16)
-    oc_reg[63] = 8'b00000001; // same as above but RHD2132 is 1 and RHD2216 is 1
+    read_reg[60] = 8'b00000001;
+    read_reg[61] = 8'b00100000;
+    read_reg[62] = 8'b00010000; // maybe should be 64 but datasheet gave only two options (32 or 16)
+    read_reg[63] = 8'b00000001; // same as above but RHD2132 is 1 and RHD2216 is 1
 
     MOSI_current_reg = 16'b0;
     MOSI_stored_reg = 16'b0;
 	MISO_reg = 16'b0;
     bit_count = 5'b0;
-    //cycle_count = 8'b0;
 end
 
 assign MISO = MISO_reg;
-
-// cycle_count block
-//always @ (negedge CS) begin
-//    cycle_count <= cycle_count + 1;
-//end
 
 // Command tracking and storing block
 always @ (posedge clk or posedge reset) begin
@@ -125,58 +123,75 @@ always @ (posedge clk or posedge reset) begin
             bit_count <= bit_count + 1; // Increment after CS high and posedge after 1 cycle
         end else begin // MOSI_current_reg's 16 bits are filled with a full command
             bit_count <= 5'b00001;
-		//if (cycle_count < 3) // for the first two command cycles
-		//if (MOSI_stored_reg == 16'b0)
-			//MISO_reg <= 16'hFFFF; // DUMMY value for the first two command cycles where MOSI_stored_reg is undefined
-			//else begin
-			MOSI_stored_reg <= MOSI_current_reg; // block or nonblock?
-			MOSI_current_reg <= 16'b0;
+			MOSI_stored_reg <= MOSI_current_reg; 
+        	MOSI_current_reg <= {15'b0, MOSI};
+			//MOSI_current_reg <= 16'b0;
 
 			// MISO library
-			case (MOSI_current_reg[13:8]) 
-				0:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				1:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				2:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				3:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				4:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				5:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				6:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				7:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				8:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				9:       MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				10:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				11:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				12:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				13:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				14:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				15:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				16:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				17:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				18:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				19:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				20:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				21:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				22:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				23:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				24:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				25:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				26:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				27:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				28:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				29:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				30:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				31:      MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				32:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-				33:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-				34:		MISO_reg <= {10'b0, MOSI_current_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+			/*
+			- Determine if READ or CONVERT
+			- READ -> MOSI_stored_reg[15:14] = 2'b11
+			- CONVERT -> MOSI_stored_reg[15:14] = 2'b00
+
+			*/
+
+			casez (MOSI_stored_reg[15:11]) 
+				4'b00??: MISO_reg <= conv_reg[MOSI_stored_reg[13:8]]; // CONVERT --> MISO_reg becomes value from conv_reg[channel]
+				4'b11??: MISO_reg <= {8'b0, read_reg[MOSI_stored_reg[13:8]]}; // READ --> MISO_reg becomes concatenated value of 0's and read_reg[channel]
+				4'b0101: begin
+					MISO_reg <= 16'b0; // CALIBRATE --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
+					$display("CALIBRATE");
+				end
+				4'b0110: begin
+					MISO_reg <= 16'b0; // CLEAR --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
+					$display("CLEAR");
+				end
+				default: MISO_reg <= 16'b0;
+			endcase
+
+			/*
+			case (MOSI_stored_reg[13:8]) 
+				0:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				1:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				2:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				3:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				4:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				5:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				6:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				7:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				8:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				9:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				10:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				11:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				12:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				13:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				14:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				15:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				16:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				17:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				18:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				19:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				20:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				21:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				22:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				23:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				24:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				25:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				26:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				27:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				28:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				29:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				30:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				31:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+				32:		MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+				33:		MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+				34:		MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
 				default: MISO_reg <= 16'b0; // MOSI_cmd <= 16'b0;
 			endcase
+			*/
 		//end
 
             $display("bit_count %d MOSI_current_reg %b",bit_count, MOSI_current_reg); // Fix MOSI_current_reg
-
-            // MOSI -> MISO decoder
-            // Not sure what MISO should be produced yet...
 
         end
     end
@@ -2832,41 +2847,76 @@ module custom_command_selector (
 
 	always @(*) begin
 		case (channel)
-			0:       MOSI_cmd <= { 16'b1001_1001_1001_1001 };
-			1:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			2:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			3:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			4:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			5:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			6:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			7:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			8:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			9:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			10:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			11:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			12:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			13:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			14:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			15:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			16:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			17:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			18:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			19:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			20:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			21:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			22:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			23:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			24:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			25:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			26:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			27:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			28:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			29:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			30:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			31:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			32:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
-			33:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
-			34:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
+			//0:       MOSI_cmd <= { 16'b1001_1001_1001_1001 };
+			//1:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//2:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//3:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//4:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//5:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//6:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//7:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//8:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//9:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//10:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//11:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//12:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//13:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//14:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//15:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//16:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//17:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//18:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//19:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//20:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//21:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//22:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//23:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//24:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//25:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//26:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//27:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//28:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//29:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//30:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//31:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			//32:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
+			//33:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
+			//34:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
+			0:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			1:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			2:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			3:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			4:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			5:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			6:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			7:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			8:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			9:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			10:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			11:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			12:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			13:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			14:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			15:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			16:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			17:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			18:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			19:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			20:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			21:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			22:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			23:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			24:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			25:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			26:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			27:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			28:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			29:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			30:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			31:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
+			32:		 MOSI_cmd <= {16'b0001_1001_1001_1001};
+			33:		 MOSI_cmd <= {16'b0001_1001_1001_1001};
+			34:		 MOSI_cmd <= {16'b0001_1001_1001_1001};
 			default: MOSI_cmd <= 16'b0;
 			endcase
 	end	

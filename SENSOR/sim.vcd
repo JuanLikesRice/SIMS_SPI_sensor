@@ -1,5 +1,5 @@
 $date
-	Tue Feb  4 20:24:16 2025
+	Wed Feb 19 23:31:50 2025
 $end
 $version
 	Icarus Verilog
@@ -1047,7 +1047,7 @@ b0 6$
 0a"
 0*
 #15000
-b1001100110011001 *#
+b1100110011001 *#
 b10110011 /&
 0N$
 b1000000000000000 4$
@@ -1150,7 +1150,7 @@ bz D$
 bz C$
 bz B$
 bz A$
-b1001100110011001 @$
+b1100110011001 @$
 1N$
 1a"
 1*
@@ -1166,8 +1166,6 @@ z<$
 z;$
 z:$
 z9$
-1$
-18$
 b1000000000000000 5$
 b1000000000000000 3$
 b1000000000000000 2$
@@ -1199,7 +1197,6 @@ b101010101010101 7&
 0*
 #55000
 b1 4&
-b1 2&
 b1100111 /&
 bxz U%
 bxz T%
@@ -1260,8 +1257,6 @@ bxzzx W%
 bxzzx V%
 bxzzz U%
 bxzzz T%
-0$
-08$
 0#
 0M$
 17$
@@ -1304,7 +1299,6 @@ b1100 8&
 0*
 #95000
 b10 4&
-b10 2&
 b1101011 /&
 bxzzzzx c%
 bxzzzzx b%
@@ -1414,7 +1408,6 @@ b1000 8&
 0*
 #135000
 b11 4&
-b100 2&
 b1101111 /&
 bxzzzzzzzzx c%
 bxzzzzzzzzx b%
@@ -1522,7 +1515,7 @@ b100 8&
 0*
 #175000
 b100 4&
-b1001 2&
+b1 2&
 b1110011 /&
 bxzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzx b%
@@ -1628,7 +1621,7 @@ b0 8&
 0*
 #215000
 b101 4&
-b10011 2&
+b11 2&
 b1110111 /&
 bxzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzx b%
@@ -1730,7 +1723,7 @@ bxzzzzzzzzzzzzzzzzzzzz T%
 0*
 #255000
 b110 4&
-b100110 2&
+b110 2&
 b1111011 /&
 bxzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzx b%
@@ -1834,7 +1827,7 @@ b1100 8&
 0*
 #295000
 b111 4&
-b1001100 2&
+b1100 2&
 b1111111 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -1942,7 +1935,7 @@ b1000 8&
 0*
 #335000
 b1000 4&
-b10011001 2&
+b11001 2&
 b10000011 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2048,7 +2041,7 @@ b100 8&
 0*
 #375000
 b1001 4&
-b100110011 2&
+b110011 2&
 b10000111 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2156,7 +2149,7 @@ b0 8&
 0*
 #415000
 b1010 4&
-b1001100110 2&
+b1100110 2&
 b10001011 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2256,7 +2249,7 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz T%
 0*
 #455000
 b1011 4&
-b10011001100 2&
+b11001100 2&
 b10001111 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2362,7 +2355,7 @@ b1100 8&
 0*
 #495000
 b1100 4&
-b100110011001 2&
+b110011001 2&
 b10010011 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2468,7 +2461,7 @@ b1000 8&
 0*
 #535000
 b1101 4&
-b1001100110011 2&
+b1100110011 2&
 b10010111 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2576,7 +2569,7 @@ b100 8&
 0*
 #575000
 b1110 4&
-b10011001100110 2&
+b11001100110 2&
 b10011011 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2682,7 +2675,7 @@ b0 8&
 0*
 #615000
 b1111 4&
-b100110011001100 2&
+b110011001100 2&
 b10011111 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -2784,7 +2777,7 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz T%
 0*
 #655000
 b10000 4&
-b1001100110011001 2&
+b1100110011001 2&
 b10100011 /&
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx c%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx b%
@@ -3225,8 +3218,6 @@ z<$
 z;$
 z:$
 z9$
-1$
-18$
 0"
 0%
 0"$
@@ -3243,9 +3234,7 @@ b1100110 /&
 0a"
 0*
 #855000
-1-
-b11001 1&
-b1001100110011001 3&
+b1100110011001 3&
 b1 4&
 b0 2&
 b1100111 /&
@@ -3267,8 +3256,6 @@ b1110 8&
 0*
 #875000
 b1101001 /&
-0$
-08$
 0#
 0M$
 0)
@@ -4019,8 +4006,6 @@ z<$
 z;$
 z:$
 z9$
-1$
-18$
 0%
 0"$
 1a"
@@ -4036,7 +4021,8 @@ b1100110 /&
 0a"
 0*
 #1655000
-b1100110011001 3&
+1-
+b11001 1&
 b1 4&
 b0 2&
 b1100111 /&
@@ -4056,8 +4042,6 @@ b1101000 /&
 0*
 #1675000
 b1101001 /&
-0$
-08$
 0#
 0M$
 1a"
@@ -4714,8 +4698,6 @@ z<$
 z;$
 z:$
 z9$
-1$
-18$
 0%
 0"$
 1a"
@@ -4750,8 +4732,6 @@ b1101000 /&
 0*
 #2475000
 b1101001 /&
-0$
-08$
 0#
 0M$
 1a"
