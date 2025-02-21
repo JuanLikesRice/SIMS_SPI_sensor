@@ -50,7 +50,7 @@ main
             $dumpvars(vcdlevel);
             end
 
-    parameter transmission_cycles = 5;
+    parameter transmission_cycles = 75;
 
     initial begin
         clk = 0;         

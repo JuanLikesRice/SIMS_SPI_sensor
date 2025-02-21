@@ -817,13 +817,13 @@ module main
     SDRAM_FIFO SDRAM_FIFO_inst
         (
         .okClk              (okClk),
-        .data_in_clk        (dataclk),
+        .data_in_clk        (dataclk),          // FIFO stage 1
         .sys_clk            (sys_clk),
-        .reset              (reset),
-        .FIFO_write_to      (FIFO_write_to),
-        .FIFO_data_in       (FIFO_data_in),
+        .reset              (reset),			// FIFO stage 1
+        .FIFO_write_to      (FIFO_write_to),    // FIFO stage 1
+        .FIFO_data_in       (FIFO_data_in),     // FIFO stage 1
         .FIFO_read_from     (FIFO_read_from),
-        .FIFO_data_out      (FIFO_data_out),
+        .FIFO_data_out      (FIFO_data			_out),
         .FIFO_out_rdy       (FIFO_out_rdy),
         .usb3_blocksize     (usb3_blocksize),
         .ddr_blocksize      (ddr_blocksize),
@@ -955,7 +955,8 @@ module main
 		
 	wire [5:0] num_data_streams_enabled;
 	assign num_data_streams_enabled =
-		data_stream_1_en + data_stream_2_en + data_stream_3_en + data_stream_4_en + 
+		
+		 + data_stream_2_en + data_stream_3_en + data_stream_4_en + 
 		data_stream_5_en + data_stream_6_en + data_stream_7_en + data_stream_8_en + 
 		data_stream_9_en + data_stream_10_en + data_stream_11_en + data_stream_12_en + 
 		data_stream_13_en + data_stream_14_en + data_stream_15_en + data_stream_16_en + 
@@ -1149,7 +1150,8 @@ module main
 					aux_cmd_bank_3_G <= aux_cmd_bank_3_G_in;
 					aux_cmd_bank_3_H <= aux_cmd_bank_3_H_in;
 					
-					data_stream_1_en <= data_stream_1_en_in;		// can only change USB streams after stopping SPI
+					
+					 <= data_stream_1_en_in;		// can only change USB streams after stopping SPI
 					data_stream_2_en <= data_stream_2_en_in;
 					data_stream_3_en <= data_stream_3_en_in;
 					data_stream_4_en <= data_stream_4_en_in;

@@ -13,7 +13,7 @@ wire MISO;
         .clk(clk),
         .reset(reset),
         .MOSI_to_sensor(MOSI_to_sensor), // This you care
-		.MISO_from_sensor(MISO_from_sensor),
+		.MISO_from_sensor(MOSI_to_sensor),
         .SCLK_wire(SCLK_wire),// This you care
         .CS_b_wire(CS_b_wire), // This you care
         .sample_CLK_out(sample_CLK_out)
@@ -233,7 +233,7 @@ output reg  sample_CLK_out
 	wire [15:0] 	in_DDR_H1, in_DDR_H2;
 	
 	wire [3:0] 		delay_A, delay_B, delay_C, delay_D, delay_E, delay_F, delay_G, delay_H;
-	
+
 	reg [15:0] 		result_A1, result_A2;
 	reg [15:0] 		result_B1, result_B2;
 	reg [15:0] 		result_C1, result_C2;
@@ -376,19 +376,114 @@ output reg  sample_CLK_out
 	wire [15:0] TTL_in, TTL_parallel;
 	wire serial_CLK_auto, serial_LOAD_auto;
     
-    		
-	wire [5:0] num_data_streams_enabled;
-	assign num_data_streams_enabled =
-		data_stream_1_en + data_stream_2_en + data_stream_3_en + data_stream_4_en + 
-		data_stream_5_en + data_stream_6_en + data_stream_7_en + data_stream_8_en + 
-		data_stream_9_en + data_stream_10_en + data_stream_11_en + data_stream_12_en + 
-		data_stream_13_en + data_stream_14_en + data_stream_15_en + data_stream_16_en + 
-		data_stream_17_en + data_stream_18_en + data_stream_19_en + data_stream_20_en + 
-		data_stream_21_en + data_stream_22_en + data_stream_23_en + data_stream_24_en + 
-		data_stream_25_en + data_stream_26_en + data_stream_27_en + data_stream_28_en + 
-		data_stream_29_en + data_stream_30_en + data_stream_31_en + data_stream_32_en;
-	
 
+	wire [5:0] num_data_streams_enabled;
+	
+	//MODIFIED LOGIC
+	// Engineer Name: Curtis North
+	// Date: 1/26/2013
+
+	//	from ep wires (Opal Kelly)
+	// assign delay_A = 						ep04wirein[3:0];
+	assign delay_A			   		= 4'b1;
+	assign data_stream_1_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign data_stream_2_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign data_stream_3_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign data_stream_4_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign num_data_streams_enabled = 5'd4; //						
+
+
+	assign data_stream_1 = result_A1;
+	assign data_stream_2 = result_DDR_A1;
+	assign data_stream_3 = result_A2;
+	assign data_stream_4 = result_DDR_A2;
+	wire [6:0] address_ofset;
+
+	wire MOSI2_A, MOSI1_A;
+    assign CS_b_A = CS_b;
+	assign SCLK_A = SCLK;
+	assign MOSI1_A = MOSI_A;
+	assign MOSI2_A = 1'b0;
+	assign MISO1_A = MISO_from_sensor;
+	assign MISO2_A = MISO_from_sensor;
+	assign MISO_A1 = MISO1_A;
+	assign MISO_A2 = MISO2_A;
+	wire [6:0] address_write;
+	wire address_bank;
+
+	assign	address_write = address_ofset + channel_MISO;
+	
+	wire halt_wire;
+	wire write_enable_regfile;
+
+	assign write_enable_regfile = (~halt_write) && reg_file_enable;
+	assign 	halt_write = (channel_MISO>=32);
+
+
+	assign address_bank = timestamp[0];
+	reg [15:0] data_in_dual_bank_reg_file;
+
+	//signals for regfile
+
+	//Write signals -->
+	//address_bank
+	//address_write
+	//write_enable_regfile
+    wire    last_address_written;
+	wire [6:0] rd_addr0, rd_addr1;
+	reg  [6:0] address_index_readout;
+	wire [15:0] data_out0, data_out1;
+
+	assign 	last_address_written = (address_write==7'd127)&&(write_enable_regfile==1'b1);
+    dual_bank_regfile dual_bank_regfile (
+        .clk(dataclk),
+        .rst(reset),
+        .we(write_enable_regfile),
+        .bank_sel(address_bank),
+        .wr_addr(address_write),
+        .data_in(data_in_dual_bank_reg_file),
+        .rd_addr0(rd_addr0),
+        .rd_addr1(rd_addr0),
+        .data_out0(data_out0),
+        .data_out1(data_out1)
+    );
+    wire [15:0] data_out_regfile_to_fifo;
+	assign data_out_regfile_to_fifo = address_bank ? data_out1 : data_out0;
+	wire fifo_ready_refile;
+	assign fifo_ready_refile = 1'b1;
+	assign rd_addr0 = address_index_readout;
+	assign rd_addr1 = address_index_readout;
+	
+always @(posedge dataclk) begin
+	if (reset) begin
+		address_index_readout <= 16'b0;
+	end else if (last_address_written)begin
+		address_index_readout <= 16'b0;
+	end else if (fifo_ready_refile &&(address_index_readout < 7'd127)) begin
+		address_index_readout <= address_index_readout + 1;;
+	end 
+end
+
+
+
+
+initial begin 
+in4x_A1 <=0;
+in4x_A2 <=0;
+address_index_readout <= 0;
+data_in_dual_bank_reg_file <= 0;
+end
+
+	// assign num_data_streams_enabled =
+	// 	data_stream_1_en + data_stream_2_en + data_stream_3_en + data_stream_4_en + 
+	// 	data_stream_5_en + data_stream_6_en + data_stream_7_en + data_stream_8_en + 
+	// 	data_stream_9_en + data_stream_10_en + data_stream_11_en + data_stream_12_en + 
+	// 	data_stream_13_en + data_stream_14_en + data_stream_15_en + data_stream_16_en + 
+	// 	data_stream_17_en + data_stream_18_en + data_stream_19_en + data_stream_20_en + 
+	// 	data_stream_21_en + data_stream_22_en + data_stream_23_en + data_stream_24_en + 
+	// 	data_stream_25_en + data_stream_26_en + data_stream_27_en + data_stream_28_en + 
+	// 	data_stream_29_en + data_stream_30_en + data_stream_31_en + data_stream_32_en;
+	
 
 
 	always @(posedge dataclk) begin
@@ -405,10 +500,13 @@ output reg  sample_CLK_out
 
 
 	reg [3:0] word_counter_16bit = 0;
-
+	reg 	  reg_file_enable;
+	reg [2:0] reg_value;
 	always @(posedge dataclk) begin
 		if (reset) begin
-			main_state <= ms_wait;
+			reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <= ms_wait;
 			timestamp <= 0;
 			sample_CLK_out <= 0;
 			channel <= 0;
@@ -526,7 +624,9 @@ output reg  sample_CLK_out
 					SPI_running <= 1'b0;
 
 					if (SPI_start) begin
-						main_state <= ms_cs_n;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <= ms_cs_n;
 					end
 				end
 
@@ -541,6 +641,8 @@ output reg  sample_CLK_out
 					MOSI_cmd_G <= MOSI_cmd_selected_G;
 					MOSI_cmd_H <= MOSI_cmd_selected_H;
 					CS_b <= 1'b1;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk1_a;
 				end
 
@@ -592,6 +694,8 @@ output reg  sample_CLK_out
 					MOSI_F <= MOSI_cmd_F[15];
 					MOSI_G <= MOSI_cmd_G[15];
 					MOSI_H <= MOSI_cmd_H[15];
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk1_b;
 				end
 
@@ -612,6 +716,8 @@ output reg  sample_CLK_out
 						FIFO_write_to <= 1'b1;
 					end
 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk1_c;
 				end
 
@@ -641,6 +747,8 @@ output reg  sample_CLK_out
 					// in4x_F1[0] <= MISO_F1; in4x_F2[0] <= MISO_F2;
 					// in4x_G1[0] <= MISO_G1; in4x_G2[0] <= MISO_G2;
 					// in4x_H1[0] <= MISO_H1; in4x_H2[0] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk1_d;
 				end
 				
@@ -669,6 +777,8 @@ output reg  sample_CLK_out
 					in4x_F1[1] <= MISO_F1; in4x_F2[1] <= MISO_F2;
 					in4x_G1[1] <= MISO_G1; in4x_G2[1] <= MISO_G2;
 					in4x_H1[1] <= MISO_H1; in4x_H2[1] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk2_a;
 				end
 
@@ -704,6 +814,8 @@ output reg  sample_CLK_out
 					in4x_F1[2] <= MISO_F1; in4x_F2[2] <= MISO_F2;
 					in4x_G1[2] <= MISO_G1; in4x_G2[2] <= MISO_G2;
 					in4x_H1[2] <= MISO_H1; in4x_H2[2] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk2_b;
 				end
 
@@ -731,6 +843,8 @@ output reg  sample_CLK_out
 					in4x_F1[3] <= MISO_F1; in4x_F2[3] <= MISO_F2;
 					in4x_G1[3] <= MISO_G1; in4x_G2[3] <= MISO_G2;
 					in4x_H1[3] <= MISO_H1; in4x_H2[3] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk2_c;
 				end
 
@@ -759,6 +873,8 @@ output reg  sample_CLK_out
 					in4x_F1[4] <= MISO_F1; in4x_F2[4] <= MISO_F2;
 					in4x_G1[4] <= MISO_G1; in4x_G2[4] <= MISO_G2;
 					in4x_H1[4] <= MISO_H1; in4x_H2[4] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk2_d;
 				end
 				
@@ -774,8 +890,15 @@ output reg  sample_CLK_out
 					end
 
 					if (data_stream_1_en == 1'b1) begin
-						FIFO_data_in <= data_stream_1;
-						FIFO_write_to <= 1'b1;
+						FIFO_data_in 	<= data_stream_1;
+						data_in_dual_bank_reg_file <= data_stream_1;
+
+						FIFO_write_to 	<= 1'b1;
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd0;
+					end else begin 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					end
 
 					SCLK <= 1'b1;
@@ -787,6 +910,7 @@ output reg  sample_CLK_out
 					in4x_F1[5] <= MISO_F1; in4x_F2[5] <= MISO_F2;
 					in4x_G1[5] <= MISO_G1; in4x_G2[5] <= MISO_G2;
 					in4x_H1[5] <= MISO_H1; in4x_H2[5] <= MISO_H2;
+
 					main_state <= ms_clk3_a;
 				end
 				
@@ -803,7 +927,13 @@ output reg  sample_CLK_out
 
 					if (data_stream_2_en == 1'b1) begin
 						FIFO_data_in <= data_stream_2;
+						data_in_dual_bank_reg_file <= data_stream_2;
 						FIFO_write_to <= 1'b1;
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd1;
+					end else begin 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					end
 
 					MOSI_A <= MOSI_cmd_A[13];
@@ -822,6 +952,7 @@ output reg  sample_CLK_out
 					in4x_F1[6] <= MISO_F1; in4x_F2[6] <= MISO_F2;
 					in4x_G1[6] <= MISO_G1; in4x_G2[6] <= MISO_G2;
 					in4x_H1[6] <= MISO_H1; in4x_H2[6] <= MISO_H2;
+
 					main_state <= ms_clk3_b;
 				end
 
@@ -837,7 +968,13 @@ output reg  sample_CLK_out
 					end
 					if (data_stream_3_en == 1'b1) begin
 						FIFO_data_in <= data_stream_3;
+						data_in_dual_bank_reg_file <= data_stream_3;
 						FIFO_write_to <= 1'b1;
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd2;
+					end else begin 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					end
 
 					in4x_A1[7] <= MISO_A1; in4x_A2[7] <= MISO_A2;
@@ -848,6 +985,7 @@ output reg  sample_CLK_out
 					in4x_F1[7] <= MISO_F1; in4x_F2[7] <= MISO_F2;
 					in4x_G1[7] <= MISO_G1; in4x_G2[7] <= MISO_G2;
 					in4x_H1[7] <= MISO_H1; in4x_H2[7] <= MISO_H2;					
+
 					main_state <= ms_clk3_c;
 				end
 
@@ -863,7 +1001,13 @@ output reg  sample_CLK_out
 					end
 					if (data_stream_4_en == 1'b1) begin
 						FIFO_data_in <= data_stream_4;
+						data_in_dual_bank_reg_file <= data_stream_4;
 						FIFO_write_to <= 1'b1;
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd3;
+					end else begin 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					end
 
 					SCLK <= 1'b1;
@@ -902,6 +1046,8 @@ output reg  sample_CLK_out
 					in4x_F1[9] <= MISO_F1; in4x_F2[9] <= MISO_F2;
 					in4x_G1[9] <= MISO_G1; in4x_G2[9] <= MISO_G2;
 					in4x_H1[9] <= MISO_H1; in4x_H2[9] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk4_a;
 				end
 
@@ -936,6 +1082,8 @@ output reg  sample_CLK_out
 					in4x_F1[10] <= MISO_F1; in4x_F2[10] <= MISO_F2;
 					in4x_G1[10] <= MISO_G1; in4x_G2[10] <= MISO_G2;
 					in4x_H1[10] <= MISO_H1; in4x_H2[10] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk4_b;
 				end
 
@@ -962,6 +1110,8 @@ output reg  sample_CLK_out
 					in4x_F1[11] <= MISO_F1; in4x_F2[11] <= MISO_F2;
 					in4x_G1[11] <= MISO_G1; in4x_G2[11] <= MISO_G2;
 					in4x_H1[11] <= MISO_H1; in4x_H2[11] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk4_c;
 				end
 
@@ -989,6 +1139,8 @@ output reg  sample_CLK_out
 					in4x_F1[12] <= MISO_F1; in4x_F2[12] <= MISO_F2;
 					in4x_G1[12] <= MISO_G1; in4x_G2[12] <= MISO_G2;
 					in4x_H1[12] <= MISO_H1; in4x_H2[12] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk4_d;
 				end
 				
@@ -1016,6 +1168,8 @@ output reg  sample_CLK_out
 					in4x_F1[13] <= MISO_F1; in4x_F2[13] <= MISO_F2;
 					in4x_G1[13] <= MISO_G1; in4x_G2[13] <= MISO_G2;
 					in4x_H1[13] <= MISO_H1; in4x_H2[13] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk5_a;
 				end
 				
@@ -1050,6 +1204,8 @@ output reg  sample_CLK_out
 					in4x_F1[14] <= MISO_F1; in4x_F2[14] <= MISO_F2;
 					in4x_G1[14] <= MISO_G1; in4x_G2[14] <= MISO_G2;
 					in4x_H1[14] <= MISO_H1; in4x_H2[14] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk5_b;
 				end
 
@@ -1076,6 +1232,8 @@ output reg  sample_CLK_out
 					in4x_F1[15] <= MISO_F1; in4x_F2[15] <= MISO_F2;
 					in4x_G1[15] <= MISO_G1; in4x_G2[15] <= MISO_G2;
 					in4x_H1[15] <= MISO_H1; in4x_H2[15] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk5_c;
 				end
 
@@ -1096,6 +1254,8 @@ output reg  sample_CLK_out
 					in4x_F1[16] <= MISO_F1; in4x_F2[16] <= MISO_F2;
 					in4x_G1[16] <= MISO_G1; in4x_G2[16] <= MISO_G2;
 					in4x_H1[16] <= MISO_H1; in4x_H2[16] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk5_d;
 				end
 				
@@ -1116,6 +1276,8 @@ output reg  sample_CLK_out
 					in4x_F1[17] <= MISO_F1; in4x_F2[17] <= MISO_F2;
 					in4x_G1[17] <= MISO_G1; in4x_G2[17] <= MISO_G2;
 					in4x_H1[17] <= MISO_H1; in4x_H2[17] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk6_a;
 				end
 				
@@ -1143,6 +1305,8 @@ output reg  sample_CLK_out
 					in4x_F1[18] <= MISO_F1; in4x_F2[18] <= MISO_F2;
 					in4x_G1[18] <= MISO_G1; in4x_G2[18] <= MISO_G2;
 					in4x_H1[18] <= MISO_H1; in4x_H2[18] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk6_b;
 				end
 
@@ -1162,6 +1326,8 @@ output reg  sample_CLK_out
 					in4x_F1[19] <= MISO_F1; in4x_F2[19] <= MISO_F2;
 					in4x_G1[19] <= MISO_G1; in4x_G2[19] <= MISO_G2;
 					in4x_H1[19] <= MISO_H1; in4x_H2[19] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk6_c;
 				end
 
@@ -1182,6 +1348,8 @@ output reg  sample_CLK_out
 					in4x_F1[20] <= MISO_F1; in4x_F2[20] <= MISO_F2;
 					in4x_G1[20] <= MISO_G1; in4x_G2[20] <= MISO_G2;
 					in4x_H1[20] <= MISO_H1; in4x_H2[20] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk6_d;
 				end
 				
@@ -1202,6 +1370,8 @@ output reg  sample_CLK_out
 					in4x_F1[21] <= MISO_F1; in4x_F2[21] <= MISO_F2;
 					in4x_G1[21] <= MISO_G1; in4x_G2[21] <= MISO_G2;
 					in4x_H1[21] <= MISO_H1; in4x_H2[21] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk7_a;
 				end
 				
@@ -1229,6 +1399,8 @@ output reg  sample_CLK_out
 					in4x_F1[22] <= MISO_F1; in4x_F2[22] <= MISO_F2;
 					in4x_G1[22] <= MISO_G1; in4x_G2[22] <= MISO_G2;
 					in4x_H1[22] <= MISO_H1; in4x_H2[22] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk7_b;
 				end
 
@@ -1248,6 +1420,8 @@ output reg  sample_CLK_out
 					in4x_F1[23] <= MISO_F1; in4x_F2[23] <= MISO_F2;
 					in4x_G1[23] <= MISO_G1; in4x_G2[23] <= MISO_G2;
 					in4x_H1[23] <= MISO_H1; in4x_H2[23] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk7_c;
 				end
 
@@ -1268,6 +1442,8 @@ output reg  sample_CLK_out
 					in4x_F1[24] <= MISO_F1; in4x_F2[24] <= MISO_F2;
 					in4x_G1[24] <= MISO_G1; in4x_G2[24] <= MISO_G2;
 					in4x_H1[24] <= MISO_H1; in4x_H2[24] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk7_d;
 				end
 				
@@ -1288,6 +1464,8 @@ output reg  sample_CLK_out
 					in4x_F1[25] <= MISO_F1; in4x_F2[25] <= MISO_F2;
 					in4x_G1[25] <= MISO_G1; in4x_G2[25] <= MISO_G2;
 					in4x_H1[25] <= MISO_H1; in4x_H2[25] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk8_a;
 				end
 
@@ -1315,6 +1493,8 @@ output reg  sample_CLK_out
 					in4x_F1[26] <= MISO_F1; in4x_F2[26] <= MISO_F2;
 					in4x_G1[26] <= MISO_G1; in4x_G2[26] <= MISO_G2;
 					in4x_H1[26] <= MISO_H1; in4x_H2[26] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk8_b;
 				end
 
@@ -1334,6 +1514,8 @@ output reg  sample_CLK_out
 					in4x_F1[27] <= MISO_F1; in4x_F2[27] <= MISO_F2;
 					in4x_G1[27] <= MISO_G1; in4x_G2[27] <= MISO_G2;
 					in4x_H1[27] <= MISO_H1; in4x_H2[27] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk8_c;
 				end
 
@@ -1354,6 +1536,8 @@ output reg  sample_CLK_out
 					in4x_F1[28] <= MISO_F1; in4x_F2[28] <= MISO_F2;
 					in4x_G1[28] <= MISO_G1; in4x_G2[28] <= MISO_G2;
 					in4x_H1[28] <= MISO_H1; in4x_H2[28] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk8_d;
 				end
 				
@@ -1374,6 +1558,8 @@ output reg  sample_CLK_out
 					in4x_F1[29] <= MISO_F1; in4x_F2[29] <= MISO_F2;
 					in4x_G1[29] <= MISO_G1; in4x_G2[29] <= MISO_G2;
 					in4x_H1[29] <= MISO_H1; in4x_H2[29] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk9_a;
 				end
 
@@ -1401,6 +1587,8 @@ output reg  sample_CLK_out
 					in4x_F1[30] <= MISO_F1; in4x_F2[30] <= MISO_F2;
 					in4x_G1[30] <= MISO_G1; in4x_G2[30] <= MISO_G2;
 					in4x_H1[30] <= MISO_H1; in4x_H2[30] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk9_b;
 				end
 
@@ -1420,6 +1608,8 @@ output reg  sample_CLK_out
 					in4x_F1[31] <= MISO_F1; in4x_F2[31] <= MISO_F2;
 					in4x_G1[31] <= MISO_G1; in4x_G2[31] <= MISO_G2;
 					in4x_H1[31] <= MISO_H1; in4x_H2[31] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk9_c;
 				end
 
@@ -1440,6 +1630,8 @@ output reg  sample_CLK_out
 					in4x_F1[32] <= MISO_F1; in4x_F2[32] <= MISO_F2;
 					in4x_G1[32] <= MISO_G1; in4x_G2[32] <= MISO_G2;
 					in4x_H1[32] <= MISO_H1; in4x_H2[32] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk9_d;
 				end
 				
@@ -1460,6 +1652,8 @@ output reg  sample_CLK_out
 					in4x_F1[33] <= MISO_F1; in4x_F2[33] <= MISO_F2;
 					in4x_G1[33] <= MISO_G1; in4x_G2[33] <= MISO_G2;
 					in4x_H1[33] <= MISO_H1; in4x_H2[33] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk10_a;
 				end
 
@@ -1487,6 +1681,8 @@ output reg  sample_CLK_out
 					in4x_F1[34] <= MISO_F1; in4x_F2[34] <= MISO_F2;
 					in4x_G1[34] <= MISO_G1; in4x_G2[34] <= MISO_G2;
 					in4x_H1[34] <= MISO_H1; in4x_H2[34] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk10_b;
 				end
 
@@ -1506,6 +1702,8 @@ output reg  sample_CLK_out
 					in4x_F1[35] <= MISO_F1; in4x_F2[35] <= MISO_F2;
 					in4x_G1[35] <= MISO_G1; in4x_G2[35] <= MISO_G2;
 					in4x_H1[35] <= MISO_H1; in4x_H2[35] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk10_c;
 				end
 
@@ -1526,6 +1724,8 @@ output reg  sample_CLK_out
 					in4x_F1[36] <= MISO_F1; in4x_F2[36] <= MISO_F2;
 					in4x_G1[36] <= MISO_G1; in4x_G2[36] <= MISO_G2;
 					in4x_H1[36] <= MISO_H1; in4x_H2[36] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk10_d;
 				end
 				
@@ -1541,6 +1741,8 @@ output reg  sample_CLK_out
 					in4x_F1[37] <= MISO_F1; in4x_F2[37] <= MISO_F2;
 					in4x_G1[37] <= MISO_G1; in4x_G2[37] <= MISO_G2;
 					in4x_H1[37] <= MISO_H1; in4x_H2[37] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk11_a;
 				end
 
@@ -1563,6 +1765,8 @@ output reg  sample_CLK_out
 					in4x_F1[38] <= MISO_F1; in4x_F2[38] <= MISO_F2;
 					in4x_G1[38] <= MISO_G1; in4x_G2[38] <= MISO_G2;
 					in4x_H1[38] <= MISO_H1; in4x_H2[38] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk11_b;
 				end
 
@@ -1577,6 +1781,8 @@ output reg  sample_CLK_out
 					in4x_F1[39] <= MISO_F1; in4x_F2[39] <= MISO_F2;
 					in4x_G1[39] <= MISO_G1; in4x_G2[39] <= MISO_G2;
 					in4x_H1[39] <= MISO_H1; in4x_H2[39] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk11_c;
 				end
 
@@ -1592,6 +1798,8 @@ output reg  sample_CLK_out
 					in4x_F1[40] <= MISO_F1; in4x_F2[40] <= MISO_F2;
 					in4x_G1[40] <= MISO_G1; in4x_G2[40] <= MISO_G2;
 					in4x_H1[40] <= MISO_H1; in4x_H2[40] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk11_d;
 				end
 				
@@ -1607,6 +1815,8 @@ output reg  sample_CLK_out
 					in4x_F1[41] <= MISO_F1; in4x_F2[41] <= MISO_F2;
 					in4x_G1[41] <= MISO_G1; in4x_G2[41] <= MISO_G2;
 					in4x_H1[41] <= MISO_H1; in4x_H2[41] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk12_a;
 				end
 
@@ -1629,6 +1839,8 @@ output reg  sample_CLK_out
 					in4x_F1[42] <= MISO_F1; in4x_F2[42] <= MISO_F2;
 					in4x_G1[42] <= MISO_G1; in4x_G2[42] <= MISO_G2;
 					in4x_H1[42] <= MISO_H1; in4x_H2[42] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk12_b;
 				end
 
@@ -1643,6 +1855,8 @@ output reg  sample_CLK_out
 					in4x_F1[43] <= MISO_F1; in4x_F2[43] <= MISO_F2;
 					in4x_G1[43] <= MISO_G1; in4x_G2[43] <= MISO_G2;
 					in4x_H1[43] <= MISO_H1; in4x_H2[43] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk12_c;
 				end
 
@@ -1658,6 +1872,8 @@ output reg  sample_CLK_out
 					in4x_F1[44] <= MISO_F1; in4x_F2[44] <= MISO_F2;
 					in4x_G1[44] <= MISO_G1; in4x_G2[44] <= MISO_G2;
 					in4x_H1[44] <= MISO_H1; in4x_H2[44] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk12_d;
 				end
 				
@@ -1673,6 +1889,8 @@ output reg  sample_CLK_out
 					in4x_F1[45] <= MISO_F1; in4x_F2[45] <= MISO_F2;
 					in4x_G1[45] <= MISO_G1; in4x_G2[45] <= MISO_G2;
 					in4x_H1[45] <= MISO_H1; in4x_H2[45] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk13_a;
 				end
 
@@ -1695,6 +1913,8 @@ output reg  sample_CLK_out
 					in4x_F1[46] <= MISO_F1; in4x_F2[46] <= MISO_F2;
 					in4x_G1[46] <= MISO_G1; in4x_G2[46] <= MISO_G2;
 					in4x_H1[46] <= MISO_H1; in4x_H2[46] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk13_b;
 				end
 
@@ -1709,6 +1929,8 @@ output reg  sample_CLK_out
 					in4x_F1[47] <= MISO_F1; in4x_F2[47] <= MISO_F2;
 					in4x_G1[47] <= MISO_G1; in4x_G2[47] <= MISO_G2;
 					in4x_H1[47] <= MISO_H1; in4x_H2[47] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk13_c;
 				end
 
@@ -1724,6 +1946,8 @@ output reg  sample_CLK_out
 					in4x_F1[48] <= MISO_F1; in4x_F2[48] <= MISO_F2;
 					in4x_G1[48] <= MISO_G1; in4x_G2[48] <= MISO_G2;
 					in4x_H1[48] <= MISO_H1; in4x_H2[48] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk13_d;
 				end
 				
@@ -1739,6 +1963,8 @@ output reg  sample_CLK_out
 					in4x_F1[49] <= MISO_F1; in4x_F2[49] <= MISO_F2;
 					in4x_G1[49] <= MISO_G1; in4x_G2[49] <= MISO_G2;
 					in4x_H1[49] <= MISO_H1; in4x_H2[49] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk14_a;
 				end
 
@@ -1761,6 +1987,8 @@ output reg  sample_CLK_out
 					in4x_F1[50] <= MISO_F1; in4x_F2[50] <= MISO_F2;
 					in4x_G1[50] <= MISO_G1; in4x_G2[50] <= MISO_G2;
 					in4x_H1[50] <= MISO_H1; in4x_H2[50] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk14_b;
 				end
 
@@ -1775,6 +2003,8 @@ output reg  sample_CLK_out
 					in4x_F1[51] <= MISO_F1; in4x_F2[51] <= MISO_F2;
 					in4x_G1[51] <= MISO_G1; in4x_G2[51] <= MISO_G2;
 					in4x_H1[51] <= MISO_H1; in4x_H2[51] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk14_c;
 				end
 
@@ -1790,6 +2020,8 @@ output reg  sample_CLK_out
 					in4x_F1[52] <= MISO_F1; in4x_F2[52] <= MISO_F2;
 					in4x_G1[52] <= MISO_G1; in4x_G2[52] <= MISO_G2;
 					in4x_H1[52] <= MISO_H1; in4x_H2[52] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk14_d;
 				end
 				
@@ -1805,6 +2037,8 @@ output reg  sample_CLK_out
 					in4x_F1[53] <= MISO_F1; in4x_F2[53] <= MISO_F2;
 					in4x_G1[53] <= MISO_G1; in4x_G2[53] <= MISO_G2;
 					in4x_H1[53] <= MISO_H1; in4x_H2[53] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk15_a;
 				end
 
@@ -1827,6 +2061,8 @@ output reg  sample_CLK_out
 					in4x_F1[54] <= MISO_F1; in4x_F2[54] <= MISO_F2;
 					in4x_G1[54] <= MISO_G1; in4x_G2[54] <= MISO_G2;
 					in4x_H1[54] <= MISO_H1; in4x_H2[54] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk15_b;
 				end
 
@@ -1841,6 +2077,8 @@ output reg  sample_CLK_out
 					in4x_F1[55] <= MISO_F1; in4x_F2[55] <= MISO_F2;
 					in4x_G1[55] <= MISO_G1; in4x_G2[55] <= MISO_G2;
 					in4x_H1[55] <= MISO_H1; in4x_H2[55] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk15_c;
 				end
 
@@ -1856,6 +2094,8 @@ output reg  sample_CLK_out
 					in4x_F1[56] <= MISO_F1; in4x_F2[56] <= MISO_F2;
 					in4x_G1[56] <= MISO_G1; in4x_G2[56] <= MISO_G2;
 					in4x_H1[56] <= MISO_H1; in4x_H2[56] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk15_d;
 				end
 				
@@ -1871,6 +2111,8 @@ output reg  sample_CLK_out
 					in4x_F1[57] <= MISO_F1; in4x_F2[57] <= MISO_F2;
 					in4x_G1[57] <= MISO_G1; in4x_G2[57] <= MISO_G2;
 					in4x_H1[57] <= MISO_H1; in4x_H2[57] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk16_a;
 				end
 
@@ -1893,6 +2135,8 @@ output reg  sample_CLK_out
 					in4x_F1[58] <= MISO_F1; in4x_F2[58] <= MISO_F2;
 					in4x_G1[58] <= MISO_G1; in4x_G2[58] <= MISO_G2;
 					in4x_H1[58] <= MISO_H1; in4x_H2[58] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk16_b;
 				end
 
@@ -1907,6 +2151,8 @@ output reg  sample_CLK_out
 					in4x_F1[59] <= MISO_F1; in4x_F2[59] <= MISO_F2;
 					in4x_G1[59] <= MISO_G1; in4x_G2[59] <= MISO_G2;
 					in4x_H1[59] <= MISO_H1; in4x_H2[59] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk16_c;
 				end
 
@@ -1922,6 +2168,8 @@ output reg  sample_CLK_out
 					in4x_F1[60] <= MISO_F1; in4x_F2[60] <= MISO_F2;
 					in4x_G1[60] <= MISO_G1; in4x_G2[60] <= MISO_G2;
 					in4x_H1[60] <= MISO_H1; in4x_H2[60] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk16_d;
 				end
 				
@@ -1937,6 +2185,8 @@ output reg  sample_CLK_out
 					in4x_F1[61] <= MISO_F1; in4x_F2[61] <= MISO_F2;
 					in4x_G1[61] <= MISO_G1; in4x_G2[61] <= MISO_G2;
 					in4x_H1[61] <= MISO_H1; in4x_H2[61] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk17_a;
 				end
 
@@ -1964,6 +2214,8 @@ output reg  sample_CLK_out
 					in4x_F1[62] <= MISO_F1; in4x_F2[62] <= MISO_F2;
 					in4x_G1[62] <= MISO_G1; in4x_G2[62] <= MISO_G2;
 					in4x_H1[62] <= MISO_H1; in4x_H2[62] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_clk17_b;
 				end
 
@@ -1983,6 +2235,8 @@ output reg  sample_CLK_out
 					in4x_F1[63] <= MISO_F1; in4x_F2[63] <= MISO_F2;
 					in4x_G1[63] <= MISO_G1; in4x_G2[63] <= MISO_G2;
 					in4x_H1[63] <= MISO_H1; in4x_H2[63] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_a;
 				end
 
@@ -2003,6 +2257,8 @@ output reg  sample_CLK_out
 					in4x_F1[64] <= MISO_F1; in4x_F2[64] <= MISO_F2;
 					in4x_G1[64] <= MISO_G1; in4x_G2[64] <= MISO_G2;
 					in4x_H1[64] <= MISO_H1; in4x_H2[64] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_b;
 				end
 
@@ -2023,6 +2279,8 @@ output reg  sample_CLK_out
 					in4x_F1[65] <= MISO_F1; in4x_F2[65] <= MISO_F2;
 					in4x_G1[65] <= MISO_G1; in4x_G2[65] <= MISO_G2;
 					in4x_H1[65] <= MISO_H1; in4x_H2[65] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_c;
 				end
 
@@ -2043,6 +2301,8 @@ output reg  sample_CLK_out
 					in4x_F1[66] <= MISO_F1; in4x_F2[66] <= MISO_F2;
 					in4x_G1[66] <= MISO_G1; in4x_G2[66] <= MISO_G2;
 					in4x_H1[66] <= MISO_H1; in4x_H2[66] <= MISO_H2;						
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_d;
 				end
 				
@@ -2061,6 +2321,8 @@ output reg  sample_CLK_out
 					in4x_F1[67] <= MISO_F1; in4x_F2[67] <= MISO_F2;
 					in4x_G1[67] <= MISO_G1; in4x_G2[67] <= MISO_G2;
 					in4x_H1[67] <= MISO_H1; in4x_H2[67] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_e;
 				end
 				
@@ -2079,6 +2341,8 @@ output reg  sample_CLK_out
 					in4x_F1[68] <= MISO_F1; in4x_F2[68] <= MISO_F2;
 					in4x_G1[68] <= MISO_G1; in4x_G2[68] <= MISO_G2;
 					in4x_H1[68] <= MISO_H1; in4x_H2[68] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_f;
 				end
 				
@@ -2097,6 +2361,8 @@ output reg  sample_CLK_out
 					in4x_F1[69] <= MISO_F1; in4x_F2[69] <= MISO_F2;
 					in4x_G1[69] <= MISO_G1; in4x_G2[69] <= MISO_G2;
 					in4x_H1[69] <= MISO_H1; in4x_H2[69] <= MISO_H2;					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_g;
 				end
 				
@@ -2115,6 +2381,8 @@ output reg  sample_CLK_out
 					in4x_F1[70] <= MISO_F1; in4x_F2[70] <= MISO_F2;
 					in4x_G1[70] <= MISO_G1; in4x_G2[70] <= MISO_G2;
 					in4x_H1[70] <= MISO_H1; in4x_H2[70] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_h;
 				end
 				
@@ -2133,6 +2401,8 @@ output reg  sample_CLK_out
 					in4x_F1[71] <= MISO_F1; in4x_F2[71] <= MISO_F2;
 					in4x_G1[71] <= MISO_G1; in4x_G2[71] <= MISO_G2;
 					in4x_H1[71] <= MISO_H1; in4x_H2[71] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_i;
 				end
 				
@@ -2151,6 +2421,8 @@ output reg  sample_CLK_out
 					in4x_F1[72] <= MISO_F1; in4x_F2[72] <= MISO_F2;
 					in4x_G1[72] <= MISO_G1; in4x_G2[72] <= MISO_G2;
 					in4x_H1[72] <= MISO_H1; in4x_H2[72] <= MISO_H2;	
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_j;
 				end
 				
@@ -2169,6 +2441,10 @@ output reg  sample_CLK_out
 					in4x_F1[73] <= MISO_F1; in4x_F2[73] <= MISO_F2;
 					in4x_G1[73] <= MISO_G1; in4x_G2[73] <= MISO_G2;
 					in4x_H1[73] <= MISO_H1; in4x_H2[73] <= MISO_H2;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_k;
 				end
 				
@@ -2176,7 +2452,9 @@ output reg  sample_CLK_out
 					if (channel == 34) begin
 						FIFO_data_in <= data_stream_TTL_out;	// Write current value of TTL outputs so users can reconstruct exact timings
 						FIFO_write_to <= 1'b1;
-					end					
+					end	
+
+					// reg_enable <= 1'b1;
 					SCLK <= 1'b0;
 					CS_b <= 1'b1;
 					result_A1 <= in_A1; result_A2 <= in_A2;
@@ -2195,7 +2473,13 @@ output reg  sample_CLK_out
 					result_DDR_F1 <= in_DDR_F1; result_DDR_F2 <= in_DDR_F2;
 					result_DDR_G1 <= in_DDR_G1; result_DDR_G2 <= in_DDR_G2;
 					result_DDR_H1 <= in_DDR_H1; result_DDR_H2 <= in_DDR_H2;
+					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_l;
+
+					//	begin writing to Register file
+					// First index
 				end
 				
 				ms_cs_l: begin
@@ -2593,6 +2877,8 @@ output reg  sample_CLK_out
 					end
 					SCLK <= 1'b0;
 					CS_b <= 1'b1;			
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_cs_m;
 				end
 				
@@ -2610,45 +2896,55 @@ output reg  sample_CLK_out
 						channel_MISO <= channel_MISO + 1;
 					end
 					CS_b <= 1'b1;	
-					
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					if (channel == 34) begin
 						if (SPI_run_continuous) begin		// run continuously if SPI_run_continuous == 1
-							main_state <= ms_cs_n;
+					main_state <= ms_cs_n;
 						end else begin
 							if (timestamp == max_timestep || max_timestep == 32'b0) begin  // stop if max_timestep reached, or if max_timestep == 0
-							     main_state <= ms_finish_256bit_word_0;
+
+					main_state <= ms_finish_256bit_word_0;
 							end else begin
-								main_state <= ms_cs_n;
+					main_state <= ms_cs_n;
 							end
 						end
 					end else begin
-						main_state <= ms_cs_n;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <= ms_cs_n;
 					end
 				end
 				
 				ms_finish_256bit_word_0: begin
 					CS_b <= 1'b0;
 					SCLK <= 1'b0;
+				    reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 				    if (word_counter_16bit != 4'b0000) begin
 				        FIFO_data_in <= 16'b0;
 				        FIFO_write_to <= 1'b1;
-				        main_state <= ms_finish_256bit_word_1;
+					main_state <= ms_finish_256bit_word_1;
 				    end else begin
-				        main_state <= ms_wait;
+					main_state <= ms_wait;
 				    end
 				end
 				
 				ms_finish_256bit_word_1: begin
 					CS_b <= 1'b0;
 					SCLK <= 1'b0;
+				    reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 	
 				    // Wait for 1 clock cycle to give time for counter to increment before returning to ms_finish_256bit_word_0
-				    main_state <= ms_finish_256bit_word_0;
+					main_state <= ms_finish_256bit_word_0;
 				end
 								
 				default: begin
 					CS_b <= 1'b0;
 					SCLK <= 1'b0;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					main_state <= ms_wait;
 				end
 				
@@ -2660,7 +2956,25 @@ output reg  sample_CLK_out
 
 
 
+	// Normal selector
+	MISO_phase_selector MISO_phase_selector_1 (
+		.phase_select(delay_A), .MISO4x(in4x_A1), .MISO(in_A1));	
 
+	MISO_phase_selector MISO_phase_selector_2 (
+		.phase_select(delay_A), .MISO4x(in4x_A2), .MISO(in_A2));	
+
+
+	// DDR selector
+	MISO_DDR_phase_selector MISO_DDR_phase_selector_1 (
+		.phase_select(delay_A), .MISO4x(in4x_A1), .MISO(in_DDR_A1));	
+
+	MISO_DDR_phase_selector MISO_DDR_phase_selector_2 (
+		.phase_select(delay_A), .MISO4x(in4x_A2), .MISO(in_DDR_A2));	
+
+    lookup_table_case #(.OUT_WIDTH(7)) lookup_table_case (
+        .in(reg_value),
+        .out(address_ofset)
+    );
 
 
 
@@ -2679,41 +2993,41 @@ module custom_command_selector (
 
 	always @(*) begin
 		case (channel)
-			0:       MOSI_cmd <= { 16'b1001_1001_1001_1001 };
-			1:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			2:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			3:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			4:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			5:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			6:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			7:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			8:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			9:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			10:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			11:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			12:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			13:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			14:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			15:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			16:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			17:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			18:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			19:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			20:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			21:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			22:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			23:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			24:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			25:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			26:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			27:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			28:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			29:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			30:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			31:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
-			32:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
-			33:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
-			34:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
+			0:       MOSI_cmd <= { 16'd0 };
+			1:       MOSI_cmd <= { 16'd1 };
+			2:       MOSI_cmd <= { 16'd2 };
+			3:       MOSI_cmd <= { 16'd3 };
+			4:       MOSI_cmd <= { 16'd4 };
+			5:       MOSI_cmd <= { 16'd5 };
+			6:       MOSI_cmd <= { 16'd6 };
+			7:       MOSI_cmd <= { 16'd7 };
+			8:       MOSI_cmd <= { 16'd8 };
+			9:       MOSI_cmd <= { 16'd9 };
+			10:      MOSI_cmd <= { 16'd10};
+			11:      MOSI_cmd <= { 16'd11};
+			12:      MOSI_cmd <= { 16'd12};
+			13:      MOSI_cmd <= { 16'd13};
+			14:      MOSI_cmd <= { 16'd14};
+			15:      MOSI_cmd <= { 16'd15};
+			16:      MOSI_cmd <= { 16'd16};
+			17:      MOSI_cmd <= { 16'd17};
+			18:      MOSI_cmd <= { 16'd18};
+			19:      MOSI_cmd <= { 16'd19};
+			20:      MOSI_cmd <= { 16'd20};
+			21:      MOSI_cmd <= { 16'd21};
+			22:      MOSI_cmd <= { 16'd22};
+			23:      MOSI_cmd <= { 16'd23};
+			24:      MOSI_cmd <= { 16'd24};
+			25:      MOSI_cmd <= { 16'd25};
+			26:      MOSI_cmd <= { 16'd26};
+			27:      MOSI_cmd <= { 16'd27};
+			28:      MOSI_cmd <= { 16'd28};
+			29:      MOSI_cmd <= { 16'd29};
+			30:      MOSI_cmd <= { 16'd30};
+			31:      MOSI_cmd <= { 16'd31};
+			32:		 MOSI_cmd <= { 16'd32};
+			33:		 MOSI_cmd <= { 16'd33};
+			34:		 MOSI_cmd <= { 16'd34};
 			default: MOSI_cmd <= 16'b0;
 			endcase
 	end	
@@ -2778,3 +3092,160 @@ endmodule
 
 
 
+
+
+
+module MISO_phase_selector(
+	input wire [3:0] 		phase_select,	// MISO sampling phase lag to compensate for headstage cable delay
+	input wire [73:0] 	MISO4x,			// 4x oversampled MISO input
+	output reg [15:0] 	MISO				// 16-bit MISO output
+	);
+
+	always @(*) begin
+		case (phase_select)
+			0:       MISO <= {MISO4x[0],  MISO4x[4],  MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60]};
+			1:       MISO <= {MISO4x[1],  MISO4x[5],  MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61]};
+			2:       MISO <= {MISO4x[2],  MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62]};
+			3:       MISO <= {MISO4x[3],  MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63]};
+			4:       MISO <= {MISO4x[4],  MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64]};
+			5:       MISO <= {MISO4x[5],  MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65]};
+			6:       MISO <= {MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66]};
+			7:       MISO <= {MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67]};
+			8:       MISO <= {MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64], MISO4x[68]};
+			9:       MISO <= {MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69]};
+			10:      MISO <= {MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66], MISO4x[70]};
+			11:      MISO <= {MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67], MISO4x[71]};
+			default: MISO <= {MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67], MISO4x[71]};
+		endcase
+	end
+	
+endmodule
+
+
+module MISO_DDR_phase_selector(
+	input wire [3:0] 		phase_select,	// MISO sampling phase lag to compensate for headstage cable delay
+	input wire [73:0] 	MISO4x,			// 4x oversampled MISO input
+	output reg [15:0] 	MISO				// 16-bit MISO output
+	);
+	
+	always @(*) begin
+		case (phase_select)
+			0:       MISO <= {MISO4x[2],  MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62]};
+			1:       MISO <= {MISO4x[3],  MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63]};
+			2:       MISO <= {MISO4x[4],  MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64]};
+			3:       MISO <= {MISO4x[5],  MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65]};
+			4:       MISO <= {MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66]};
+			5:       MISO <= {MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67]};
+			6:       MISO <= {MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64], MISO4x[68]};
+			7:       MISO <= {MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69]};
+			8:       MISO <= {MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66], MISO4x[70]};
+			9:       MISO <= {MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67], MISO4x[71]};
+			10:      MISO <= {MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64], MISO4x[68], MISO4x[72]};
+			11:      MISO <= {MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69], MISO4x[73]};
+			default: MISO <= {MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69], MISO4x[73]};
+		endcase
+	end
+	
+endmodule
+
+
+
+module dual_bank_regfile (
+    input wire clk,
+    input wire rst,
+    input wire we,                    // Write enable
+    input wire bank_sel,              // Bank select for writing (0: Bank 0, 1: Bank 1)
+    input wire [6:0] wr_addr,         // 7-bit write address (128 entries)
+    input wire [15:0] data_in,        // Data to write
+    input wire [6:0] rd_addr0,        // Read address for Bank 0
+    input wire [6:0] rd_addr1,        // Read address for Bank 1
+    output wire [15:0] data_out0,     // Data output from Bank 0
+    output wire [15:0] data_out1      // Data output from Bank 1
+);
+
+integer i,j;
+initial begin 
+
+	for (j = 0; j < 128; j = j + 1) begin
+		bank0[j] <= 16'b0;
+		bank1[j] <= 16'b0;
+	end
+
+end
+
+    reg [15:0] bank0 [127:0];  // 128 x 16-bit register bank 0
+    reg [15:0] bank1 [127:0];  // 128 x 16-bit register bank 1
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            for (i = 0; i < 128; i = i + 1) begin
+                bank0[i] <= 16'b0;
+                bank1[i] <= 16'b0;
+            end
+        end else if (we) begin
+            // Write operation
+            if (bank_sel)
+                bank1[wr_addr] <= data_in;  // Write to Bank 1
+            else
+                bank0[wr_addr] <= data_in;  // Write to Bank 0
+        end
+    end
+
+    assign data_out0 = bank0[rd_addr0];  // Read from Bank 0
+    assign data_out1 = bank1[rd_addr1];  // Read from Bank 1
+
+endmodule
+
+
+
+module lookup_table_case #(
+    parameter OUT_WIDTH = 8  // Default output width (can be changed)
+)(
+    input wire [2:0] in,       // 3-bit input
+    output reg [OUT_WIDTH-1:0] out  // Parameterized output width
+);
+
+    always @(*) begin
+        case (in)
+            3'b000: out = 8'h00; // Example: 0
+            3'b001: out = 8'h20;// Example: All 1s
+            3'b010: out = 8'h40;              // Example: 0b10101010
+            3'b011: out = 8'h60;              // Example: 0b01010101
+            3'b100: out = 8'hFF;              // Example: 0b00001111
+            3'b101: out = 8'hFF;              // Example: 0b11110000
+            3'b110: out = 8'hFF;              // Example: 0b00110011
+            3'b111: out = 8'hFF;              // Example: 0b11001100
+            default: out = {OUT_WIDTH{1'b0}}; // Default case
+        endcase
+    end
+
+endmodule
+
+module remap_7bit (
+    input wire [6:0] in,       // 7-bit input (0 to 127)
+    output reg [6:0] out       // 7-bit output (mapped value)
+);
+
+    always @(*) begin
+        case (in)
+            0: out =    7'd0 ;  
+            1: out =    7'd2 ;  
+            2: out =    7'd4 ; 
+            3: out =    7'd8 ;  
+            4: out =    7'd16;  
+            5: out =    7'd32 ;  
+            6: out =    7'd64 ;  
+            7: out =    7'd5 ; 
+            8: out =    7'd3 ;   
+            9: out =    7'd69 ; 
+            10: out =   7'd50 ; 
+            11: out =   7'd100 ; 
+            12: out =   7'd101 ; 
+            13: out =   7'd102 ; 
+            14: out =   7'd113 ; 
+            15: out =   7'd110 ; 
+            default: out = 0; 
+        endcase
+    end
+
+endmodule
