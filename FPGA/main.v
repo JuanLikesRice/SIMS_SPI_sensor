@@ -352,6 +352,7 @@ output reg  sample_CLK_out
 	reg				external_digout_enable_E, external_digout_enable_F, external_digout_enable_G, external_digout_enable_H;
 	reg [3:0]		external_digout_channel_A, external_digout_channel_B, external_digout_channel_C, external_digout_channel_D;
 	reg [3:0]		external_digout_channel_E, external_digout_channel_F, external_digout_channel_G, external_digout_channel_H;
+	// wire external_digout_A;
 	reg				external_digout_A, external_digout_B, external_digout_C, external_digout_D;
 	reg				external_digout_E, external_digout_F, external_digout_G, external_digout_H;
 	
@@ -460,7 +461,7 @@ always @(posedge dataclk) begin
 	end else if (last_address_written)begin
 		address_index_readout <= 16'b0;
 	end else if (fifo_ready_refile &&(address_index_readout < 7'd127)) begin
-		address_index_readout <= address_index_readout + 1;;
+		address_index_readout <= address_index_readout + 1;
 	end 
 end
 
