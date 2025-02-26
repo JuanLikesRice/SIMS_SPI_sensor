@@ -1,0 +1,4 @@
+VCD info: dumpfile sim.vcd opened for output.
+VCD warning: $dumpvars: Package ($unit) is not dumpable with VCD.
+Read @ wr_addr 5: Expected 42, Got   1
+mainTB.v:124: $finish called at 245000 (1ps)

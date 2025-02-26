@@ -1,0 +1,459 @@
+import os
+import sys
+import time
+import socket
+import random
+import ok
+
+
+# startup initailzation of it all
+
+# add parent directory to PYTHONPATH
+file_dir = os.path.dirname(os.path.realpath(__file__))
+parent_dir = os.path.dirname(file_dir)
+sys.path.append(parent_dir)
+dev_info = ok.okTDeviceInfo()
+print("------ PipeTest Application fot Python API ----------")
+print("Front Panel API version: {}".format(ok.okCFrontPanel_GetAPIVersionString()))
+dev = ok.okCFrontPanel()
+error_code = dev.OpenBySerial("")
+if error_code != 0:
+    print('Could not open the device.')
+    print(error_code)
+    sys.exit(1)
+def initialize_FPGA(dev: ok.okCFrontPanel, bit_file_path):
+
+    dev.GetDeviceInfo(dev_info)
+    print("Found device: {}".format(dev_info.productName))
+
+    dev.LoadDefaultPLLConfiguration()
+
+    print('Device firmware version: {}.{}'.format(dev_info.deviceMajorVersion, dev_info.deviceMinorVersion))
+    print('Device serial number: {}'.format(dev_info.serialNumber))
+    print('Device ID: {}'.format(dev_info.productID))
+
+    # Download the configuration file:
+    print(f"loading {bit_file_path} as bit file")
+
+    if (dev.ConfigureFPGA(bit_file_path) != ok.okCFrontPanel.NoError):
+        print("Fpga configuration failed.")
+        return False
+
+
+    print("success configuration")
+initialize_FPGA(dev, sys.argv[1])
+
+import time
+# REAL CODE STARTS HERE
+
+ep00wire_address = 0x00 # address you are writing to 
+for i in range(1000):  # You can set the range as needed
+    # print(i) 
+    ep00wire = i  # led light value set
+    dev.UpdateWireOuts() # updates input wire
+    # ep20wire =  dev.GetWireOutValue(0x20)
+    # print(f"ep20wire is: {ep20wire}") # reads input buffer
+    ep21wire =  dev.GetWireOutValue(0x21)
+    print(f"measured frequnecy is: {ep21wire:,}Mh") # reads input buffer
+    # #Set Values for wire out
+    dev.SetWireInValue(ep00wire_address, ep00wire) # LED lights
+    dev.UpdateWireIns() # updates inpit registers (connected to output buffer)
+    time.sleep(1)  # Wait for 1 second
+
+
+
+
+
+
+
+
+
+
+#set values for wire in
+# ep00wire = 3  # led light value set
+# ep00wire_address = 0x00
+# dev.SetWireInValue(ep00wire_address, ep00wire) # LED lights
+# dev.UpdateWireIns() # 
+
+# ep00wire = 2  # led light value set
+# dev.SetWireInValue(ep00wire_address, ep00wire) # LED lights
+# dev.UpdateWireIns() # 
+
+# ep01wire = 4 #
+# ep02wire = 1#4294967294 #
+# (address, value)
+#ep01wire + ep02wire = ep21wire
+# dev.SetWireInValue(0x01, ep01wire) # A
+# dev.SetWireInValue(0x02, ep02wire) # B
+# dev.UpdateWireIns() # 
+# ep21wire =  dev.GetWireOutValue(0x21)
+# print(f"ep20wire is at first : {ep21wire}")
+# #Set Values for wire out
+# dev.UpdateWireOuts()
+# ep20wire = dev.GetWireOutValue(0x20) # should read 0
+# ep21wire = dev.GetWireOutValue(0x21)
+
+# # print(f"ep20wire is : {ep21wire}")
+
+# ep21wire = dev.GetWireOutValue(0x21)
+
+# byte_size = 16
+
+# print("_____________example______________________")
+
+# #print(random.randrange(0, 255, 1))
+# '''
+# A = (random.randrange(0, 255, 1) << 16)
+# B = random.randrange(0, 255, 1) + A
+# NUM = B# 0x00050001
+# b_data_pt =  bytearray(NUM.to_bytes(byte_size,'big'))
+# print(f"input  is     {b_data_pt}")
+# '''
+# n = 16
+# buff = bytearray(n)
+# A = (255 << n)
+# B = 255 + A
+# b_data_pt =  bytearray(B.to_bytes(byte_size,'big'))
+# print(f"Input  is {b_data_pt}")
+# ret1 = dev.WriteToBlockPipeIn(0x80, byte_size, b_data_pt)
+# L = dev.ReadFromBlockPipeOut(0xA0, byte_size, buff) 
+# print(f"Output is {buff}")
+# print("__________________________________________")
+
+# iters = 10000
+# start_time = time.time()
+# for i in range (iters):
+#     A = (random.randrange(0, 255, 1) << 15)
+#     B = random.randrange(0, 255, 1) + A
+#     b_data_pt =  bytearray(B.to_bytes(byte_size,'big'))
+#     ret1 = dev.WriteToBlockPipeIn(0x80, byte_size, b_data_pt)
+#     L = dev.ReadFromBlockPipeOut(0xA0, byte_size, buff) 
+# duration = time.time() - start_time
+
+# print(f"for {iters} writes followed by read is {duration} seconds, avg {1/(duration/iters)}")
+# #print(f"ret1 val is {ret1}")
+
+# n = 16
+# buff = bytearray(n)
+
+# #print(buff)
+# #print(dev.ReadFromPipeOut(0xA0,dev.ReadFromBlockPipeOut(0xA0, block_size, buff),buff))
+# L = dev.ReadFromBlockPipeOut(0xA0, byte_size, buff) 
+# #print(f"L: {L}")#dev.ReadFromPipeOut(0xA0,,buff))
+# #print(f"Output is {buff[1:5]}")
+
+
+
+
+
+
+
+
+
+
+
+'''
+input_buffer = bytearray(byte_size)
+buff = bytearray(byte_size)
+#input_buffer = bytearray(131075)[:16]
+#print(f"input buff is {input_buffer}")
+
+
+
+#set values for wire in
+ep00wire = 255 # led light value set
+ep01wire = 0 #
+ep02wire = 1#4294967294 #
+dev.SetWireInValue(0x00, ep00wire) # LED lights
+
+#ep01wire + ep02wire = ep21wire
+dev.SetWireInValue(0x01, ep01wire) # A
+dev.SetWireInValue(0x02, ep02wire) # B
+dev.UpdateWireIns() # 
+ep21wire = 21
+print(f"ep20wire is at first : {ep21wire}")
+#Set Values for wire out
+dev.UpdateWireOuts()
+ep20wire = dev.GetWireOutValue(0x20) # should read 0
+ep21wire = dev.GetWireOutValue(0x21)
+
+print(f"ep20wire is : {ep21wire}")
+
+ep21wire = dev.GetWireOutValue(0x21)
+
+
+
+
+
+ep00wire = 0 
+I =0
+while True:
+    ep00wire +=1
+    dev.SetWireInValue(0x00, ep00wire) # LED lights
+    dev.UpdateWireIns() 
+    time.sleep(.05)
+    if I > 10:
+        break 
+    I +=  1
+
+def BenchmarkWires(dev: ok.okCFrontPanel):
+    # WireIns:
+    start_time = time.time()
+    for i in range(1000):
+        dev.UpdateWireIns()
+    duration = time.time() - start_time
+    print('UpdateWireIns (1000 calls) Duration: {:3f} seconds -- {:2f} calls/s'.format(duration, 1000/duration))
+    # WireOuts:
+    start_time = time.time()
+    for i in range(1000):
+        dev.UpdateWireOuts()
+    duration = time.time() - start_time
+    print('UpdateWireOuts (1000 calls) Duration: {:3f} seconds -- {:2f} calls/s'.format(duration, 1000/duration))
+
+
+
+
+
+
+def BenchmarkPipes(dev: ok.okCFrontPanel, custom_settings = None):
+    if custom_settings is not None:
+        settings_list = [custom_settings]
+    #else:
+        #settings_list = createSettingsList()
+    for read_write in ('READ', 'WRITE'):
+        for entry in settings_list:
+            if (entry.block_size != 0):
+                entry.segment_size -= (entry.segment_size % entry.block_size)     # must be a multiple of block length
+            Transfer(dev, entry, read_write)
+
+OK_PATTERN_COUNT         = 0
+OK_PATTERN_LFSR          = 1
+OK_PATTERN_WALKING1      = 2
+OK_PATTERN_WALKING0      = 3
+OK_PATTERN_HAMMER        = 4
+OK_PATTERN_NEIGHBOR      = 5
+OK_PATTERN_FIXED         = 6
+
+
+
+class TransferSettings:
+    def __init__(self, settings):
+        self.block_size = settings[0]
+        self.segment_size = settings[1]
+        self.count = settings[2]
+
+class TestbenchType:
+    triggers = 0
+    wires = 1
+    pipes = 2
+
+
+
+def Transfer(dev: ok.okCFrontPanel, transfer_settings: TransferSettings, read_write: str):
+
+    # Apparently this is required to setup FPGA:
+
+    # Check capability bits for newer pattern
+    selected_pattern = OK_PATTERN_LFSR
+
+    # Bit 0 - added Fixed pattern
+    dev.UpdateWireOuts()
+    if ((dev.GetWireOutValue(0x3e) & 0x1) != 0x1) and (selected_pattern == OK_PATTERN_FIXED):
+      
+  print("Fixed pattern is not supported by this bitstream. Switchin to LFSR.")
+        selected_pattern = OK_PATTERN_LFSR
+
+    # only COUNT and LFSR are supported on non-USB3 devicecs
+    if dev_info.deviceInterface != ok.OK_INTERFACE_USB3:
+        if selected_pattern in (OK_PATTERN_WALKING0, OK_PATTERN_WALKING1, OK_PATTERN_HAMMER, OK_PATTERN_NEIGHBOR):
+            print("Unsupported pattern for not USB3 device. Switching do LFSR.")
+            selected_pattern = OK_PATTERN_LFSR
+
+    if dev_info.deviceInterface == ok.OK_INTERFACE_USB3:
+        dev.SetWireInValue(0x03, fixed_pattern) # Apply fixed pattern
+        dev.SetWireInValue(0x02, throttle_in) # Pipe in throttle
+        dev.SetWireInValue(0x01, throttle_out)  # Pipe out throttle
+        dev.SetWireInValue(0x00, (selected_pattern << 2) | 1 << 1 | 1) # PATTERN | SET_THROTTLE = 1 | RESET = 1
+        dev.UpdateWireIns()
+        dev.SetWireInValue(0x00, (selected_pattern << 2) | 0 << 1 | 0) # PATTERN | SET_THROTTLE = 0 | RESET = 0
+        dev.UpdateWireIns()
+    else:
+        dev.SetWireInValue(0x02, throttle_in) #PipeIn throttle
+        dev.SetWireInValue(0x01, throttle_out)  # pipe out throttle
+        dev.SetWireInValue(0x00, 1 << 5 | (
+                    (1 if (selected_pattern == OK_PATTERN_LFSR) else 0) << 4) | 1 << 2) # SET_THROTTLE = 1 | MODE = LFSR | RESET = 1
+        dev.UpdateWireIns()
+        dev.SetWireInValue(0x00, 0 << 5 | (
+                    (1 if (selected_pattern == OK_PATTERN_LFSR) else 0) << 4) | 0 << 2) # SET_THROTTLE = 0 | MODE = LFSR | RESET = 0
+        dev.UpdateWireIns()
+
+    start_time = time.time()
+    for i in range(transfer_settings.count):
+
+        # create sample data array
+        input_buffer = bytearray(transfer_settings.segment_size)
+
+        if read_write == 'WRITE':
+            if transfer_settings.block_size == 0:
+                ret = dev.WriteToPipeIn(0x80, input_buffer)
+            else:
+                ret = dev.WriteToBlockPipeIn(0x80, transfer_settings.block_size, input_buffer)
+        else:
+            buff = bytearray(transfer_settings.segment_size)
+            if transfer_settings.block_size == 0:
+                ret = dev.ReadFromPipeOut(0xA0, buff)
+            else:
+                ret = dev.ReadFromBlockPipeOut(0xA0, transfer_settings.block_size, buff)
+
+        if ret < 0:
+            # error reported
+            if ret == ok.okCFrontPanel.InvalidBlockSize:
+                reportUnsupported(read_write, transfer_settings, "Block Size not Supported!")
+                break
+            elif ret == ok.okCFrontPanel.UnsupportedFeature:
+                reportUnsupported(read_write, transfer_settings, "Unsupported feature!")
+                break
+            else:
+                print("Transfer Failed with error {}".format(ret))
+            if not dev.IsOpen():
+                print("Device disconnected")
+                sys.exit(-1)
+    else:
+        # if the loop ended normally (no breaks => no errors)
+        duration = time.time() - start_time
+        transfer_speed_MiBs = transfer_settings.segment_size*transfer_settings.count / (1024*1024*duration)
+        reportBandwidthResults(read_write, transfer_settings, duration, transfer_speed_MiBs)
+
+
+def reportBandwidthResults(read_write, transfer_settings, duration, transfer_speed_MiBs):
+    print("{:5} Block Size: {:8.2f}B \tSS:{:10.2f}kB \tTS:{:8.2f}kB \tDuration: {:.3f}sec -- {:6.2f} MiB/s ".format(
+                                                                 read_write,
+                                                                transfer_settings.block_size,
+                                                                transfer_settings.segment_size/1024,
+                                                                 transfer_settings.segment_size * transfer_settings.count/1024,
+                                                                 duration,
+                                                                 transfer_speed_MiBs))
+
+def reportUnsupported(read_write, transfer_settings, error_info):
+    print("{:5} Block Size: {:8.2f}B \tSS:{:10.2f}kB \tTS:{:8.2f}kB \t{}".format(read_write,
+                                                                                transfer_settings.block_size,
+                                                                                transfer_settings.segment_size/1024,
+                                                                                transfer_settings.segment_size * transfer_settings.count/1024,
+                                                                                error_info))
+
+
+def parse_args():
+
+    test_type = TestbenchType.pipes
+    custom_transfer = None
+
+    if len(sys.argv) < 2:
+        print("Path to bitfile not provided!")
+        print_help()
+        sys.exit(1)
+
+    if len(sys.argv) >= 3:
+        if sys.argv[2] == 'wires':
+            test_type = TestbenchType.wires
+        elif sys.argv[2] == 'triggers':
+            test_type = TestbenchType.triggers
+        elif len(sys.argv) > 3:
+            custom_transfer = TransferSettings([int(sys.argv[3]), int(sys.argv[4]), 10])
+
+    return test_type, custom_transfer
+
+
+
+def print_help():
+    print("PipeTest.py syntax:\npython PipeTest.py path_to_bitfile [params]")
+    print("params:")
+    print("\twires: \texecutes wires testbench\n"
+          "\ttriggers: \texecutes triggers testbench\n"
+          "\tpipes [BLOCK_SIZE TRANSFER_SIZE]:\texecutes pipes testbench, if no BLOCK_SIZE and TRANSFER_SIZE provided (in bytes)"
+          "performs default testbench, otherwise performs test only for a given setting")
+
+def main(type=TestbenchType.pipes, custom_transfer=None):
+
+    print("------ PipeTest Application fot Python API ----------")
+    print("Front Panel API version: {}".format(ok.okCFrontPanel_GetAPIVersionString()))
+
+    dev = ok.okCFrontPanel()
+    error_code = dev.OpenBySerial("")
+    if error_code != 0:
+        print('Could not open the device.')
+        print(error_code)
+        sys.exit(1)
+
+    if not initialize_FPGA(dev, sys.argv[1]):
+        print("FPGA could not be initialized.")
+        sys.exit(1)
+
+    if type == TestbenchType.triggers:
+        print('Starting benchmark: triggers...')
+        BenchmarkTriggers(dev)
+    elif type == TestbenchType.wires:
+        print('Starting benchmark: wires...')
+        BenchmarkWires(dev)
+    else:
+        print('Starting benchmark: pipes...')
+        BenchmarkPipes(dev, custom_transfer)
+
+
+if __name__ == '__main__':
+    test_type, custom = parse_args()
+    main(test_type, custom)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# echo-server.py
+import socket
+
+
+
+
+str_haha= 2**(2000)-1#'eqdyjrhzarypeuouieewqvgxuilxhewumnmuuzhaeghjagxnmygvtjdpcrbfqjjljhjfrkdfvlbvxolpufqtcaqbgvleejjpsthaghnkcfdmbdvtfevgfstxorcnzrvhwwbbqolhjfcgkrvqdwjopxcrtzwrxewgsdwyohpattqzorpjiamimskxqntjodxaafvmuudgkcjoxejjpmxdxxsstgqhransvxzllznipgzsckvnebvcgvazfdfrpxewipkpudfbxnklgawvnivbyvkdxfniqznlwrsrefptndid'
+b_data_pt =  str_haha.to_bytes(300,'big')
+print(b_data_pt)
+
+inty = 345432
+if type(inty) == int:
+    print("its an int")
+
+import socket
+
+HOST = "192.168.2.99"  # Standard loopback interface address (localhost)
+PORT = 54367  # Port to listen on (non-privileged ports are > 1023)
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind((HOST, PORT))
+    s.listen()
+    conn, addr = s.accept()
+    with conn:
+    print(f"Connected by {addr}")
+    while True:
+        data = conn.recv(1024)
+        if not data:
+            print("Not recived")
+            if not data:                                                
+                break   
+        if data:
+            print(f"Data says {data}")
+            i_data = int.from_bytes(data, "big")
+            final_data_i = i_data + 27
+            b_data_pt =  final_data_i.to_bytes(1,'big')
+            conn.sendall(b_data_pt)
+
+
+
+'''

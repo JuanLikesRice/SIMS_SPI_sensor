@@ -1,3 +1,0 @@
-read_verilog -sv -formal -overwrite {workspace}/FPGA/main.v
-design -reset-vlog; proc;
-write_json {workspace}/netlist/lookup_table_case.json

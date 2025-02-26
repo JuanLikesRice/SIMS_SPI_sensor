@@ -1,0 +1,211 @@
+
+`timescale 1ns/1ps
+
+module main
+    (
+    input  wire [4:0]   okUH,
+    output wire [2:0]   okHU,
+    inout  wire [31:0]  okUHU,
+    inout  wire         okAA,
+    
+    output wire [7:0]   led
+    );
+    
+ 
+   //a
+    okHost okHI(
+        .okUH(okUH),
+        .okHU(okHU),
+        .okUHU(okUHU),
+        .okAA(okAA),
+        .okClk(okClk),
+        .okHE(okHE),
+        .okEH(okEH)
+    );
+    
+	wire [65*2-1:0] 	okEHx;
+	wire         okClk;
+    wire [112:0] okHE;
+    wire [64:0]  okEH;
+
+	okWireOR # (.N(2)) wireOR (okEH, okEHx);
+
+
+    wire [31:0] ep41trigin, ep20wireout,ep21wireout,ep00wirein;
+    assign clk = okClk;
+	
+	okTriggerIn  ti41 (.okHE(okHE),                            .ep_addr(8'h41), .ep_clk(okClk), .ep_trigger(ep41trigin));
+	okWireIn     wi00 (.okHE(okHE),                            .ep_addr(8'h00), .ep_dataout(ep00wirein));
+
+	okWireOut    wo20 (.okHE(okHE), .okEH(okEHx[ 0*65 +: 65 ]),  .ep_addr(8'h20), .ep_datain(ep20wireout));
+//	okWireOut    wo20 (.okHE(okHE), .okEH(okEHx[ 0*65 +: 65 ]),  .ep_addr(8'h20), .ep_datain(ep20wireout));
+	okWireOut    wo21 (.okHE(okHE), .okEH(okEHx[ 1*65 +: 65 ]),  .ep_addr(8'h21), .ep_datain(ep21wireout));
+    
+    assign ep21wireout = {8'd147,8'd7,8'd14,8'd1};
+
+
+//    assign led[3:0] = ep41trigin[11:8];
+    assign led[3:0] = 4'd5;
+    assign led[7:4] =  ep00wirein[3:0];
+
+	wire  write_enable;
+	wire  reset;
+	wire  [6:0] data;
+	wire  [6:0] wr_addr;
+    wire  [6:0] in;
+    wire  [6:0] out;
+    wire  [6:0] out_debug;
+
+	assign ep20wireout = { 16'b0 ,1'b0,out, 1'b0, out_debug};
+	assign 	data  			= ep41trigin[6:0];
+	assign 	reset 			= ep41trigin[7];
+	assign 	wr_addr 		= ep41trigin[14:8] | ep00wirein[7:0];
+	assign 	write_enable 	= ep41trigin[15];
+	assign 	in 				= ep41trigin[22:16];
+
+    remap_7bit_regfile uut (
+        .clk(			clk),
+        .write_enable(	write_enable),
+		.reset(			reset),
+        .data(			data),
+        .wr_addr(		wr_addr),
+        .in(			in),
+        .out(			out),
+		.out_debug(out_debug)
+    );
+
+endmodule
+
+
+module remap_7bit_regfile (
+
+	input clk,
+	input wire write_enable,
+	input wire reset,
+	input wire  [6:0] data,
+	input wire  [6:0] wr_addr,
+    input wire  [6:0] in,       
+    output wire [6:0] out,            
+    output wire [6:0] out_debug       
+);
+
+    reg [6:0] out_r, out_debug_r;
+	reg [31:0] reg_128x7bit_map [0:127];
+
+	assign out 		 = out_r;
+	assign out_debug = out_debug_r;	
+
+integer j,k;
+
+	initial begin
+		for (j=0; j<128; j=j+1) begin
+			reg_128x7bit_map[j] <= 0;
+		end
+	end
+
+	always @(posedge clk) begin
+		if (reset)begin 
+			for (k=0; k<128; k=k+1) begin
+				reg_128x7bit_map[k] <= 0;
+			end
+		end else if (write_enable) begin
+			reg_128x7bit_map[wr_addr] <= data;
+		end
+		
+	end
+    always @(*) begin
+        out_debug_r <= reg_128x7bit_map[wr_addr]; // Direct lookup using input as an index
+        out_r 		<= reg_128x7bit_map[in]; // Direct lookup using input as an index
+    end
+    // end
+    // always @(*) begin
+
+endmodule
+    
+
+
+
+
+`default_nettype wire
+
+
+
+
+//	okWireIn     wi00 (.okHE(okHE),                            .ep_addr(8'h00), .ep_dataout(ep00wirein));
+//	okWireIn     wi01 (.okHE(okHE),                            .ep_addr(8'h01), .ep_dataout(ep01wirein));
+//	okWireIn     wi02 (.okHE(okHE),                            .ep_addr(8'h02), .ep_dataout(ep02wirein));
+//	okWireIn     wi03 (.okHE(okHE),                            .ep_addr(8'h03), .ep_dataout(ep03wirein));
+//	okWireIn     wi04 (.okHE(okHE),                            .ep_addr(8'h04), .ep_dataout(ep04wirein));
+//	okWireIn     wi05 (.okHE(okHE),                            .ep_addr(8'h05), .ep_dataout(ep05wirein));
+//	okWireIn     wi06 (.okHE(okHE),                            .ep_addr(8'h06), .ep_dataout(ep06wirein));
+//	okWireIn     wi07 (.okHE(okHE),                            .ep_addr(8'h07), .ep_dataout(ep07wirein));
+//	okWireIn     wi08 (.okHE(okHE),                            .ep_addr(8'h08), .ep_dataout(ep08wirein));
+//	okWireIn     wi09 (.okHE(okHE),                            .ep_addr(8'h09), .ep_dataout(ep09wirein));
+//	okWireIn     wi0a (.okHE(okHE),                            .ep_addr(8'h0a), .ep_dataout(ep0awirein));
+//	okWireIn     wi0b (.okHE(okHE),                            .ep_addr(8'h0b), .ep_dataout(ep0bwirein));
+//	okWireIn     wi0c (.okHE(okHE),                            .ep_addr(8'h0c), .ep_dataout(ep0cwirein));
+//	okWireIn     wi0d (.okHE(okHE),                            .ep_addr(8'h0d), .ep_dataout(ep0dwirein));
+//	okWireIn     wi0e (.okHE(okHE),                            .ep_addr(8'h0e), .ep_dataout(ep0ewirein));
+//	okWireIn     wi0f (.okHE(okHE),                            .ep_addr(8'h0f), .ep_dataout(ep0fwirein));
+//	okWireIn     wi10 (.okHE(okHE),                            .ep_addr(8'h10), .ep_dataout(ep10wirein));
+//	okWireIn     wi11 (.okHE(okHE),                            .ep_addr(8'h11), .ep_dataout(ep11wirein));
+//	okWireIn     wi12 (.okHE(okHE),                            .ep_addr(8'h12), .ep_dataout(ep12wirein));
+//	okWireIn     wi13 (.okHE(okHE),                            .ep_addr(8'h13), .ep_dataout(ep13wirein));
+//	okWireIn     wi14 (.okHE(okHE),                            .ep_addr(8'h14), .ep_dataout(ep14wirein));
+//	okWireIn     wi15 (.okHE(okHE),                            .ep_addr(8'h15), .ep_dataout(ep15wirein));
+//	okWireIn     wi16 (.okHE(okHE),                            .ep_addr(8'h16), .ep_dataout(ep16wirein));
+//	okWireIn     wi17 (.okHE(okHE),                            .ep_addr(8'h17), .ep_dataout(ep17wirein));
+//	okWireIn     wi18 (.okHE(okHE),                            .ep_addr(8'h18), .ep_dataout(ep18wirein));
+//	okWireIn     wi19 (.okHE(okHE),                            .ep_addr(8'h19), .ep_dataout(ep19wirein));
+//	okWireIn     wi1a (.okHE(okHE),                            .ep_addr(8'h1a), .ep_dataout(ep1awirein));
+//	okWireIn     wi1b (.okHE(okHE),                            .ep_addr(8'h1b), .ep_dataout(ep1bwirein));
+//	okWireIn     wi1c (.okHE(okHE),                            .ep_addr(8'h1c), .ep_dataout(ep1cwirein));
+//	okWireIn     wi1d (.okHE(okHE),                            .ep_addr(8'h1d), .ep_dataout(ep1dwirein));
+//	okWireIn     wi1e (.okHE(okHE),                            .ep_addr(8'h1e), .ep_dataout(ep1ewirein));
+//	okWireIn     wi1f (.okHE(okHE),                            .ep_addr(8'h1f), .ep_dataout(ep1fwirein));
+	
+//	okTriggerIn  ti40 (.okHE(okHE),                            .ep_addr(8'h40), .ep_clk(okClk),  .ep_trigger(ep40trigin));
+//	okTriggerIn  ti41 (.okHE(okHE),                            .ep_addr(8'h41), .ep_clk(dataclk), .ep_trigger(ep41trigin));
+//	okTriggerIn  ti42 (.okHE(okHE),                            .ep_addr(8'h42), .ep_clk(okClk),  .ep_trigger(ep42trigin));
+	
+//	okWireOut    wo20 (.okHE(okHE), .okEH(okEHx[ 0*65 +: 65 ]),  .ep_addr(8'h20), .ep_datain(ep20wireout));
+//	okWireOut    wo21 (.okHE(okHE), .okEH(okEHx[ 1*65 +: 65 ]),  .ep_addr(8'h21), .ep_datain(ep21wireout));
+//	okWireOut    wo22 (.okHE(okHE), .okEH(okEHx[ 2*65 +: 65 ]),  .ep_addr(8'h22), .ep_datain(ep22wireout));
+//	okWireOut    wo23 (.okHE(okHE), .okEH(okEHx[ 3*65 +: 65 ]),  .ep_addr(8'h23), .ep_datain(ep23wireout));
+//	okWireOut    wo24 (.okHE(okHE), .okEH(okEHx[ 4*65 +: 65 ]),  .ep_addr(8'h24), .ep_datain(ep24wireout));
+//	okWireOut    wo25 (.okHE(okHE), .okEH(okEHx[ 5*65 +: 65 ]),  .ep_addr(8'h25), .ep_datain(ep25wireout));
+//	okWireOut    wo26 (.okHE(okHE), .okEH(okEHx[ 6*65 +: 65 ]),  .ep_addr(8'h26), .ep_datain(ep26wireout));
+//	okWireOut    wo27 (.okHE(okHE), .okEH(okEHx[ 7*65 +: 65 ]),  .ep_addr(8'h27), .ep_datain(ep27wireout));
+//	okWireOut    wo28 (.okHE(okHE), .okEH(okEHx[ 8*65 +: 65 ]),  .ep_addr(8'h28), .ep_datain(ep28wireout));
+//	okWireOut    wo29 (.okHE(okHE), .okEH(okEHx[ 9*65 +: 65 ]),  .ep_addr(8'h29), .ep_datain(ep29wireout));
+//	okWireOut    wo2a (.okHE(okHE), .okEH(okEHx[ 10*65 +: 65 ]), .ep_addr(8'h2a), .ep_datain(ep2awireout));
+//	okWireOut    wo2b (.okHE(okHE), .okEH(okEHx[ 11*65 +: 65 ]), .ep_addr(8'h2b), .ep_datain(ep2bwireout));
+//	okWireOut    wo2c (.okHE(okHE), .okEH(okEHx[ 12*65 +: 65 ]), .ep_addr(8'h2c), .ep_datain(ep2cwireout));
+//	okWireOut    wo2d (.okHE(okHE), .okEH(okEHx[ 13*65 +: 65 ]), .ep_addr(8'h2d), .ep_datain(ep2dwireout));
+//	okWireOut    wo2e (.okHE(okHE), .okEH(okEHx[ 14*65 +: 65 ]), .ep_addr(8'h2e), .ep_datain(ep2ewireout));
+//	okWireOut    wo2f (.okHE(okHE), .okEH(okEHx[ 15*65 +: 65 ]), .ep_addr(8'h2f), .ep_datain(ep2fwireout));
+//	okWireOut    wo30 (.okHE(okHE), .okEH(okEHx[ 16*65 +: 65 ]), .ep_addr(8'h30), .ep_datain(ep30wireout));
+//	okWireOut    wo31 (.okHE(okHE), .okEH(okEHx[ 17*65 +: 65 ]), .ep_addr(8'h31), .ep_datain(ep31wireout));
+//	okWireOut    wo32 (.okHE(okHE), .okEH(okEHx[ 18*65 +: 65 ]), .ep_addr(8'h32), .ep_datain(ep32wireout));
+//	okWireOut    wo33 (.okHE(okHE), .okEH(okEHx[ 19*65 +: 65 ]), .ep_addr(8'h33), .ep_datain(ep33wireout));
+//	okWireOut    wo34 (.okHE(okHE), .okEH(okEHx[ 20*65 +: 65 ]), .ep_addr(8'h34), .ep_datain(ep34wireout));
+//	okWireOut    wo35 (.okHE(okHE), .okEH(okEHx[ 21*65 +: 65 ]), .ep_addr(8'h35), .ep_datain(ep35wireout));
+//	okWireOut    wo36 (.okHE(okHE), .okEH(okEHx[ 22*65 +: 65 ]), .ep_addr(8'h36), .ep_datain(ep36wireout));
+//	okWireOut    wo37 (.okHE(okHE), .okEH(okEHx[ 23*65 +: 65 ]), .ep_addr(8'h37), .ep_datain(ep37wireout));
+//	okWireOut    wo38 (.okHE(okHE), .okEH(okEHx[ 24*65 +: 65 ]), .ep_addr(8'h38), .ep_datain(ep38wireout));
+//	okWireOut    wo39 (.okHE(okHE), .okEH(okEHx[ 25*65 +: 65 ]), .ep_addr(8'h39), .ep_datain(ep39wireout));
+//	okWireOut    wo3a (.okHE(okHE), .okEH(okEHx[ 26*65 +: 65 ]), .ep_addr(8'h3a), .ep_datain(ep3awireout));
+//	okWireOut    wo3b (.okHE(okHE), .okEH(okEHx[ 27*65 +: 65 ]), .ep_addr(8'h3b), .ep_datain(ep3bwireout));
+//	okWireOut    wo3c (.okHE(okHE), .okEH(okEHx[ 28*65 +: 65 ]), .ep_addr(8'h3c), .ep_datain(ep3cwireout));
+//	okWireOut    wo3d (.okHE(okHE), .okEH(okEHx[ 29*65 +: 65 ]), .ep_addr(8'h3d), .ep_datain(ep3dwireout));
+//	okWireOut    wo3e (.okHE(okHE), .okEH(okEHx[ 30*65 +: 65 ]), .ep_addr(8'h3e), .ep_datain(ep3ewireout));
+//	okWireOut    wo3f (.okHE(okHE), .okEH(okEHx[ 31*65 +: 65 ]), .ep_addr(8'h3f), .ep_datain(ep3fwireout));
+	
+//	wire pipeout_rdy;
+//	assign pipeout_rdy = ( FIFO_out_rdy | pipeout_override_en);
+	
+	// Flip the 16-bit words in the fifo for compatibility with the USB2 read methods
+//	okBTPipeOut    poa0 (.okHE(okHE), .okEH(okEHx[ 32*65 +: 65 ]), .ep_addr(8'ha0), .ep_read(FIFO_read_from), 
+//		.ep_blockstrobe(), .ep_datain({FIFO_data_out[15:0], FIFO_data_out[31:16]}), .ep_ready(pipeout_rdy));
+//endmodule
+    
