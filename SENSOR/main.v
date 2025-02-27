@@ -62,16 +62,18 @@ case (channel)
 reg [15:0] MOSI_current_reg;
 reg [15:0] MOSI_stored_reg;
 reg [15:0] MISO_reg;
+reg MISO_bit_reg;
 reg [4:0] bit_count;
-//reg [7:0] cycle_count;
-reg [7:0] read_reg [63:0]; // 64 long reg file, byte long each -> stores on-chip READ-only registers
-reg [15:0] conv_reg [31:0]; // 32 long reg file, 
+reg [3:0] bit_pointer;
+reg [7:0] read_reg [63:0]; // 64 long reg file, byte long each -> stores on-chip registers where they are READ-only from 40 - 64
+reg [15:0] conv_reg [31:0]; // 32 long reg file, 2 byte long each
 
 // Populate reg file values and zero other registers
 integer i;
 initial begin
+	bit_pointer = 4'b0;
 	// CONVERT Reg File Initialization
-	for (i=0; i < 33; i=i+1)begin 
+	for (i=0; i < 32; i=i+1)begin 
             conv_reg[i] <= i;  
     end
 
@@ -107,7 +109,8 @@ initial begin
     bit_count = 5'b0;
 end
 
-assign MISO = MISO_reg;
+//assign MISO = MISO_reg;
+assign MISO = MISO_bit_reg;
 
 // Command tracking and storing block
 always @ (posedge clk or posedge reset) begin
@@ -128,16 +131,8 @@ always @ (posedge clk or posedge reset) begin
 			//MOSI_current_reg <= 16'b0;
 
 			// MISO library
-			/*
-			- Determine if READ or CONVERT
-			- READ -> MOSI_stored_reg[15:14] = 2'b11
-			- CONVERT -> MOSI_stored_reg[15:14] = 2'b00
-
-			*/
-
-			casez (MOSI_stored_reg[15:11]) 
+			casez (MOSI_stored_reg[15:11]) // ADD WRITE & CHANGE to 16 bit case
 				4'b00??: MISO_reg <= conv_reg[MOSI_stored_reg[13:8]]; // CONVERT --> MISO_reg becomes value from conv_reg[channel]
-				4'b11??: MISO_reg <= {8'b0, read_reg[MOSI_stored_reg[13:8]]}; // READ --> MISO_reg becomes concatenated value of 0's and read_reg[channel]
 				4'b0101: begin
 					MISO_reg <= 16'b0; // CALIBRATE --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
 					$display("CALIBRATE");
@@ -146,62 +141,41 @@ always @ (posedge clk or posedge reset) begin
 					MISO_reg <= 16'b0; // CLEAR --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
 					$display("CLEAR");
 				end
+				4'b10??: begin
+					MISO_reg <= {8'b1, MOSI_stored_reg[7:0]}; // WRITE --> MISO_reg echoes data byte to be written
+					$display("WRITE");
+				end
+				4'b11??: begin
+					MISO_reg <= {8'b0, read_reg[MOSI_stored_reg[13:8]]}; // READ --> MISO_reg becomes concatenated value of 0's and read_reg[channel]
+					$display("READ %b", read_reg[MOSI_stored_reg[13:8]]);
+				end
 				default: MISO_reg <= 16'b0;
 			endcase
 
-			/*
-			case (MOSI_stored_reg[13:8]) 
-				0:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				1:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				2:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				3:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				4:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				5:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				6:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				7:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				8:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				9:       MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				10:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				11:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				12:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				13:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				14:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				15:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				16:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				17:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				18:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				19:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				20:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				21:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				22:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				23:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				24:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				25:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				26:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				27:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				28:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				29:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				30:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				31:      MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
-				32:		MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-				33:		MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-				34:		MISO_reg <= {10'b0, MOSI_stored_reg[13:8]}; // MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
-				default: MISO_reg <= 16'b0; // MOSI_cmd <= 16'b0;
-			endcase
-			*/
-		//end
-
-            $display("bit_count %d MOSI_current_reg %b",bit_count, MOSI_current_reg); // Fix MOSI_current_reg
+            //$display("bit_count %d MOSI_current_reg %b",bit_count, MOSI_current_reg); // Fix MOSI_current_reg
 
         end
     end
 end
 
+reg test_reg;
 
+// Shift Reg MISO bit by bit output
+always @ (posedge clk or posedge reset or posedge CS) begin
+    if (reset || CS) begin
+        MISO_bit_reg <= 1'b0;
+		bit_pointer <= 4'b0;
+    end else if (!CS && (bit_pointer < 16)) begin
+		MISO_bit_reg <= MISO_reg[15 - bit_pointer];  // MSB first
+        bit_pointer <= bit_pointer + 1;         // Move to the next bit
+	end
+end
 
+/*
 always @ (posedge CS) begin
  $display("CS is high %h", MOSI_current_reg);
 end
+*/
 
 endmodule
 
