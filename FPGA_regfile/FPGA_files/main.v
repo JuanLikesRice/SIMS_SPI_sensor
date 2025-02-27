@@ -152,7 +152,7 @@ integer j,k;
 
 	initial begin
 		for (j=0; j<128; j=j+1) begin
-			reg_128x7bit_map[j] <= 0;
+			reg_128x7bit_map[j] <= j;
 		end
 	end
 
@@ -170,7 +170,5 @@ integer j,k;
         out_debug_r <= reg_128x7bit_map[wr_addr]; // Direct lookup using input as an index
         out_r 		<= reg_128x7bit_map[in]; // Direct lookup using input as an index
     end
-    // end
-    // always @(*) begin
 
 endmodule
