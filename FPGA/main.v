@@ -5,18 +5,48 @@ output  wire  MOSI_to_sensor,
 output wire  MISO_from_sensor,
 output wire SCLK_wire,
 output wire CS_b_wire,
-output wire  sample_CLK_out
+output wire  sample_CLK_out,
+
+input  wire [31:0] ep00wirein,
+input  wire [31:0] ep01wirein,
+input  wire [31:0] ep02wirein,
+input  wire [31:0] ep03wirein,
+input  wire [31:0] ep04wirein,
+input  wire [31:0] ep40trigin,
+input  wire [31:0] ep41trigin,
+output wire [31:0] ep22wireout,
+output wire [31:0] ep24wireout,
+
+
+    // SPI
+output wire                      CS_b_A,
+output wire                      SCLK_A,
+output wire                      MOSI1_A,
+output wire						MOSI2_A,
+input  wire                      MISO1_A,
+input  wire                      MISO2_A
+
+
 );
 
 wire MISO;
     FPGA fpga_inst (
-        .clk(clk),
-        .reset(reset),
+        .dataclk(clk),
+        // .reset(reset),
         .MOSI_to_sensor(MOSI_to_sensor), // This you care
 		.MISO_from_sensor(MOSI_to_sensor),
         .SCLK_wire(SCLK_wire),// This you care
-        .CS_b_wire(CS_b_wire), // This you care
-        .sample_CLK_out(sample_CLK_out)
+        .CS_b_wire(CS_b_wire), // This you care()
+		.ep00wirein(ep00wirein),
+		.ep01wirein(ep01wirein),
+		.ep02wirein(ep02wirein),
+		.ep03wirein(ep03wirein),
+		.ep04wirein(ep04wirein),
+		.ep40trigin(ep40trigin),
+		.ep41trigin(ep41trigin),
+		.ep22wireout(ep22wireout),
+		.ep24wireout(ep24wireout)
+        // .sample_CLK_out(sample_CLK_out)
     );
 
 	// sensor_emulator sensor_emulator (
@@ -41,50 +71,90 @@ endmodule
 
 
 module FPGA (
-input wire  clk,
-input wire  reset, 
+input wire  dataclk,
+// input wire  reset, 
+
 input wire MISO_from_sensor,
 output wire MOSI_to_sensor,
+
+input  wire [31:0] ep00wirein,
+input  wire [31:0] ep01wirein,
+input  wire [31:0] ep02wirein,
+input  wire [31:0] ep03wirein,
+input  wire [31:0] ep04wirein,
+input  wire [31:0] ep40trigin,
+input  wire [31:0] ep41trigin,
+output wire [31:0] ep22wireout,
+output wire [31:0] ep24wireout,
+
 output wire SCLK_wire,
 output wire CS_b_wire,
 output reg  sample_CLK_out
-// input sys_clk
+
 );
 
 
-// wires for frequency generator
-    wire [7:0]      dataclk_M, dataclk_D;
 
+	wire   reset;
+	assign reset = 						ep00wirein[0];
+	assign SPI_run_continuous = 		ep00wirein[1];
+	assign DSP_settle =     			ep00wirein[2];
+	assign TTL_out_mode = 				ep00wirein[3];
+	assign DAC_noise_suppress = 		ep00wirein[12:6];
+	assign DAC_gain = 					ep00wirein[15:13];
+	assign pipeout_override_en =        ep00wirein[16];
+
+	assign max_timestep_in =			ep01wirein;
+	assign serial_CLK_manual =			ep02wirein[0];
+	assign serial_LOAD_manual =		    ep02wirein[1];
+
+	always @(posedge dataclk) begin
+		max_timestep <= max_timestep_in;
+	end
+	
 	assign dataclk_M =                     ep03wirein[15:8];
 	assign dataclk_D =                     ep03wirein[7:0];
+
 	assign delay_A = 						ep04wirein[3:0];
+	assign SPI_start = 					    ep41trigin[0];
 
-	wire				reset, SPI_start, SPI_run_continuous;
-	assign MMCM_prog_trigger = 			ep40trigin[0];
-	wire				dataclk_locked, MMCM_prog_done;
 	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
-		
-	
 	assign ep24wireout = 				   { 16'b0, 14'b0, MMCM_prog_done, dataclk_locked };
-	
 
-    variable_freq_clk_generator variable_freq_clk_generator_inst
-        (
-        .sys_clk            (sys_clk),
-        .okClk              (okClk),
-        .reset              (reset), // WireIn00[0]
-        .M                  (dataclk_M),
-        .D                  (dataclk_D),
-        .MMCM_prog_trigger  (MMCM_prog_trigger), // TriggerIn40[0]
-        .clkout             (dataclk),
-        .MMCM_prog_done     (MMCM_prog_done), // WireOut24[1]
-        .locked             (dataclk_locked)  // WireOut24[0]
-        );
+
+
+	// assign dataclk = clk;
+
+// // wires for frequency generator
+//     wire [7:0]      dataclk_M, dataclk_D;
+
+// 	assign dataclk_M =                     ep03wirein[15:8];
+// 	assign dataclk_D =                     ep03wirein[7:0];
+// 	assign delay_A = 						ep04wirein[3:0];
+
+// 	wire				reset, SPI_start, SPI_run_continuous;
+// 	assign MMCM_prog_trigger = 			ep40trigin[0];
+// 	wire				dataclk_locked, MMCM_prog_done;
+// 	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
+		
+// 	assign ep24wireout = 				   { 16'b0, 14'b0, MMCM_prog_done, dataclk_locked };
+
+//     variable_freq_clk_generator variable_freq_clk_generator_inst
+//         (
+//         .sys_clk            (sys_clk),
+//         .okClk              (okClk),
+//         .reset              (reset), // WireIn00[0]
+//         .M                  (dataclk_M),
+//         .D                  (dataclk_D),
+//         .MMCM_prog_trigger  (MMCM_prog_trigger), // TriggerIn40[0]
+//         .clkout             (dataclk),
+//         .MMCM_prog_done     (MMCM_prog_done), // WireOut24[1]
+//         .locked             (dataclk_locked)  // WireOut24[0]
+//         );
         
 	// okTriggerIn  ti40 (.okHE(okHE),                            .ep_addr(8'h40), .ep_clk(okClk),  .ep_trigger(ep40trigin));
 	// okTriggerIn  ti41 (.okHE(okHE),                            .ep_addr(8'h41), .ep_clk(dataclk), .ep_trigger(ep41trigin));
 	// okWireOut    wo22 (.okHE(okHE), .okEH(okEHx[ 2*65 +: 65 ]),  .ep_addr(8'h22), .ep_datain(ep22wireout));
-
 	// okWireOut    wo24 (.okHE(okHE), .okEH(okEHx[ 4*65 +: 65 ]),  .ep_addr(8'h24), .ep_datain(ep24wireout));
 
 
@@ -92,11 +162,13 @@ output reg  sample_CLK_out
 
 	assign 	CS_b_wire = CS_b;
 	assign TTL_out_direct = TTL_out_mode ? {TTL_out_user[15:8], DAC_thresh_out} : TTL_out_user;
-	assign dataclk = clk;
 	assign SCLK_wire = SCLK;
-	assign SPI_start = 1;
+	// assign SPI_start = 1;
 	assign DSP_settle = 0;
 	assign MOSI_to_sensor = MOSI_A;
+
+
+
 	custom_command_selector command_selector_A (
 		.channel(channel), .DSP_settle(DSP_settle), .aux_cmd(aux_cmd_A), .digout_override(external_digout_A), .MOSI_cmd(MOSI_cmd_selected_A));
 	integer main_state;
@@ -227,7 +299,7 @@ output reg  sample_CLK_out
 	// Wires and registers
 
 	wire 				sys_clk;				// buffered 200 MHz clock
-	wire				dataclk;			// programmable frequency clock (f = 2800 * per-channel amplifier sampling rate)
+	// wire				dataclk;			// programmable frequency clock (f = 2800 * per-channel amplifier sampling rate)
 	wire				dataclk_locked, MMCM_prog_done;
 	
 	reg [15:0]		FIFO_data_in;

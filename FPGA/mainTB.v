@@ -21,6 +21,26 @@ module mainTB//;
     reg CS, MOSI;
     //wire CS, MOSI;
 
+    reg [31:0] ep00wirein;
+    reg [31:0] ep01wirein;
+    reg [31:0] ep02wirein;
+    reg [31:0] ep03wirein;
+    reg [31:0] ep04wirein;
+    reg [31:0] ep40trigin;
+    reg [31:0] ep41trigin;
+    wire  [31:0] ep22wireout;
+    wire [31:0] ep24wireout;
+
+
+initial begin 
+ ep00wirein <= 0;
+ ep01wirein <= 0;
+ ep02wirein <= 0;
+ ep03wirein <= 0;
+ ep04wirein <= 0;
+ ep40trigin <= 0;
+ ep41trigin <= 0;
+end 
 
 main
 `ifndef GATESIM
@@ -35,7 +55,16 @@ main
     .MISO_from_sensor(MISO_from_sensor),
     .SCLK_wire(SCLK_wire),
     .CS_b_wire(CS_b_wire),
-    .sample_CLK_out(sample_CLK_out)
+    .sample_CLK_out(sample_CLK_out),
+    .ep00wirein(ep00wirein),
+    .ep01wirein(ep01wirein),
+    .ep02wirein(ep02wirein),
+    .ep03wirein(ep03wirein),
+    .ep04wirein(ep04wirein),
+    .ep40trigin(ep40trigin),
+    .ep41trigin(ep41trigin),
+    .ep22wireout(ep22wireout),
+    .ep24wireout(ep24wireout)
     );
 
     always #5 clk = ~clk; // 100 MHz clock
@@ -54,9 +83,11 @@ main
 
     initial begin
         clk = 0;         
-        reset = 1;
+        // reset = 1;
+        modify_ep00wirein(32'h00000001);
         repeat ( 8) @(posedge clk);
-        reset = 0;
+        modify_ep00wirein(32'h00000002);
+        modify_ep41trigin(32'h00000001);
         repeat (81*transmission_cycles) @(posedge clk);
         $finish;
     end
@@ -73,6 +104,39 @@ always @(posedge clk) begin
             Cycle_count <= Cycle_count + 1;
 	// end
   end
+
+
+  task modify_ep00wirein(input [31:0] new_value);
+    begin
+        @(posedge clk); 
+        ep00wirein <= new_value;
+        @(posedge clk); 
+    end
+  endtask
+
+  task modify_ep40trigin(input [31:0] new_value);
+    begin
+        ep40trigin <= 0;
+        ep40trigin <= 0;
+        @(posedge clk); 
+        ep40trigin <= new_value;
+        @(posedge clk); 
+        ep40trigin <= 0;
+        ep40trigin <= 0;
+    end
+  endtask
+
+  task modify_ep41trigin(input [31:0] new_value);
+    begin
+        ep41trigin <= 0;
+        ep41trigin <= 0;
+        @(posedge clk); 
+        ep41trigin <= new_value;
+        @(posedge clk); 
+        ep41trigin <= 0;
+        ep41trigin <= 0;
+    end
+  endtask
 
 
 
