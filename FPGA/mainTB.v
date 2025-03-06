@@ -32,6 +32,15 @@ module mainTB//;
     wire [31:0] ep24wireout;
 
 
+
+	
+	// wire pipeout_rdy;
+	// assign pipeout_rdy = ( FIFO_out_rdy | pipeout_override_en);
+	
+	// // Flip the 16-bit words in the fifo for compatibility with the USB2 read methods
+	// okBTPipeOut    poa0 (.okHE(okHE), .okEH(okEHx[ 32*65 +: 65 ]), .ep_addr(8'ha0), .ep_read(FIFO_read_from), 
+	// 	.ep_blockstrobe(), .ep_datain({FIFO_data_out[15:0], FIFO_data_out[31:16]}), .ep_ready(pipeout_rdy));
+
 initial begin 
  ep00wirein <= 0;
  ep01wirein <= 0;
@@ -84,9 +93,10 @@ main
     initial begin
         clk = 0;         
         // reset = 1;
-        modify_ep00wirein(32'h00000001);
-        repeat ( 8) @(posedge clk);
-        modify_ep00wirein(32'h00000002);
+        modify_ep00wirein(32'h00000001);/// reset
+        modify_ep00wirein(32'h00000000);/// reset
+        repeat ( 50) @(posedge clk);
+        modify_ep00wirein(32'h00000000);
         modify_ep41trigin(32'h00000001);
         repeat (81*transmission_cycles) @(posedge clk);
         $finish;
@@ -109,19 +119,98 @@ always @(posedge clk) begin
   task modify_ep00wirein(input [31:0] new_value);
     begin
         @(posedge clk); 
+        @(posedge clk); 
         ep00wirein <= new_value;
         @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+    end
+  endtask
+
+
+
+  task modify_ep01wirein(input [31:0] new_value);
+    begin
+        @(posedge clk); 
+        @(posedge clk); 
+        ep01wirein <= new_value;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+    end
+  endtask
+
+
+  task modify_ep02wirein(input [31:0] new_value);
+    begin
+        @(posedge clk); 
+        @(posedge clk); 
+        ep02wirein <= new_value;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk);
+    end
+  endtask
+
+
+  
+  task modify_ep03wirein(input [31:0] new_value);
+    begin
+        @(posedge clk); 
+        @(posedge clk); 
+        ep03wirein <= new_value;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+    end
+  endtask
+
+
+
+  task modify_ep04wirein(input [31:0] new_value);
+    begin
+        @(posedge clk); 
+        @(posedge clk); 
+        ep04wirein <= new_value;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk);
     end
   endtask
 
   task modify_ep40trigin(input [31:0] new_value);
     begin
         ep40trigin <= 0;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
         ep40trigin <= 0;
         @(posedge clk); 
         ep40trigin <= new_value;
         @(posedge clk); 
         ep40trigin <= 0;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
         ep40trigin <= 0;
     end
   endtask
@@ -129,11 +218,21 @@ always @(posedge clk) begin
   task modify_ep41trigin(input [31:0] new_value);
     begin
         ep41trigin <= 0;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
         ep41trigin <= 0;
         @(posedge clk); 
         ep41trigin <= new_value;
         @(posedge clk); 
         ep41trigin <= 0;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
         ep41trigin <= 0;
     end
   endtask

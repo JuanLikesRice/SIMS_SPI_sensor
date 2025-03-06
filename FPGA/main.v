@@ -1,10 +1,10 @@
  module main #(  parameter mem_size = 4096 ) (
 input  wire  clk,
 input  wire  reset,
-output  wire  MOSI_to_sensor, 
+output  wire MOSI_to_sensor, 
 output wire  MISO_from_sensor,
-output wire SCLK_wire,
-output wire CS_b_wire,
+output wire  SCLK_wire,
+output wire  CS_b_wire,
 output wire  sample_CLK_out,
 
 input  wire [31:0] ep00wirein,
@@ -17,20 +17,22 @@ input  wire [31:0] ep41trigin,
 output wire [31:0] ep22wireout,
 output wire [31:0] ep24wireout,
 
+output wire [31:0] 	fpgaout_fifoin_din,
+output wire 		fpgaout_fifoin_wr_en,
 
-    // SPI
 output wire                      CS_b_A,
 output wire                      SCLK_A,
 output wire                      MOSI1_A,
 output wire						MOSI2_A,
 input  wire                      MISO1_A,
 input  wire                      MISO2_A
-
-
 );
 
 wire MISO;
+
     FPGA fpga_inst (
+		// .clk(clk),
+        // .dataclk(clk),
         .dataclk(clk),
         // .reset(reset),
         .MOSI_to_sensor(MOSI_to_sensor), // This you care
@@ -45,9 +47,38 @@ wire MISO;
 		.ep40trigin(ep40trigin),
 		.ep41trigin(ep41trigin),
 		.ep22wireout(ep22wireout),
-		.ep24wireout(ep24wireout)
+		.ep24wireout(ep24wireout),
+
+
+		.fpgain_fifoout_ready_refile(fpgain_fifoout_ready_refile),
+		.fpgaout_fifoin_din(   fpgaout_fifoin_din),
+		.fpgaout_fifoin_wr_en( fpgaout_fifoin_wr_en)
+		// .MISO_from_sensor(MISO),
         // .sample_CLK_out(sample_CLK_out)
     );
+
+// wire [31:0] fpgaout_fifoin;
+// wire [31:0] fpgaout_fifoin;
+wire dataclk;
+assign dataclk = clk;
+assign fpgain_fifoout_ready_refile = 1'b1;
+
+// fifo_generator_0 your_instance_name (
+//   .rst(rst),                      // input wire rst
+//   .wr_clk(	dataclk),                // input wire wr_clk
+//   .rd_clk(	rd_clk),                // input wire rd_clk
+//   .din(		fpgaout_fifoin_din),                      // input wire [31 : 0] din
+//   .wr_en(	fpgaout_fifoin_wr_en),                  // input wire wr_en
+//   .rd_en(rd_en),                  // input wire rd_en
+//   .dout(dout),                    // output wire [31 : 0] dout
+//   .full(full),                    // output wire full
+//   .empty(empty),                  // output wire empty
+//   .wr_data_count(wr_data_count),  // output wire [9 : 0] wr_data_count
+//   .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
+//   .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
+// );
+
+
 
 	// sensor_emulator sensor_emulator (
 	// 	.clk(SCLK_wire),
@@ -56,9 +87,6 @@ wire MISO;
 	// 	.MOSI(MOSI_to_sensor),
 	// 	.MISO(MISO)
 	// );
-
-
-
 	// Your module goes here
 
 endmodule
@@ -86,6 +114,11 @@ input  wire [31:0] ep40trigin,
 input  wire [31:0] ep41trigin,
 output wire [31:0] ep22wireout,
 output wire [31:0] ep24wireout,
+
+input wire 			fpgain_fifoout_ready_refile,
+output wire [31:0] 	fpgaout_fifoin_din,
+output wire 		fpgaout_fifoin_wr_en,
+
 
 output wire SCLK_wire,
 output wire CS_b_wire,
@@ -123,22 +156,17 @@ output reg  sample_CLK_out
 
 
 
-	// assign dataclk = clk;
-
+// assign dataclk = clk;
 // // wires for frequency generator
 //     wire [7:0]      dataclk_M, dataclk_D;
-
 // 	assign dataclk_M =                     ep03wirein[15:8];
 // 	assign dataclk_D =                     ep03wirein[7:0];
 // 	assign delay_A = 						ep04wirein[3:0];
-
 // 	wire				reset, SPI_start, SPI_run_continuous;
 // 	assign MMCM_prog_trigger = 			ep40trigin[0];
 // 	wire				dataclk_locked, MMCM_prog_done;
 // 	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
-		
 // 	assign ep24wireout = 				   { 16'b0, 14'b0, MMCM_prog_done, dataclk_locked };
-
 //     variable_freq_clk_generator variable_freq_clk_generator_inst
 //         (
 //         .sys_clk            (sys_clk),
@@ -151,7 +179,6 @@ output reg  sample_CLK_out
 //         .MMCM_prog_done     (MMCM_prog_done), // WireOut24[1]
 //         .locked             (dataclk_locked)  // WireOut24[0]
 //         );
-        
 	// okTriggerIn  ti40 (.okHE(okHE),                            .ep_addr(8'h40), .ep_clk(okClk),  .ep_trigger(ep40trigin));
 	// okTriggerIn  ti41 (.okHE(okHE),                            .ep_addr(8'h41), .ep_clk(dataclk), .ep_trigger(ep41trigin));
 	// okWireOut    wo22 (.okHE(okHE), .okEH(okEHx[ 2*65 +: 65 ]),  .ep_addr(8'h22), .ep_datain(ep22wireout));
@@ -537,8 +564,8 @@ output reg  sample_CLK_out
 	assign address_bank = timestamp[0];
 	reg [15:0] data_in_dual_bank_reg_file;
 
-	//signals for regfile
 
+	//signals for regfile
 	//Write signals -->
 	//address_bank
 	//address_write
@@ -561,10 +588,9 @@ output reg  sample_CLK_out
         .data_out0(data_out0),
         .data_out1(data_out1)
     );
+
     wire [15:0] data_out_regfile_to_fifo;
 	assign data_out_regfile_to_fifo = address_bank ? data_out1 : data_out0;
-	wire fifo_ready_refile;
-	assign fifo_ready_refile = 1'b1;
 	assign rd_addr0 = address_index_readout;
 	assign rd_addr1 = address_index_readout;
 	
@@ -581,7 +607,7 @@ always @(posedge dataclk) begin
 	end else if (last_address_written)begin
 		address_index_readout <= 16'b0;
 		data_valid_readout <= 1'b1;
-	end else if (fifo_ready_refile &&(address_index_readout < address_index_readout_max)) begin
+	end else if (fpgain_fifoout_ready_refile &&(address_index_readout < address_index_readout_max)) begin
 		address_index_readout <= address_index_readout + 1;
 		data_valid_readout <= 1'b1;
 	end else begin 
@@ -589,6 +615,16 @@ always @(posedge dataclk) begin
 	end
 end
 
+reg [31:0] 	fpgaout_fifoin_din_r;
+reg 		fpgaout_fifoin_wr_en_r;
+
+
+assign fpgaout_fifoin_din     = fpgaout_fifoin_din_r  ;
+assign fpgaout_fifoin_wr_en   = fpgaout_fifoin_wr_en_r;
+always @(*) begin
+	fpgaout_fifoin_wr_en_r <=		data_valid_readout;
+	fpgaout_fifoin_din_r   <= {address_index_readout,data_out_regfile_to_fifo};
+end
 
 
 
