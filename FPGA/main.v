@@ -12,6 +12,8 @@ input  wire [31:0] ep01wirein,
 input  wire [31:0] ep02wirein,
 input  wire [31:0] ep03wirein,
 input  wire [31:0] ep04wirein,
+input  wire [31:0] ep05wirein,
+
 input  wire [31:0] ep40trigin,
 input  wire [31:0] ep41trigin,
 output wire [31:0] ep22wireout,
@@ -44,6 +46,8 @@ wire MISO;
 		.ep02wirein(ep02wirein),
 		.ep03wirein(ep03wirein),
 		.ep04wirein(ep04wirein),
+		.ep05wirein(ep05wirein),
+
 		.ep40trigin(ep40trigin),
 		.ep41trigin(ep41trigin),
 		.ep22wireout(ep22wireout),
@@ -110,6 +114,8 @@ input  wire [31:0] ep01wirein,
 input  wire [31:0] ep02wirein,
 input  wire [31:0] ep03wirein,
 input  wire [31:0] ep04wirein,
+input  wire [31:0] ep05wirein,
+
 input  wire [31:0] ep40trigin,
 input  wire [31:0] ep41trigin,
 output wire [31:0] ep22wireout,
@@ -596,13 +602,13 @@ output reg  sample_CLK_out
 	
 reg [6:0] address_index_readout_max;
 reg data_valid_readout;
-initial begin
-	address_index_readout_max <= 7'd32;
+always @(*) begin	
+	address_index_readout_max <= ep05wirein[6:0];
 end
 
 always @(posedge dataclk) begin
 	if (reset) begin
-		address_index_readout <= 16'b0;
+		address_index_readout <= 16'd127;
 		data_valid_readout <= 1'b0;
 	end else if (last_address_written)begin
 		address_index_readout <= 16'b0;
@@ -631,7 +637,7 @@ end
 initial begin 
 in4x_A1 <=0;
 in4x_A2 <=0;
-address_index_readout <= 0;
+address_index_readout <= 7'd127;
 data_in_dual_bank_reg_file <= 0;
 end
 

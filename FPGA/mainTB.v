@@ -26,6 +26,7 @@ module mainTB//;
     reg [31:0] ep02wirein;
     reg [31:0] ep03wirein;
     reg [31:0] ep04wirein;
+    reg [31:0] ep05wirein;
     reg [31:0] ep40trigin;
     reg [31:0] ep41trigin;
     wire  [31:0] ep22wireout;
@@ -47,8 +48,10 @@ initial begin
  ep02wirein <= 0;
  ep03wirein <= 0;
  ep04wirein <= 0;
+ ep05wirein <= 0;
  ep40trigin <= 0;
  ep41trigin <= 0;
+
 end 
 
 main
@@ -70,6 +73,7 @@ main
     .ep02wirein(ep02wirein),
     .ep03wirein(ep03wirein),
     .ep04wirein(ep04wirein),
+    .ep05wirein(ep05wirein),
     .ep40trigin(ep40trigin),
     .ep41trigin(ep41trigin),
     .ep22wireout(ep22wireout),
@@ -88,17 +92,23 @@ main
             $dumpvars(vcdlevel);
             end
 
-    parameter transmission_cycles = 75;
+    parameter transmission_cycles = 150;
 
     initial begin
         clk = 0;         
         // reset = 1;
+        repeat ( 50) @(posedge clk);
         modify_ep00wirein(32'h00000001);/// reset
         modify_ep00wirein(32'h00000000);/// reset
+        modify_ep05wirein(32'd31);/// reset
         repeat ( 50) @(posedge clk);
         modify_ep00wirein(32'h00000000);
         modify_ep41trigin(32'h00000001);
         repeat (81*transmission_cycles) @(posedge clk);
+        modify_ep05wirein(32'd5);/// reset
+        modify_ep41trigin(32'h00000001);
+        repeat (81*transmission_cycles) @(posedge clk);
+
         $finish;
     end
 
@@ -184,6 +194,21 @@ always @(posedge clk) begin
         @(posedge clk); 
         @(posedge clk); 
         ep04wirein <= new_value;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk);
+    end
+  endtask
+
+
+    task modify_ep05wirein(input [31:0] new_value);
+    begin
+        @(posedge clk); 
+        @(posedge clk); 
+        ep05wirein <= new_value;
         @(posedge clk); 
         @(posedge clk); 
         @(posedge clk); 
