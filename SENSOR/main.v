@@ -8,7 +8,17 @@ output wire CS_b_wire,
 output wire  sample_CLK_out
 );
 
-wire MISO;
+//wire MISO, MISO_a, MISO_b, miso_ddr;
+wire miso_ddr;
+reg [15:0] MISO_a, MISO_b;
+
+// Test MOSI for sensor B for DDR
+reg [15:0] miso_test_reg; 
+
+initial begin
+	miso_test_reg = 16'b1010_1100_1111_0001; 
+end
+// -----------------------------------------------------------------------
 
     FPGA fpga_inst (
         .clk(clk),
@@ -20,17 +30,46 @@ wire MISO;
         .sample_CLK_out(sample_CLK_out)
     );
 
-	sensor_emulator sensor_emulator (
+	sensor_emulator sensor_emulator_a (
 		.clk(SCLK_wire),
 		.reset(reset), 
 		.CS(CS_b_wire),
 		.MOSI(MOSI_to_sensor),
-		.MISO(MISO)
+		.MISO(MISO_a)
+	);
+	
+	sensor_emulator sensor_emulator_b (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO_b)
 	);
 
+	shift_reg shift_reg_a (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MISO_full(MISO_a),
+		.MISO(MISO_bit_a)
+	);
 
+	shift_reg shift_reg_b (
+		.clk(~SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MISO_full(miso_test_reg),
+		//.MISO_full(MISO_b),
+		.MISO(MISO_bit_b)
+	);
 
-	// Your module goes here
+	ddr_mux ddr_mux (
+		.clk(SCLK_wire),       
+    	.miso_a(MISO_bit_a),    
+    	.miso_b(MISO_bit_b),    
+    	.miso_ddr(miso_ddr)  
+	);
+
 
 endmodule
 
@@ -42,7 +81,8 @@ input wire clk,
 input wire reset, 
 input wire CS,
 input wire MOSI,
-output wire MISO
+output reg [15:0] MISO
+//output wire MISO
 );
 /*
 - Command is 16 bits wide
@@ -109,8 +149,8 @@ initial begin
     bit_count = 5'b0;
 end
 
-//assign MISO = MISO_reg;
-assign MISO = MISO_bit_reg;
+assign MISO = MISO_reg;
+//assign MISO = MISO_bit_reg;
 
 // Command tracking and storing block
 always @ (posedge clk or posedge reset) begin
@@ -128,19 +168,10 @@ always @ (posedge clk or posedge reset) begin
             bit_count <= 5'b00001;
 			MOSI_stored_reg <= MOSI_current_reg; 
         	MOSI_current_reg <= {15'b0, MOSI};
-			//MOSI_current_reg <= 16'b0;
 
 			// MISO library
-			casez (MOSI_stored_reg[15:11]) // ADD WRITE & CHANGE to 16 bit case
+			casez (MOSI_stored_reg[15:12]) // CHANGE to 16 bit case
 				4'b00??: MISO_reg <= conv_reg[MOSI_stored_reg[13:8]]; // CONVERT --> MISO_reg becomes value from conv_reg[channel]
-				4'b0101: begin
-					MISO_reg <= 16'b0; // CALIBRATE --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
-					$display("CALIBRATE");
-				end
-				4'b0110: begin
-					MISO_reg <= 16'b0; // CLEAR --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
-					$display("CLEAR");
-				end
 				4'b10??: begin
 					MISO_reg <= {8'b1, MOSI_stored_reg[7:0]}; // WRITE --> MISO_reg echoes data byte to be written
 					$display("WRITE");
@@ -148,6 +179,14 @@ always @ (posedge clk or posedge reset) begin
 				4'b11??: begin
 					MISO_reg <= {8'b0, read_reg[MOSI_stored_reg[13:8]]}; // READ --> MISO_reg becomes concatenated value of 0's and read_reg[channel]
 					$display("READ %b", read_reg[MOSI_stored_reg[13:8]]);
+				end
+				4'b0101: begin
+					MISO_reg <= 16'b0; // CALIBRATE --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
+					$display("CALIBRATE");
+				end
+				4'b0110: begin
+					MISO_reg <= 16'b0; // CLEAR --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
+					$display("CLEAR");
 				end
 				default: MISO_reg <= 16'b0;
 			endcase
@@ -158,8 +197,7 @@ always @ (posedge clk or posedge reset) begin
     end
 end
 
-reg test_reg;
-
+/*
 // Shift Reg MISO bit by bit output
 always @ (posedge clk or posedge reset or posedge CS) begin
     if (reset || CS) begin
@@ -170,6 +208,7 @@ always @ (posedge clk or posedge reset or posedge CS) begin
         bit_pointer <= bit_pointer + 1;         // Move to the next bit
 	end
 end
+*/
 
 /*
 always @ (posedge CS) begin
@@ -179,6 +218,82 @@ end
 
 endmodule
 
+
+module shift_reg (
+	input wire clk,
+	input wire reset,
+	input wire CS,
+	input reg [15:0] MISO_full,
+	output wire MISO
+);
+	reg MISO_bit_reg;
+	reg [3:0] bit_pointer;
+	//reg [15:0] MISO_reg;
+
+	assign MISO = MISO_bit_reg;
+	//assign MISO_reg = MISO_full;
+
+	initial begin
+		bit_pointer = 4'b0;
+	end
+
+	// Shift Reg MISO bit by bit output
+	always @ (posedge clk or posedge reset or posedge CS) begin
+		if (reset || CS) begin
+			MISO_bit_reg <= 1'b0;
+			bit_pointer <= 4'b0;
+		end else if (!CS && (bit_pointer < 16)) begin
+			MISO_bit_reg <= MISO_full[15 - bit_pointer];  // MSB first
+			bit_pointer <= bit_pointer + 1;         // Move to the next bit
+		end
+	end
+endmodule
+
+/*
+module ddr_mux (
+    input  wire clk,       // SCLK
+    input  wire miso_a,    // MISO A input
+    input  wire miso_b,    // MISO B input
+    output reg miso_ddr   // DDR MISO output
+);
+
+    reg miso_a_reg, miso_b_reg;
+    reg sel = 1'b0;  // Selector toggles each clock cycle
+
+    // Capture MISO_A on rising edge, MISO_B on falling edge
+    always @(posedge clk) begin
+        miso_a_reg <= miso_a;
+        sel <= ~sel;  // Toggle selection bit
+    end
+
+    always @(negedge clk) begin
+        miso_b_reg <= miso_b;
+    end
+
+    // DDR MISO multiplexer
+    always @(*) begin
+        miso_ddr = sel ? miso_b_reg : miso_a_reg;
+    end
+
+endmodule
+*/
+
+module ddr_mux (
+    input wire clk,    // SCLK
+    input wire miso_a, // Input sampled on rising edge
+    input wire miso_b, // Input sampled on falling edge
+    output reg miso_ddr // 1-bit DDR output
+);
+
+    always @(posedge clk) begin
+        miso_ddr <= miso_a; // Output miso_a on rising edge
+    end
+
+    always @(negedge clk) begin
+        miso_ddr <= miso_b; // Output miso_b on falling edge
+    end
+
+endmodule
 
 
 
@@ -2856,41 +2971,41 @@ module custom_command_selector (
 			//32:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
 			//33:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
 			//34:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
-			0:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			1:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			2:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			3:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			4:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			5:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			6:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			7:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			8:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			9:       MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			10:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			11:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			12:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			13:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			14:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			15:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			16:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			17:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			18:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			19:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			20:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			21:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			22:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			23:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			24:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			25:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			26:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			27:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			28:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			29:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			30:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			31:      MOSI_cmd <= { 16'b0001_1001_1001_1001};
-			32:		 MOSI_cmd <= {16'b0001_1001_1001_1001};
-			33:		 MOSI_cmd <= {16'b0001_1001_1001_1001};
-			34:		 MOSI_cmd <= {16'b0001_1001_1001_1001};
+			0:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			1:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			2:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			3:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			4:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			5:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			6:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			7:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			8:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			9:       MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			10:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			11:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			12:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			13:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			14:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			15:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			16:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			17:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			18:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			19:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			20:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			21:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			22:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			23:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			24:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			25:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			26:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			27:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			28:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			29:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			30:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			31:      MOSI_cmd <= { 16'b1001_1001_1001_1001};
+			32:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
+			33:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
+			34:		 MOSI_cmd <= {16'b1001_1001_1001_1001};
 			default: MOSI_cmd <= 16'b0;
 			endcase
 	end	
