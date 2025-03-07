@@ -55,10 +55,10 @@ initial begin
 end 
 
 main
-`ifndef GATESIM
-#(    .mem_size(mem_size)
-      ) 
-`endif
+// `ifndef GATESIM
+// #(    .mem_size(mem_size)
+//       ) 
+// `endif
     dut (
     // dataMem #(mem_size) dut (
     .clk(clk),

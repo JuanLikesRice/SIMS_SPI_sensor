@@ -1,4 +1,20 @@
- module main #(  parameter mem_size = 4096 ) (
+`timescale 1ns/1ps
+`default_nettype none
+
+module main   #(  parameter mem_size = 4096 ) (
+	input  wire [4:0]   okUH,
+	output wire [2:0]   okHU,
+	inout  wire [31:0]  okUHU,
+	inout  wire         okAA,
+
+	input  wire         sys_clk_p,
+	input  wire         sys_clk_n,
+	
+	output wire [7:0]   led, 
+	
+//	);
+
+// module main  (
 input  wire  clk,
 input  wire  reset,
 output  wire MOSI_to_sensor, 
@@ -25,13 +41,14 @@ output wire 		fpgaout_fifoin_wr_en,
 output wire                      CS_b_A,
 output wire                      SCLK_A,
 output wire                      MOSI1_A,
-output wire						MOSI2_A,
+output wire						 MOSI2_A,
 input  wire                      MISO1_A,
 input  wire                      MISO2_A
+
 );
 
 wire MISO;
-
+wire fpgain_fifoout_ready_refile;
     FPGA fpga_inst (
 		// .clk(clk),
         // .dataclk(clk),
@@ -59,7 +76,10 @@ wire MISO;
 		.fpgaout_fifoin_wr_en( fpgaout_fifoin_wr_en)
 		// .MISO_from_sensor(MISO),
         // .sample_CLK_out(sample_CLK_out)
-    );
+    
+	
+	
+	);
 
 // wire [31:0] fpgaout_fifoin;
 // wire [31:0] fpgaout_fifoin;
@@ -126,187 +146,24 @@ output wire [31:0] 	fpgaout_fifoin_din,
 output wire 		fpgaout_fifoin_wr_en,
 
 
+
+
 output wire SCLK_wire,
 output wire CS_b_wire,
-output reg  sample_CLK_out
+output reg  sample_CLK_out,
+
+
+
+output wire                      CS_b_A,
+output wire                      SCLK_A,
+output wire                      MOSI1_A,
+output wire						 MOSI2_A,
+input  wire                      MISO1_A,
+input  wire                      MISO2_A
+
 
 );
 
-
-
-	wire   reset;
-	assign reset = 						ep00wirein[0];
-	assign SPI_run_continuous = 		ep00wirein[1];
-	assign DSP_settle =     			ep00wirein[2];
-	assign TTL_out_mode = 				ep00wirein[3];
-	assign DAC_noise_suppress = 		ep00wirein[12:6];
-	assign DAC_gain = 					ep00wirein[15:13];
-	assign pipeout_override_en =        ep00wirein[16];
-
-	assign max_timestep_in =			ep01wirein;
-	assign serial_CLK_manual =			ep02wirein[0];
-	assign serial_LOAD_manual =		    ep02wirein[1];
-
-	always @(posedge dataclk) begin
-		max_timestep <= max_timestep_in;
-	end
-	
-	assign dataclk_M =                     ep03wirein[15:8];
-	assign dataclk_D =                     ep03wirein[7:0];
-
-	assign delay_A = 						ep04wirein[3:0];
-	assign SPI_start = 					    ep41trigin[0];
-
-	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
-	assign ep24wireout = 				   { 16'b0, 14'b0, MMCM_prog_done, dataclk_locked };
-
-
-
-// assign dataclk = clk;
-// // wires for frequency generator
-//     wire [7:0]      dataclk_M, dataclk_D;
-// 	assign dataclk_M =                     ep03wirein[15:8];
-// 	assign dataclk_D =                     ep03wirein[7:0];
-// 	assign delay_A = 						ep04wirein[3:0];
-// 	wire				reset, SPI_start, SPI_run_continuous;
-// 	assign MMCM_prog_trigger = 			ep40trigin[0];
-// 	wire				dataclk_locked, MMCM_prog_done;
-// 	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
-// 	assign ep24wireout = 				   { 16'b0, 14'b0, MMCM_prog_done, dataclk_locked };
-//     variable_freq_clk_generator variable_freq_clk_generator_inst
-//         (
-//         .sys_clk            (sys_clk),
-//         .okClk              (okClk),
-//         .reset              (reset), // WireIn00[0]
-//         .M                  (dataclk_M),
-//         .D                  (dataclk_D),
-//         .MMCM_prog_trigger  (MMCM_prog_trigger), // TriggerIn40[0]
-//         .clkout             (dataclk),
-//         .MMCM_prog_done     (MMCM_prog_done), // WireOut24[1]
-//         .locked             (dataclk_locked)  // WireOut24[0]
-//         );
-	// okTriggerIn  ti40 (.okHE(okHE),                            .ep_addr(8'h40), .ep_clk(okClk),  .ep_trigger(ep40trigin));
-	// okTriggerIn  ti41 (.okHE(okHE),                            .ep_addr(8'h41), .ep_clk(dataclk), .ep_trigger(ep41trigin));
-	// okWireOut    wo22 (.okHE(okHE), .okEH(okEHx[ 2*65 +: 65 ]),  .ep_addr(8'h22), .ep_datain(ep22wireout));
-	// okWireOut    wo24 (.okHE(okHE), .okEH(okEHx[ 4*65 +: 65 ]),  .ep_addr(8'h24), .ep_datain(ep24wireout));
-
-
-
-
-	assign 	CS_b_wire = CS_b;
-	assign TTL_out_direct = TTL_out_mode ? {TTL_out_user[15:8], DAC_thresh_out} : TTL_out_user;
-	assign SCLK_wire = SCLK;
-	// assign SPI_start = 1;
-	assign DSP_settle = 0;
-	assign MOSI_to_sensor = MOSI_A;
-
-
-
-	custom_command_selector command_selector_A (
-		.channel(channel), .DSP_settle(DSP_settle), .aux_cmd(aux_cmd_A), .digout_override(external_digout_A), .MOSI_cmd(MOSI_cmd_selected_A));
-	integer main_state;
-	localparam
-                ms_wait    = 99,
-                
-	            ms_clk1_a  = 100,
-			    ms_clk1_b  = 101,
-                ms_clk1_c  = 102,
-                ms_clk1_d  = 103,
-                
-				ms_clk2_a  = 104,
-			    ms_clk2_b  = 105,
-                ms_clk2_c  = 106,
-                ms_clk2_d  = 107,
-                
-				ms_clk3_a  = 108,
-			    ms_clk3_b  = 109,
-                ms_clk3_c  = 110,
-                ms_clk3_d  = 111,
-                
-				ms_clk4_a  = 112,
-			    ms_clk4_b  = 113,
-                ms_clk4_c  = 114,
-                ms_clk4_d  = 115,
-                
-				ms_clk5_a  = 116,
-			    ms_clk5_b  = 117,
-                ms_clk5_c  = 118,
-                ms_clk5_d  = 119,
-                
-				ms_clk6_a  = 120,
-			    ms_clk6_b  = 121,
-                ms_clk6_c  = 122,
-                ms_clk6_d  = 123,
-                
-				ms_clk7_a  = 124,
-			    ms_clk7_b  = 125,
-                ms_clk7_c  = 126,
-                ms_clk7_d  = 127,
-                
-				ms_clk8_a  = 128,
-			    ms_clk8_b  = 129,
-                ms_clk8_c  = 130,
-                ms_clk8_d  = 131,
-                
-				ms_clk9_a  = 132,
-			    ms_clk9_b  = 133,
-                ms_clk9_c  = 134,
-                ms_clk9_d  = 135,
-                
-				ms_clk10_a = 136,
-			    ms_clk10_b = 137,
-                ms_clk10_c = 138,
-                ms_clk10_d = 139,
-                
-				ms_clk11_a = 140,
-			    ms_clk11_b = 141,
-                ms_clk11_c = 142,
-                ms_clk11_d = 143,
-                
-				ms_clk12_a = 144,
-			    ms_clk12_b = 145,
-                ms_clk12_c = 146,
-                ms_clk12_d = 147,
-                
-				ms_clk13_a = 148,
-			    ms_clk13_b = 149,
-                ms_clk13_c = 150,
-                ms_clk13_d = 151,
-                
-				ms_clk14_a = 152,
-			    ms_clk14_b = 153,
-                ms_clk14_c = 154,
-                ms_clk14_d = 155,
-                
-				ms_clk15_a = 156,
-			    ms_clk15_b = 157,
-                ms_clk15_c = 158,
-                ms_clk15_d = 159,
-                
-				ms_clk16_a = 160,
-			    ms_clk16_b = 161,
-                ms_clk16_c = 162,
-                ms_clk16_d = 163,
-				  
-                ms_clk17_a = 164,
-                ms_clk17_b = 165,
-				  
-				ms_cs_a    = 166,
-				ms_cs_b    = 167,
-				ms_cs_c    = 168,
-				ms_cs_d    = 169,
-				ms_cs_e    = 170,
-				ms_cs_f    = 171,
-				ms_cs_g    = 172,
-				ms_cs_h    = 173,
-				ms_cs_i    = 174,
-				ms_cs_j    = 175,
-				ms_cs_k    = 176,
-				ms_cs_l    = 177,
-				ms_cs_m    = 178,
-				ms_cs_n    = 179,
-				ms_finish_256bit_word_0 = 180,
-				ms_finish_256bit_word_1 = 181;
 
 
 	// SPI I/O
@@ -526,6 +383,216 @@ output reg  sample_CLK_out
 
 	wire [5:0] num_data_streams_enabled;
 	
+	wire   reset;
+	
+	wire serial_CLK_manual,serial_LOAD_manual;
+
+	reg [3:0] word_counter_16bit = 0;
+	reg 	  reg_file_enable;
+	reg [2:0] reg_value;
+
+// WIRE ASSIGNETS ABOVE
+
+
+// assign dataclk = clk;
+// // wires for frequency generator
+//     wire [7:0]      dataclk_M, dataclk_D;
+// 	assign dataclk_M =                     ep03wirein[15:8];
+// 	assign dataclk_D =                     ep03wirein[7:0];
+// 	assign delay_A = 						ep04wirein[3:0];
+// 	wire				reset, SPI_start, SPI_run_continuous;
+// 	assign MMCM_prog_trigger = 			ep40trigin[0];
+// 	wire				dataclk_locked, MMCM_prog_done;
+// 	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
+// 	assign ep24wireout = 				   { 16'b0, 14'b0, MMCM_prog_done, dataclk_locked };
+//     variable_freq_clk_generator variable_freq_clk_generator_inst
+//         (
+//         .sys_clk            (sys_clk),
+//         .okClk              (okClk),
+//         .reset              (reset), // WireIn00[0]
+//         .M                  (dataclk_M),
+//         .D                  (dataclk_D),
+//         .MMCM_prog_trigger  (MMCM_prog_trigger), // TriggerIn40[0]
+//         .clkout             (dataclk),
+//         .MMCM_prog_done     (MMCM_prog_done), // WireOut24[1]
+//         .locked             (dataclk_locked)  // WireOut24[0]
+//         );
+	// okTriggerIn  ti40 (.okHE(okHE),                            .ep_addr(8'h40), .ep_clk(okClk),  .ep_trigger(ep40trigin));
+	// okTriggerIn  ti41 (.okHE(okHE),                            .ep_addr(8'h41), .ep_clk(dataclk), .ep_trigger(ep41trigin));
+	// okWireOut    wo22 (.okHE(okHE), .okEH(okEHx[ 2*65 +: 65 ]),  .ep_addr(8'h22), .ep_datain(ep22wireout));
+	// okWireOut    wo24 (.okHE(okHE), .okEH(okEHx[ 4*65 +: 65 ]),  .ep_addr(8'h24), .ep_datain(ep24wireout));
+
+
+
+	wire TTL_out_direct;
+
+	wire [6:0] address_ofset;
+	wire [6:0] address_write;
+	wire address_bank;
+	
+	wire halt_wire;
+	wire write_enable_regfile;
+	wire halt_write;
+	reg [15:0] data_in_dual_bank_reg_file;
+
+    wire    last_address_written;
+	wire [6:0] rd_addr0, rd_addr1;
+	reg  [6:0] address_index_readout;
+	wire [15:0] data_out0, data_out1;
+
+	
+	reg [6:0] address_index_readout_max;
+	reg data_valid_readout;
+    wire [15:0] data_out_regfile_to_fifo;
+
+
+	reg [31:0] 	fpgaout_fifoin_din_r;
+	reg 		fpgaout_fifoin_wr_en_r;
+
+
+
+	assign reset = 						ep00wirein[0];
+	assign SPI_run_continuous = 		ep00wirein[1];
+	assign DSP_settle =     			ep00wirein[2];
+	assign TTL_out_mode = 				ep00wirein[3];
+	assign DAC_noise_suppress = 		ep00wirein[12:6];
+	assign DAC_gain = 					ep00wirein[15:13];
+	assign pipeout_override_en =        ep00wirein[16];
+
+	assign max_timestep_in =			ep01wirein;
+	assign serial_CLK_manual =			ep02wirein[0];
+	assign serial_LOAD_manual =		    ep02wirein[1];
+
+	always @(posedge dataclk) begin
+		max_timestep <= max_timestep_in;
+	end
+	
+	assign dataclk_M =                     ep03wirein[15:8];
+	assign dataclk_D =                     ep03wirein[7:0];
+
+	assign delay_A = 						ep04wirein[3:0];
+	assign SPI_start = 					    ep41trigin[0];
+
+	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
+	assign ep24wireout = 				   { 16'b0, 14'b0, MMCM_prog_done, dataclk_locked };
+
+
+	assign 	CS_b_wire = CS_b;
+	assign TTL_out_direct = TTL_out_mode ? {TTL_out_user[15:8], DAC_thresh_out} : TTL_out_user;
+	assign SCLK_wire = SCLK;
+	// assign SPI_start = 1;
+	assign DSP_settle = 0;
+	assign MOSI_to_sensor = MOSI_A;
+
+
+
+	custom_command_selector command_selector_A (
+		.channel(channel), .DSP_settle(DSP_settle), .aux_cmd(aux_cmd_A), .digout_override(external_digout_A), .MOSI_cmd(MOSI_cmd_selected_A));
+	integer main_state;
+	localparam
+                ms_wait    = 99,
+                
+	            ms_clk1_a  = 100,
+			    ms_clk1_b  = 101,
+                ms_clk1_c  = 102,
+                ms_clk1_d  = 103,
+                
+				ms_clk2_a  = 104,
+			    ms_clk2_b  = 105,
+                ms_clk2_c  = 106,
+                ms_clk2_d  = 107,
+                
+				ms_clk3_a  = 108,
+			    ms_clk3_b  = 109,
+                ms_clk3_c  = 110,
+                ms_clk3_d  = 111,
+                
+				ms_clk4_a  = 112,
+			    ms_clk4_b  = 113,
+                ms_clk4_c  = 114,
+                ms_clk4_d  = 115,
+                
+				ms_clk5_a  = 116,
+			    ms_clk5_b  = 117,
+                ms_clk5_c  = 118,
+                ms_clk5_d  = 119,
+                
+				ms_clk6_a  = 120,
+			    ms_clk6_b  = 121,
+                ms_clk6_c  = 122,
+                ms_clk6_d  = 123,
+                
+				ms_clk7_a  = 124,
+			    ms_clk7_b  = 125,
+                ms_clk7_c  = 126,
+                ms_clk7_d  = 127,
+                
+				ms_clk8_a  = 128,
+			    ms_clk8_b  = 129,
+                ms_clk8_c  = 130,
+                ms_clk8_d  = 131,
+                
+				ms_clk9_a  = 132,
+			    ms_clk9_b  = 133,
+                ms_clk9_c  = 134,
+                ms_clk9_d  = 135,
+                
+				ms_clk10_a = 136,
+			    ms_clk10_b = 137,
+                ms_clk10_c = 138,
+                ms_clk10_d = 139,
+                
+				ms_clk11_a = 140,
+			    ms_clk11_b = 141,
+                ms_clk11_c = 142,
+                ms_clk11_d = 143,
+                
+				ms_clk12_a = 144,
+			    ms_clk12_b = 145,
+                ms_clk12_c = 146,
+                ms_clk12_d = 147,
+                
+				ms_clk13_a = 148,
+			    ms_clk13_b = 149,
+                ms_clk13_c = 150,
+                ms_clk13_d = 151,
+                
+				ms_clk14_a = 152,
+			    ms_clk14_b = 153,
+                ms_clk14_c = 154,
+                ms_clk14_d = 155,
+                
+				ms_clk15_a = 156,
+			    ms_clk15_b = 157,
+                ms_clk15_c = 158,
+                ms_clk15_d = 159,
+                
+				ms_clk16_a = 160,
+			    ms_clk16_b = 161,
+                ms_clk16_c = 162,
+                ms_clk16_d = 163,
+				  
+                ms_clk17_a = 164,
+                ms_clk17_b = 165,
+				  
+				ms_cs_a    = 166,
+				ms_cs_b    = 167,
+				ms_cs_c    = 168,
+				ms_cs_d    = 169,
+				ms_cs_e    = 170,
+				ms_cs_f    = 171,
+				ms_cs_g    = 172,
+				ms_cs_h    = 173,
+				ms_cs_i    = 174,
+				ms_cs_j    = 175,
+				ms_cs_k    = 176,
+				ms_cs_l    = 177,
+				ms_cs_m    = 178,
+				ms_cs_n    = 179,
+				ms_finish_256bit_word_0 = 180,
+				ms_finish_256bit_word_1 = 181;
+
+
 	//MODIFIED LOGIC
 	// Engineer Name: Curtis North
 	// Date: 1/26/2013
@@ -544,9 +611,8 @@ output reg  sample_CLK_out
 	assign data_stream_2 = result_DDR_A1;
 	assign data_stream_3 = result_A2;
 	assign data_stream_4 = result_DDR_A2;
-	wire [6:0] address_ofset;
 
-	wire MOSI2_A, MOSI1_A;
+	// wire MOSI2_A, MOSI1_A;
     assign CS_b_A = CS_b;
 	assign SCLK_A = SCLK;
 	assign MOSI1_A = MOSI_A;
@@ -555,20 +621,15 @@ output reg  sample_CLK_out
 	assign MISO2_A = MISO_from_sensor;
 	assign MISO_A1 = MISO1_A;
 	assign MISO_A2 = MISO2_A;
-	wire [6:0] address_write;
-	wire address_bank;
+
+
+
 
 	assign	address_write = address_ofset + channel_MISO;
-	
-	wire halt_wire;
-	wire write_enable_regfile;
 
 	assign write_enable_regfile = (~halt_write) && reg_file_enable;
 	assign 	halt_write = (channel_MISO>=32);
-
-
 	assign address_bank = timestamp[0];
-	reg [15:0] data_in_dual_bank_reg_file;
 
 
 	//signals for regfile
@@ -576,10 +637,7 @@ output reg  sample_CLK_out
 	//address_bank
 	//address_write
 	//write_enable_regfile
-    wire    last_address_written;
-	wire [6:0] rd_addr0, rd_addr1;
-	reg  [6:0] address_index_readout;
-	wire [15:0] data_out0, data_out1;
+
 
 	assign 	last_address_written = (address_write==7'd127)&&(write_enable_regfile==1'b1);
     dual_bank_regfile dual_bank_regfile (
@@ -595,13 +653,10 @@ output reg  sample_CLK_out
         .data_out1(data_out1)
     );
 
-    wire [15:0] data_out_regfile_to_fifo;
 	assign data_out_regfile_to_fifo = address_bank ? data_out1 : data_out0;
 	assign rd_addr0 = address_index_readout;
 	assign rd_addr1 = address_index_readout;
-	
-reg [6:0] address_index_readout_max;
-reg data_valid_readout;
+
 always @(*) begin	
 	address_index_readout_max <= ep05wirein[6:0];
 end
@@ -620,9 +675,6 @@ always @(posedge dataclk) begin
 		data_valid_readout <= 1'b0;
 	end
 end
-
-reg [31:0] 	fpgaout_fifoin_din_r;
-reg 		fpgaout_fifoin_wr_en_r;
 
 
 assign fpgaout_fifoin_din     = fpgaout_fifoin_din_r  ;
@@ -666,9 +718,7 @@ end
 	end
 
 
-	reg [3:0] word_counter_16bit = 0;
-	reg 	  reg_file_enable;
-	reg [2:0] reg_value;
+
 	always @(posedge dataclk) begin
 		if (reset) begin
 			reg_file_enable <= 1'b0;
@@ -3330,6 +3380,12 @@ module dual_bank_regfile (
     output wire [15:0] data_out1      // Data output from Bank 1
 );
 
+
+    reg [15:0] bank0 [127:0];  // 128 x 16-bit register bank 0
+    reg [15:0] bank1 [127:0];  // 128 x 16-bit register bank 1
+
+
+
 integer i,j;
 initial begin 
 
@@ -3340,8 +3396,6 @@ initial begin
 
 end
 
-    reg [15:0] bank0 [127:0];  // 128 x 16-bit register bank 0
-    reg [15:0] bank1 [127:0];  // 128 x 16-bit register bank 1
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
