@@ -128,7 +128,7 @@ wire clk;
 assign clk = okClk;
 wire rd_en_fifo, full, empty,wr_rst_busy,rd_rst_busy;
 assign pipeout_rdy = ~empty;
-
+assign fpgain_fifoout_ready_refile = ~full;
 
 fifo_generator_0 fifo_hehe (
   .rst(trigger_fifo_rst),                      // input wire rst
