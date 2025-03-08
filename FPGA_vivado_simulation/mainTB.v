@@ -30,7 +30,7 @@ module mainTB//;
     reg [31:0] ep40trigin;
     reg [31:0] ep41trigin;
     wire  [31:0] ep22wireout;
-    wire [31:0] ep24wireout;
+    wire  [31:0] ep24wireout,ep24wireout_readout;
 
 
 
@@ -54,66 +54,66 @@ initial begin
 
 end 
 
-// main
-// `ifndef GATESIM
-// #(    .mem_size(mem_size)
-//       ) 
-// `endif
-    // dut (
-      main design_1_i (
+wire [31:0] FIFO_data_out;
+wire pipeout_rdy;
+wire FIFO_read_from;
+assign FIFO_read_from = 0;
 
-    // dataMem #(mem_size) dut (
-    .clk(clk),
-    // .reset(reset),
-    // .MOSI_to_sensor(MOSI_to_sensor),
-    // .MISO_from_sensor(MISO_from_sensor),
-    // .SCLK_wire(SCLK_wire),
-    // .CS_b_wire(CS_b_wire),
-    // .sample_CLK_out(sample_CLK_out),
+  wire [7:0]led;
+  wire okAA;
+  wire [2:0]okHU;
+  wire [4:0]okUH;
+  wire [31:0]okUHU;
+  wire sys_clk_n;
+  wire sys_clk_p;
 
-    .ep00wirein(ep00wirein),
-    .ep01wirein(ep01wirein),
-    .ep02wirein(ep02wirein),
-    .ep03wirein(ep03wirein),
-    .ep04wirein(ep04wirein),
-    .ep05wirein(ep05wirein),
-    .ep40trigin(ep40trigin),
-    .ep41trigin(ep41trigin),
-    .ep22wireout(ep22wireout),
-    .ep24wireout(ep24wireout)
-    );
+  design_1 design_1_i
+       (.FIFO_data_out(FIFO_data_out),
+        .FIFO_read_from(FIFO_read_from),
+        .clk(clk),
+        .ep00wirein(ep00wirein),
+        .ep01wirein(ep01wirein),
+        .ep02wirein(ep02wirein),
+        .ep03wirein(ep03wirein),
+        .ep04wirein(ep04wirein),
+        .ep05wirein(ep05wirein),
+        .ep22wireout(ep22wireout),
+        .ep24wireout(ep24wireout),
+        .ep24wireout_readout(ep24wireout_readout),
+        .ep40trigin(ep40trigin),
+        .ep41trigin(ep41trigin),
+        .led(led),
+        .okAA(okAA),
+        .okHU(okHU),
+        .okUH(okUH),
+        .okUHU(okUHU),
+        .pipeout_rdy(pipeout_rdy)
+        .sys_clk_n(sys_clk_n),
+        .sys_clk_p(sys_clk_p)
+        );
 
-  // design_1 design_1_i
-  //      (
-		
-	// 	.CS_b_A(CS_b_A),
-  //       .MISO1_A(MISO1_A),
-  //       .MISO2_A(MISO2_A),
-  //       .MOSI1_A(MOSI1_A),
-  //       .MOSI2_A(MOSI2_A),
-  //       .SCLK_A(SCLK_A),
-  //       .clk(clk),
-  //       .ep00wirein(ep00wirein),
-  //       .ep01wirein(ep01wirein),
-  //       .ep02wirein(ep02wirein),
-  //       .ep03wirein(ep03wirein),
-  //       .ep04wirein(ep04wirein),
-  //       .ep05wirein(ep05wirein),
-  //       .ep22wireout(ep22wireout),
-  //       .ep24wireout(ep24wireout),
-  //       .ep40trigin(ep40trigin),
-  //       .ep41trigin(ep41trigin),
-  //       .fpgaout_fifoin_din(fpgaout_fifoin_din),
-  //       .fpgaout_fifoin_wr_en(fpgaout_fifoin_wr_en),
-  //       .led(led),
-  //       .okUH(okUH),
-  //       .reset(reset),
-  //       .sys_clk_n(sys_clk_n),
-  //       .sys_clk_p(sys_clk_p)
-  //       );
+//   main_wrapper_EP #(.mem_size(4096)) u_main_wrapper_EP (
+//     .clk                           (okClk),
+//     .ep00wirein                    (ep00wirein),
+//     .ep01wirein                    (ep01wirein),
+//     .ep02wirein                    (ep02wirein),
+//     .ep03wirein                    (ep03wirein),
+//     .ep04wirein                    (ep04wirein),
+//     .ep05wirein                    (ep05wirein),
+//     .ep40trigin                    (ep40trigin),
+//     .ep41trigin                    (ep41trigin),
+//     .ep22wireout                   (ep22wireout),
+//     .ep24wireout                   (ep24wireout),
 
+//     .ep24wireout_readout           (ep24wireout_readout),
+//     .pipeout_rdy                   (pipeout_rdy),
+//     .FIFO_data_out                 (FIFO_data_out),
+//     .FIFO_read_from                (FIFO_read_from)
+//     // .fpgain_fifoout_ready_refile   (fpgain_fifoout_ready_refile),
+//     // .fpgaout_fifoin_din            (fpgaout_fifoin_din),
+//     // .fpgaout_fifoin_wr_en          (fpgaout_fifoin_wr_en)
 
-
+//   );
 
 
 

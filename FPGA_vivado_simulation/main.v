@@ -1,3 +1,4 @@
+
 `timescale 1ns/1ps
 `default_nettype none
 
@@ -11,41 +12,64 @@ module main   #(  parameter mem_size = 4096 ) (
 	input  wire         sys_clk_n,
 	
 	output wire [7:0]   led, 
-	
-//	);
+	// leaves these inputs and outputs for the FPGA
 
-// module main  (
 input  wire  clk,
-//input  wire  reset,
-//output  wire MOSI_to_sensor, 
-//output wire  MISO_from_sensor,
-//output wire  SCLK_wire,
-//output wire  CS_b_wire,
-//output wire  sample_CLK_out,
-
 input  wire [31:0] ep00wirein,
 input  wire [31:0] ep01wirein,
 input  wire [31:0] ep02wirein,
 input  wire [31:0] ep03wirein,
 input  wire [31:0] ep04wirein,
 input  wire [31:0] ep05wirein,
-
 input  wire [31:0] ep40trigin,
 input  wire [31:0] ep41trigin,
 output wire [31:0] ep22wireout,
-output wire [31:0] ep24wireout
-
-//output wire [31:0] 	fpgaout_fifoin_din,
-//output wire 		fpgaout_fifoin_wr_en,
-
-// output wire                      CS_b_A,
-// output wire                      SCLK_A,
-// output wire                      MOSI1_A,
-// output wire						 MOSI2_A,
-// input  wire                      MISO1_A,
-// input  wire                      MISO2_A
+output wire [31:0] ep24wireout,
+//FIFO SIGNALS
+// input  wire         fpgain_fifoout_ready_refile,
+// output wire [31:0]  fpgaout_fifoin_din,
+// output wire         fpgaout_fifoin_wr_en
+output wire [31:0] ep24wireout_readout   ,
+output wire        pipeout_rdy           ,
+output wire [31:0] FIFO_data_out         ,
+input  wire        FIFO_read_from        
 
 );
+
+
+wire   trigger_fifo_rst;
+assign trigger_fifo_rst = (ep00wirein[0]);
+
+
+
+wire [15:0] rd_data_count,wr_data_count;
+wire         fpgain_fifoout_ready_refile;
+wire [31:0]  fpgaout_fifoin_din;
+wire         fpgaout_fifoin_wr_en;
+wire rd_en_fifo, full, empty,wr_rst_busy,rd_rst_busy;
+
+assign pipeout_rdy = ~empty;
+assign fpgain_fifoout_ready_refile = ~full;
+assign ep24wireout_readout = rd_data_count[15:0];
+
+
+fifo_gen fifo_hehe (
+  .rst(trigger_fifo_rst),                      // input wire rst
+  .wr_clk(clk),                // input wire wr_clk
+  .rd_clk(clk),                // input wire rd_clk
+  .din(     fpgaout_fifoin_din),                      // input wire [31 : 0] din
+  .wr_en(   fpgaout_fifoin_wr_en),                  // input wire wr_en
+  .rd_en(   FIFO_read_from),                  // input wire rd_en
+  .dout(    FIFO_data_out),                    // output wire [31 : 0] dout
+  .full(full),                    // output wire full
+  .empty(empty),                  // output wire empty
+  .rd_data_count(rd_data_count),  // output wire [15 : 0] rd_data_count
+  .wr_data_count(wr_data_count),  // output wire [15 : 0] wr_data_count
+  .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
+  .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
+);
+
+
 
 
 
@@ -55,9 +79,9 @@ wire  MISO_from_sensor;
 wire  SCLK_wire;
 wire  CS_b_wire;
 wire  sample_CLK_out;
-
 wire MISO;
-wire fpgain_fifoout_ready_refile;
+
+
     FPGA fpga_inst (
 		// .clk(clk),
         // .dataclk(clk),
@@ -86,59 +110,58 @@ wire fpgain_fifoout_ready_refile;
 		// .MISO_from_sensor(MISO),
         // .sample_CLK_out(sample_CLK_out)
 	);
-
-wire trigger_fifo_readout;
-assign trigger_fifo_readout = (ep41trigin[2]);
- reg [31:0] counter_index_fifo;
- reg fifo_read;
+	
+endmodule
+// wire trigger_fifo_readout;
+// assign trigger_fifo_readout = (ep41trigin[2]);
+//  reg [31:0] counter_index_fifo;
+//  reg fifo_read;
  
- initial begin 
- counter_index_fifo <=   32'hFF;
- end 
+//  initial begin 
+//  counter_index_fifo <=   32'hFF;
+//  end 
  
-always @(posedge clk) begin 
-    if (trigger_fifo_readout) begin
-       counter_index_fifo <= 32'b0;
-       fifo_read <= 1'b0;   
-    end
-    if (counter_index_fifo < ep05wirein[6:0]) begin 
-           counter_index_fifo <= counter_index_fifo + 1; 
-           fifo_read <=1'b1;  
-    end    else begin 
-    fifo_read<=1'b0; 
-    end 
-end 
+// always @(posedge clk) begin 
+//     if (trigger_fifo_readout) begin
+//        counter_index_fifo <= 32'b0;
+//        fifo_read <= 1'b0;   
+//     end
+//     if (counter_index_fifo < ep05wirein[6:0]) begin 
+//            counter_index_fifo <= counter_index_fifo + 1; 
+//            fifo_read <=1'b1;  
+//     end    else begin 
+//     fifo_read<=1'b0; 
+//     end 
+// end 
 
-wire rd_en_fifo, full, empty,wr_rst_busy,rd_rst_busy;
+// wire rd_en_fifo, full, empty,wr_rst_busy,rd_rst_busy;
 
 
 
- wire [31:0] fpgaout_fifoin_din, dout;
- wire fpgaout_fifoin_wr_en;
-// wire [31:0] fpgaout_fifoin;
-wire dataclk;
-assign dataclk = clk;
-assign fpgain_fifoout_ready_refile = ~full;
+// // wire [31:0] fpgaout_fifoin;
+// wire dataclk;
+// assign dataclk = clk;
+// assign fpgain_fifoout_ready_refile = ~full;
 
-wire rst;
-assign rst = 1'b0;
-assign rd_en_fifo = 1'b0;
-wire [10:0] wr_data_count;
+// wire rst;
+// assign rst = 1'b0;
+// assign rd_en_fifo = 1'b0;
+// wire [10:0] wr_data_count;
 
- fifo_gen fifo_01 (
-   .rst(rst),                      // input wire rst
-   .wr_clk(	dataclk),                // input wire wr_clk
-   .rd_clk(	dataclk),                // input wire rd_clk
-   .din(		fpgaout_fifoin_din),                      // input wire [31 : 0] din
-   .wr_en(	fpgaout_fifoin_wr_en),                  // input wire wr_en
-   .rd_en(fifo_read),                  // input wire rd_en
-   .dout(dout),                    // output wire [31 : 0] dout
-   .full(full),                    // output wire full
-   .empty(empty),                  // output wire empty
-   .wr_data_count(wr_data_count),  // output wire [9 : 0] wr_data_count
-   .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
-   .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
- );
+//  fifo_gen fifo_01 (
+//    .rst(rst),                      // input wire rst
+//    .wr_clk(	dataclk),                // input wire wr_clk
+//    .rd_clk(	dataclk),                // input wire rd_clk
+//    .din(		fpgaout_fifoin_din),                      // input wire [31 : 0] din
+//    .wr_en(	fpgaout_fifoin_wr_en),                  // input wire wr_en
+//    .rd_en(fifo_read),                  // input wire rd_en
+//    .dout(dout),                    // output wire [31 : 0] dout
+//    .full(full),                    // output wire full
+//    .empty(empty),                  // output wire empty
+//    .wr_data_count(wr_data_count),  // output wire [9 : 0] wr_data_count
+//    .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
+//    .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
+//  );
 
 
 
@@ -151,7 +174,7 @@ wire [10:0] wr_data_count;
 	// );
 	// Your module goes here
 
-endmodule
+
 
 
 
