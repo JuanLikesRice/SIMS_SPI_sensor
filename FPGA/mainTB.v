@@ -54,20 +54,23 @@ initial begin
 
 end 
 
-main
+// main
 // `ifndef GATESIM
 // #(    .mem_size(mem_size)
 //       ) 
 // `endif
-    dut (
+    // dut (
+      main design_1_i (
+
     // dataMem #(mem_size) dut (
     .clk(clk),
-    .reset(reset),
-    .MOSI_to_sensor(MOSI_to_sensor),
-    .MISO_from_sensor(MISO_from_sensor),
-    .SCLK_wire(SCLK_wire),
-    .CS_b_wire(CS_b_wire),
-    .sample_CLK_out(sample_CLK_out),
+    // .reset(reset),
+    // .MOSI_to_sensor(MOSI_to_sensor),
+    // .MISO_from_sensor(MISO_from_sensor),
+    // .SCLK_wire(SCLK_wire),
+    // .CS_b_wire(CS_b_wire),
+    // .sample_CLK_out(sample_CLK_out),
+
     .ep00wirein(ep00wirein),
     .ep01wirein(ep01wirein),
     .ep02wirein(ep02wirein),
@@ -79,6 +82,42 @@ main
     .ep22wireout(ep22wireout),
     .ep24wireout(ep24wireout)
     );
+
+  // design_1 design_1_i
+  //      (
+		
+	// 	.CS_b_A(CS_b_A),
+  //       .MISO1_A(MISO1_A),
+  //       .MISO2_A(MISO2_A),
+  //       .MOSI1_A(MOSI1_A),
+  //       .MOSI2_A(MOSI2_A),
+  //       .SCLK_A(SCLK_A),
+  //       .clk(clk),
+  //       .ep00wirein(ep00wirein),
+  //       .ep01wirein(ep01wirein),
+  //       .ep02wirein(ep02wirein),
+  //       .ep03wirein(ep03wirein),
+  //       .ep04wirein(ep04wirein),
+  //       .ep05wirein(ep05wirein),
+  //       .ep22wireout(ep22wireout),
+  //       .ep24wireout(ep24wireout),
+  //       .ep40trigin(ep40trigin),
+  //       .ep41trigin(ep41trigin),
+  //       .fpgaout_fifoin_din(fpgaout_fifoin_din),
+  //       .fpgaout_fifoin_wr_en(fpgaout_fifoin_wr_en),
+  //       .led(led),
+  //       .okUH(okUH),
+  //       .reset(reset),
+  //       .sys_clk_n(sys_clk_n),
+  //       .sys_clk_p(sys_clk_p)
+  //       );
+
+
+
+
+
+
+
 
     always #5 clk = ~clk; // 100 MHz clock
 
@@ -218,6 +257,26 @@ always @(posedge clk) begin
     end
   endtask
 
+  task modify_epPIPEtrigin(input [31:0] new_value);
+    begin
+        ep40trigin <= 0;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        ep40trigin <= 0;
+        @(posedge clk); 
+        ep40trigin <= new_value;
+        @(posedge clk); 
+        ep40trigin <= 0;
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        @(posedge clk); 
+        ep40trigin <= 0;
+    end
   task modify_ep40trigin(input [31:0] new_value);
     begin
         ep40trigin <= 0;

@@ -1,0 +1,113 @@
+//Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+//Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+//--------------------------------------------------------------------------------
+//Tool Version: Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
+//Date        : Thu Mar  6 19:48:53 2025
+//Host        : jgarza running 64-bit major release  (build 9200)
+//Command     : generate_target design_1_wrapper.bd
+//Design      : design_1_wrapper
+//Purpose     : IP block netlist
+//--------------------------------------------------------------------------------
+`timescale 1 ps / 1 ps
+
+module design_1_wrapper
+   (CS_b_A,
+    MISO1_A,
+    MISO2_A,
+    MOSI1_A,
+    MOSI2_A,
+    SCLK_A,
+    clk,
+    ep00wirein,
+    ep01wirein,
+    ep02wirein,
+    ep03wirein,
+    ep04wirein,
+    ep05wirein,
+    ep22wireout,
+    ep24wireout,
+    ep40trigin,
+    ep41trigin,
+    fpgaout_fifoin_din,
+    fpgaout_fifoin_wr_en,
+    led,
+    okUH,
+    reset,
+    sys_clk_n,
+    sys_clk_p);
+  output CS_b_A;
+  input MISO1_A;
+  input MISO2_A;
+  output MOSI1_A;
+  output MOSI2_A;
+  output SCLK_A;
+  input clk;
+  input [31:0]ep00wirein;
+  input [31:0]ep01wirein;
+  input [31:0]ep02wirein;
+  input [31:0]ep03wirein;
+  input [31:0]ep04wirein;
+  input [31:0]ep05wirein;
+  output [31:0]ep22wireout;
+  output [31:0]ep24wireout;
+  input [31:0]ep40trigin;
+  input [31:0]ep41trigin;
+  output [31:0]fpgaout_fifoin_din;
+  output fpgaout_fifoin_wr_en;
+  output [7:0]led;
+  input [4:0]okUH;
+  input reset;
+  input sys_clk_n;
+  input sys_clk_p;
+
+  wire CS_b_A;
+  wire MISO1_A;
+  wire MISO2_A;
+  wire MOSI1_A;
+  wire MOSI2_A;
+  wire SCLK_A;
+  wire clk;
+  wire [31:0]ep00wirein;
+  wire [31:0]ep01wirein;
+  wire [31:0]ep02wirein;
+  wire [31:0]ep03wirein;
+  wire [31:0]ep04wirein;
+  wire [31:0]ep05wirein;
+  wire [31:0]ep22wireout;
+  wire [31:0]ep24wireout;
+  wire [31:0]ep40trigin;
+  wire [31:0]ep41trigin;
+  wire [31:0]fpgaout_fifoin_din;
+  wire fpgaout_fifoin_wr_en;
+  wire [7:0]led;
+  wire [4:0]okUH;
+  wire reset;
+  wire sys_clk_n;
+  wire sys_clk_p;
+
+  design_1 design_1_i
+       (.CS_b_A(CS_b_A),
+        .MISO1_A(MISO1_A),
+        .MISO2_A(MISO2_A),
+        .MOSI1_A(MOSI1_A),
+        .MOSI2_A(MOSI2_A),
+        .SCLK_A(SCLK_A),
+        .clk(clk),
+        .ep00wirein(ep00wirein),
+        .ep01wirein(ep01wirein),
+        .ep02wirein(ep02wirein),
+        .ep03wirein(ep03wirein),
+        .ep04wirein(ep04wirein),
+        .ep05wirein(ep05wirein),
+        .ep22wireout(ep22wireout),
+        .ep24wireout(ep24wireout),
+        .ep40trigin(ep40trigin),
+        .ep41trigin(ep41trigin),
+        .fpgaout_fifoin_din(fpgaout_fifoin_din),
+        .fpgaout_fifoin_wr_en(fpgaout_fifoin_wr_en),
+        .led(led),
+        .okUH(okUH),
+        .reset(reset),
+        .sys_clk_n(sys_clk_n),
+        .sys_clk_p(sys_clk_p));
+endmodule

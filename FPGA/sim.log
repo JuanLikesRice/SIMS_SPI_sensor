@@ -1,3 +1,3 @@
 VCD info: dumpfile sim.vcd opened for output.
 VCD warning: $dumpvars: Package ($unit) is not dumpable with VCD.
-mainTB.v:112: $finish called at 244635000 (1ps)
+mainTB.v:151: $finish called at 244635000 (1ps)
