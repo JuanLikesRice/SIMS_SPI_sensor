@@ -3,32 +3,28 @@
 `include "params.vh"
 
 module mainTB//;
-#(
-    parameter   N_param = 32 
-)
+#(parameter   N_param = 32 )
 ();
-//     glbl glbl ();
-    parameter mem_size = 4096;
+//  glbl glbl ();
+parameter mem_size = 4096;
 
-    reg clk;
-    reg reset;
-    wire MOSI_to_sensor, MISO_from_sensor, SCLK_wire, CS_b_wire, sample_CLK_out;
-    reg [63:0] Single_Instruction;
-    reg [31:0] address;
-    reg [31:0] storeData;
-    wire [31:0] loadData_w;
-    reg [15:0] data_to_send;
-    reg CS, MOSI;
-    //wire CS, MOSI;
+reg clk;
+//reg clk_n;
+reg reset;
+wire MOSI_to_sensor, MISO_from_sensor, SCLK_wire, CS_b_wire, sample_CLK_out;
+reg [63:0] Single_Instruction;
+reg [31:0] address;
+reg [31:0] storeData;
+wire [31:0] loadData_w;
+reg [15:0] data_to_send;
+reg CS, MOSI;
 
 
 main
 `ifndef GATESIM
-#(    .mem_size(mem_size)
-      ) 
+    #(.mem_size(mem_size)) 
 `endif
-    dut (
-    // dataMem #(mem_size) dut (
+dut (
     .clk(clk),
     .reset(reset),
     .MOSI_to_sensor(MOSI_to_sensor),
@@ -36,8 +32,20 @@ main
     .SCLK_wire(SCLK_wire),
     .CS_b_wire(CS_b_wire),
     .sample_CLK_out(sample_CLK_out)
-    // .(),
-    );
+);
+
+// Instantiate second main module with inverted clk
+/*
+dut2(
+    .clk(clk),
+    .reset(reset),
+    .MOSI_to_sensor(MOSI_to_sensor),
+    .MISO_from_sensor(MISO_from_sensor2),
+    .SCLK_wire(SCLK_wire),
+    .CS_b_wire(CS_b_wire),
+    .sample_CLK_out(sample_CLK_out)
+);
+*/
 
 
 // input wire clk,
@@ -49,9 +57,8 @@ main
 // output reg sample_CLK_out
 
 
-
-
     always #5 clk = ~clk; // 100 MHz clock
+    //always #5 clk_n = ~clk_n; // 100 MHz clock
 
     initial begin : init
         //logic [32*8-1:0] vcdfile;
@@ -108,7 +115,7 @@ main
         // repeat (1) @(posedge clk);
 
         // transmit_spi(data_to_send, clk, CS, MOSI);
-        repeat (150) @(posedge clk);
+        repeat (250) @(posedge clk);
         $finish;
     end
 
@@ -127,28 +134,8 @@ main
             // Deassert CS to end transmission
             CS = 1;
         repeat (2) @(posedge clk);
-
         end
     endtask
-
-
-
-
-    // task transmit_spi(input [15:0] data_in);
-    //     integer i;
-    //     begin
-    //         // Assert CS low to begin transmission
-    //         CS = 0;
-
-    //         for (i = 15; i >=0; i = i - 1) begin
-    //             MOSI = data_in[i];
-    //             @(posedge clk);
-    //         end
-
-    //         // Deassert CS to end transmission
-    //         CS = 1;
-    //     end
-    // endtask
 
 endmodule
 
