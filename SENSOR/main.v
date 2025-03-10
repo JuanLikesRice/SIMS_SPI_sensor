@@ -48,6 +48,7 @@ end
 
 	shift_reg shift_reg_a (
 		.clk(SCLK_wire),
+		//.clk(SCLK_wire),
 		.reset(reset), 
 		.CS(CS_b_wire),
 		.MISO_full(MISO_a),
@@ -55,7 +56,8 @@ end
 	);
 
 	shift_reg shift_reg_b (
-		.clk(~SCLK_wire),
+		.clk(SCLK_wire),
+		//.clk(~SCLK_wire),
 		.reset(reset), 
 		.CS(CS_b_wire),
 		.MISO_full(miso_test_reg),
@@ -249,34 +251,6 @@ module shift_reg (
 	end
 endmodule
 
-/*
-module ddr_mux (
-    input  wire clk,       // SCLK
-    input  wire miso_a,    // MISO A input
-    input  wire miso_b,    // MISO B input
-    output reg miso_ddr   // DDR MISO output
-);
-
-    reg miso_a_reg, miso_b_reg;
-    reg sel = 1'b0;  // Selector toggles each clock cycle
-
-    // Capture MISO_A on rising edge, MISO_B on falling edge
-    always @(posedge clk) begin
-        miso_a_reg <= miso_a;
-        sel <= ~sel;  // Toggle selection bit
-    end
-
-    always @(negedge clk) begin
-        miso_b_reg <= miso_b;
-    end
-
-    // DDR MISO multiplexer
-    always @(*) begin
-        miso_ddr = sel ? miso_b_reg : miso_a_reg;
-    end
-
-endmodule
-*/
 
 module ddr_mux (
     input wire clk,    // SCLK
@@ -424,6 +398,10 @@ output reg  sample_CLK_out
 	reg 			CS_b, SCLK;
 	reg			MOSI_A, MOSI_B, MOSI_C, MOSI_D, MOSI_E, MOSI_F, MOSI_G, MOSI_H;
 	wire        MISO_A1, MISO_A2;
+
+	assign MISO_A1 = MISO_from_sensor;
+	assign MISO_A2 = MISO_from_sensor;
+
 	wire        MISO_B1, MISO_B2;
 	wire        MISO_C1, MISO_C2;
 	wire        MISO_D1, MISO_D2;
