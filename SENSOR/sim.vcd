@@ -1,5 +1,5 @@
 $date
-	Fri Mar 14 11:55:24 2025
+	Fri Mar 14 13:55:40 2025
 $end
 $version
 	Icarus Verilog
@@ -39,6 +39,7 @@ $scope module ddr_mux $end
 $var wire 1 . miso_b $end
 $var wire 1 / miso_a $end
 $var wire 1 # clk $end
+$var wire 1 % CS $end
 $var reg 1 - miso_ddr $end
 $upscope $end
 $scope module fpga_inst $end
@@ -685,7 +686,7 @@ xM&
 xL&
 xK&
 xJ&
-b1010110011110001 I&
+b0 I&
 b0 H&
 xG&
 xF&
@@ -1127,6 +1128,9 @@ b0 ;$
 0f"
 0*
 #15000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -1285,11 +1289,8 @@ b101010101010101 P&
 0*
 #55000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
+b0xxxxxxxxxxxxxxx -#
+b0xxxxxxxxxxxxxxx .#
 b1 9&
 b1 7&
 b1 A&
@@ -1300,6 +1301,8 @@ b1 ?&
 1E&
 0J&
 b1100111 3&
+bx0 Y%
+bx0 X%
 1#
 1<$
 bz ;$
@@ -1326,8 +1329,8 @@ bxzx ]%
 bxzx \%
 bxzx [%
 bxzx Z%
-bx0x Y%
-bx0x X%
+bx00 Y%
+bx00 X%
 1<$
 bz ;$
 1)
@@ -1342,9 +1345,6 @@ b1110 Q&
 b10 H&
 b0xxxxxxxxxxxxxxx +#
 b0xxxxxxxxxxxxxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -1365,8 +1365,8 @@ bxzzx ]%
 bxzzx \%
 bxzzx [%
 bxzzx Z%
-bx00x Y%
-bx00x X%
+bx000 Y%
+bx000 X%
 0$
 0=$
 0#
@@ -1397,8 +1397,8 @@ bxzzzx ]%
 bxzzzx \%
 bxzzzx [%
 bxzzzx Z%
-bx100x Y%
-bx100x X%
+bx0000 Y%
+bx0000 X%
 1<$
 b0 ;$
 1)
@@ -1410,13 +1410,8 @@ b1100 Q&
 0*
 #95000
 b10 N&
-0.
-0M&
-bx1xxxxxxxxxxxxxx -#
-bx1xxxxxxxxxxxxxx .#
-0H
-0I
-0-
+b0xxxxxxxxxxxxxx -#
+b0xxxxxxxxxxxxxx .#
 b10 A&
 b10 ?&
 b10 9&
@@ -1441,8 +1436,8 @@ bxzzzzx ]%
 bxzzzzx \%
 bxzzzzx [%
 bxzzzzx Z%
-bx1100x Y%
-bx1100x X%
+bx00000 Y%
+bx00000 X%
 1#
 1<$
 b101 2&
@@ -1470,8 +1465,8 @@ bxzzzzzx ]%
 bxzzzzzx \%
 bxzzzzzx [%
 bxzzzzzx Z%
-bx01100x Y%
-bx01100x X%
+bx000000 Y%
+bx000000 X%
 bz ;$
 1<$
 1)
@@ -1505,8 +1500,8 @@ bxzzzzzzx ]%
 bxzzzzzzx \%
 bxzzzzzzx [%
 bxzzzzzzx Z%
-bx001100x Y%
-bx001100x X%
+bx0000000 Y%
+bx0000000 X%
 0#
 1<$
 bz ;$
@@ -1535,8 +1530,8 @@ bxzzzzzzzx ]%
 bxzzzzzzzx \%
 bxzzzzzzzx [%
 bxzzzzzzzx Z%
-bx0001100x Y%
-bx0001100x X%
+bx00000000 Y%
+bx00000000 X%
 1<$
 bz ;$
 1)
@@ -1548,10 +1543,8 @@ b1000 Q&
 0*
 #135000
 b11 N&
-1.
-1M&
-bx10xxxxxxxxxxxxx -#
-bx10xxxxxxxxxxxxx .#
+b0xxxxxxxxxxxxx -#
+b0xxxxxxxxxxxxx .#
 b11 9&
 b100 7&
 b11 A&
@@ -1576,8 +1569,8 @@ bxzzzzzzzzx ]%
 bxzzzzzzzzx \%
 bxzzzzzzzzx [%
 bxzzzzzzzzx Z%
-bx00001100x Y%
-bx00001100x X%
+bx000000000 Y%
+bx000000000 X%
 1#
 1<$
 bz ;$
@@ -1606,8 +1599,8 @@ bxzzzzzzzzzx ]%
 bxzzzzzzzzzx \%
 bxzzzzzzzzzx [%
 bxzzzzzzzzzx Z%
-bx000001100x Y%
-bx000001100x X%
+bx0000000000 Y%
+bx0000000000 X%
 0<$
 b0 ;$
 1)
@@ -1621,9 +1614,6 @@ b110 Q&
 b100 H&
 b0xxxxxxxxxxxxx +#
 b0xxxxxxxxxxxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -1644,8 +1634,8 @@ bxzzzzzzzzzzx ]%
 bxzzzzzzzzzzx \%
 bxzzzzzzzzzzx [%
 bxzzzzzzzzzzx Z%
-bx0000001100x Y%
-bx0000001100x X%
+bx00000000000 Y%
+bx00000000000 X%
 1$
 1=$
 0#
@@ -1672,8 +1662,8 @@ bxzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzx \%
 bxzzzzzzzzzzzx [%
 bxzzzzzzzzzzzx Z%
-bx10000001100x Y%
-bx10000001100x X%
+bx000000000000 Y%
+bx000000000000 X%
 1)
 b100 Q&
 1f"
@@ -1683,13 +1673,8 @@ b100 Q&
 0*
 #175000
 b100 N&
-0.
-0M&
-bx101xxxxxxxxxxxx -#
-bx101xxxxxxxxxxxx .#
-0H
-0I
-0-
+b0xxxxxxxxxxxx -#
+b0xxxxxxxxxxxx .#
 b100 A&
 b1001 ?&
 b100 9&
@@ -1714,8 +1699,8 @@ bxzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzx Z%
-bx110000001100x Y%
-bx110000001100x X%
+bx0000000000000 Y%
+bx0000000000000 X%
 1#
 0)
 b11 Q&
@@ -1740,8 +1725,8 @@ bxzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzx Z%
-bx0110000001100x Y%
-bx0110000001100x X%
+bx00000000000000 Y%
+bx00000000000000 X%
 1)
 b10 Q&
 1f"
@@ -1773,8 +1758,8 @@ bxzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzx Z%
-bx00110000001100x Y%
-bx00110000001100x X%
+bx000000000000000 Y%
+bx000000000000000 X%
 0#
 0)
 b1 Q&
@@ -1799,8 +1784,8 @@ bxzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzx Z%
-bx000110000001100x Y%
-bx000110000001100x X%
+bx0000000000000000 Y%
+bx0000000000000000 X%
 1)
 b0 Q&
 1f"
@@ -1810,10 +1795,8 @@ b0 Q&
 0*
 #215000
 b101 N&
-1.
-1M&
-bx1010xxxxxxxxxxx -#
-bx1010xxxxxxxxxxx .#
+b0xxxxxxxxxxx -#
+b0xxxxxxxxxxx .#
 b101 9&
 b10011 7&
 b101 A&
@@ -1838,8 +1821,8 @@ bxzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzx Z%
-bx0000110000001100x Y%
-bx0000110000001100x X%
+bx00000000000000000 Y%
+bx00000000000000000 X%
 1#
 b11111111111111111111111111111111 Q&
 1f"
@@ -1863,8 +1846,8 @@ bxzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzx Z%
-bx00000110000001100x Y%
-bx00000110000001100x X%
+bx000000000000000000 Y%
+bx000000000000000000 X%
 1(
 1f"
 1*
@@ -1875,9 +1858,6 @@ bx00000110000001100x X%
 b110 H&
 b0xxxxxxxxxxx +#
 b0xxxxxxxxxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -1898,8 +1878,8 @@ bxzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzx Z%
-bx000000110000001100x Y%
-bx000000110000001100x X%
+bx0000000000000000000 Y%
+bx0000000000000000000 X%
 0$
 0=$
 0#
@@ -1924,8 +1904,8 @@ bxzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzx Z%
-bx1000000110000001100x Y%
-bx1000000110000001100x X%
+bx00000000000000000000 Y%
+bx00000000000000000000 X%
 1f"
 1*
 #250000
@@ -1933,11 +1913,8 @@ bx1000000110000001100x X%
 0*
 #255000
 b110 N&
-bx10101xxxxxxxxxx -#
-bx10101xxxxxxxxxx .#
-0H
-0I
-0-
+b0xxxxxxxxxx -#
+b0xxxxxxxxxx .#
 b110 A&
 b100110 ?&
 b110 9&
@@ -1962,8 +1939,8 @@ bxzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzx Z%
-bx11000000110000001100x Y%
-bx11000000110000001100x X%
+bx000000000000000000000 Y%
+bx000000000000000000000 X%
 1#
 1f"
 1*
@@ -1986,8 +1963,8 @@ bxzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzx Z%
-bx011000000110000001100x Y%
-bx011000000110000001100x X%
+bx0000000000000000000000 Y%
+bx0000000000000000000000 X%
 b1110 Q&
 0(
 1f"
@@ -1999,9 +1976,6 @@ b1110 Q&
 b111 H&
 b0xxxxxxxxxx +#
 b0xxxxxxxxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -2022,8 +1996,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0011000000110000001100x Y%
-bx0011000000110000001100x X%
+bx00000000000000000000000 Y%
+bx00000000000000000000000 X%
 0#
 0)
 b1101 Q&
@@ -2048,8 +2022,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx10011000000110000001100x Y%
-bx10011000000110000001100x X%
+bx000000000000000000000000 Y%
+bx000000000000000000000000 X%
 1)
 b1100 Q&
 1f"
@@ -2059,13 +2033,8 @@ b1100 Q&
 0*
 #295000
 b111 N&
-0.
-0M&
-bx101011xxxxxxxxx -#
-bx101011xxxxxxxxx .#
-0H
-0I
-0-
+b0xxxxxxxxx -#
+b0xxxxxxxxx .#
 b111 9&
 b1001100 7&
 b111 A&
@@ -2090,8 +2059,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx110011000000110000001100x Y%
-bx110011000000110000001100x X%
+bx0000000000000000000000000 Y%
+bx0000000000000000000000000 X%
 1#
 0)
 b1011 Q&
@@ -2116,8 +2085,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0110011000000110000001100x Y%
-bx0110011000000110000001100x X%
+bx00000000000000000000000000 Y%
+bx00000000000000000000000000 X%
 1)
 b1010 Q&
 1f"
@@ -2149,8 +2118,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00110011000000110000001100x Y%
-bx00110011000000110000001100x X%
+bx000000000000000000000000000 Y%
+bx000000000000000000000000000 X%
 1$
 1=$
 0#
@@ -2177,8 +2146,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx000110011000000110000001100x Y%
-bx000110011000000110000001100x X%
+bx0000000000000000000000000000 Y%
+bx0000000000000000000000000000 X%
 1)
 b1000 Q&
 1f"
@@ -2188,8 +2157,8 @@ b1000 Q&
 0*
 #335000
 b1000 N&
-bx1010110xxxxxxxx -#
-bx1010110xxxxxxxx .#
+b0xxxxxxxx -#
+b0xxxxxxxx .#
 b1000 A&
 b10011001 ?&
 b1000 9&
@@ -2214,8 +2183,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0000110011000000110000001100x Y%
-bx0000110011000000110000001100x X%
+bx00000000000000000000000000000 Y%
+bx00000000000000000000000000000 X%
 1#
 0)
 b111 Q&
@@ -2240,8 +2209,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00000110011000000110000001100x Y%
-bx00000110011000000110000001100x X%
+bx000000000000000000000000000000 Y%
+bx000000000000000000000000000000 X%
 1)
 b110 Q&
 1f"
@@ -2273,8 +2242,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx000000110011000000110000001100x Y%
-bx000000110011000000110000001100x X%
+bx0000000000000000000000000000000 Y%
+bx0000000000000000000000000000000 X%
 0#
 0)
 b101 Q&
@@ -2299,8 +2268,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0000000110011000000110000001100x Y%
-bx0000000110011000000110000001100x X%
+bx00000000000000000000000000000000 Y%
+bx00000000000000000000000000000000 X%
 1)
 b100 Q&
 1f"
@@ -2310,10 +2279,8 @@ b100 Q&
 0*
 #375000
 b1001 N&
-1.
-1M&
-bx10101100xxxxxxx -#
-bx10101100xxxxxxx .#
+b0xxxxxxx -#
+b0xxxxxxx .#
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -2338,8 +2305,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00000000110011000000110000001100x Y%
-bx00000000110011000000110000001100x X%
+bx000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000 X%
 1#
 0)
 b11 Q&
@@ -2364,8 +2331,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx000000000110011000000110000001100x Y%
-bx000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000 X%
 1)
 b10 Q&
 1f"
@@ -2377,9 +2344,6 @@ b10 Q&
 b1010 H&
 b0xxxxxxx +#
 b0xxxxxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -2400,8 +2364,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0000000000110011000000110000001100x Y%
-bx0000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000 X%
 0$
 0=$
 0#
@@ -2428,8 +2392,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx10000000000110011000000110000001100x Y%
-bx10000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000 X%
 1)
 b0 Q&
 1f"
@@ -2439,11 +2403,8 @@ b0 Q&
 0*
 #415000
 b1010 N&
-bx101011001xxxxxx -#
-bx101011001xxxxxx .#
-0H
-0I
-0-
+b0xxxxxx -#
+b0xxxxxx .#
 b1010 A&
 b1001100110 ?&
 b1010 9&
@@ -2468,8 +2429,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx110000000000110011000000110000001100x Y%
-bx110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000 X%
 1#
 b11111111111111111111111111111111 Q&
 1f"
@@ -2493,8 +2454,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0110000000000110011000000110000001100x Y%
-bx0110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000 X%
 1(
 1f"
 1*
@@ -2505,9 +2466,6 @@ bx0110000000000110011000000110000001100x X%
 b1011 H&
 b0xxxxxx +#
 b0xxxxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -2528,8 +2486,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00110000000000110011000000110000001100x Y%
-bx00110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000 X%
 0#
 1f"
 1*
@@ -2552,8 +2510,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx100110000000000110011000000110000001100x Y%
-bx100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000 X%
 1f"
 1*
 #450000
@@ -2561,11 +2519,8 @@ bx100110000000000110011000000110000001100x X%
 0*
 #455000
 b1011 N&
-bx1010110011xxxxx -#
-bx1010110011xxxxx .#
-0H
-0I
-0-
+b0xxxxx -#
+b0xxxxx .#
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -2590,8 +2545,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx1100110000000000110011000000110000001100x Y%
-bx1100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000 X%
 1#
 1f"
 1*
@@ -2614,8 +2569,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx01100110000000000110011000000110000001100x Y%
-bx01100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000 X%
 b1110 Q&
 0(
 1f"
@@ -2627,9 +2582,6 @@ b1110 Q&
 b1100 H&
 b0xxxxx +#
 b0xxxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -2650,8 +2602,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx001100110000000000110011000000110000001100x Y%
-bx001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000 X%
 1$
 1=$
 0#
@@ -2678,8 +2630,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx1001100110000000000110011000000110000001100x Y%
-bx1001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000 X%
 1)
 b1100 Q&
 1f"
@@ -2689,11 +2641,8 @@ b1100 Q&
 0*
 #495000
 b1100 N&
-bx10101100111xxxx -#
-bx10101100111xxxx .#
-0H
-0I
-0-
+b0xxxx -#
+b0xxxx .#
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -2718,8 +2667,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx11001100110000000000110011000000110000001100x Y%
-bx11001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000 X%
 1#
 0)
 b1011 Q&
@@ -2744,8 +2693,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx011001100110000000000110011000000110000001100x Y%
-bx011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000 X%
 1)
 b1010 Q&
 1f"
@@ -2757,9 +2706,6 @@ b1010 Q&
 b1101 H&
 b0xxxx +#
 b0xxxx ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -2780,8 +2726,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0011001100110000000000110011000000110000001100x Y%
-bx0011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000 X%
 0#
 0)
 b1001 Q&
@@ -2806,8 +2752,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx10011001100110000000000110011000000110000001100x Y%
-bx10011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000 X%
 1)
 b1000 Q&
 1f"
@@ -2817,13 +2763,8 @@ b1000 Q&
 0*
 #535000
 b1101 N&
-0.
-0M&
-bx101011001111xxx -#
-bx101011001111xxx .#
-0H
-0I
-0-
+b0xxx -#
+b0xxx .#
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -2848,8 +2789,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx110011001100110000000000110011000000110000001100x Y%
-bx110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000 X%
 1#
 0)
 b111 Q&
@@ -2874,8 +2815,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0110011001100110000000000110011000000110000001100x Y%
-bx0110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000 X%
 1)
 b110 Q&
 1f"
@@ -2907,8 +2848,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00110011001100110000000000110011000000110000001100x Y%
-bx00110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000 X%
 0$
 0=$
 0#
@@ -2935,8 +2876,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx000110011001100110000000000110011000000110000001100x Y%
-bx000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000 X%
 1)
 b100 Q&
 1f"
@@ -2946,8 +2887,8 @@ b100 Q&
 0*
 #575000
 b1110 N&
-bx1010110011110xx -#
-bx1010110011110xx .#
+b0xx -#
+b0xx .#
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -2972,8 +2913,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0000110011001100110000000000110011000000110000001100x Y%
-bx0000110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000000 X%
 1#
 0)
 b11 Q&
@@ -2998,8 +2939,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00000110011001100110000000000110011000000110000001100x Y%
-bx00000110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000000 X%
 1)
 b10 Q&
 1f"
@@ -3031,8 +2972,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx000000110011001100110000000000110011000000110000001100x Y%
-bx000000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000000 X%
 0#
 0)
 b1 Q&
@@ -3057,8 +2998,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0000000110011001100110000000000110011000000110000001100x Y%
-bx0000000110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000000000 X%
 1)
 b0 Q&
 1f"
@@ -3068,8 +3009,8 @@ b0 Q&
 0*
 #615000
 b1111 N&
-bx10101100111100x -#
-bx10101100111100x .#
+b0x -#
+b0x .#
 b1111 9&
 b100110011001100 7&
 b1111 A&
@@ -3094,8 +3035,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00000000110011001100110000000000110011000000110000001100x Y%
-bx00000000110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000000000 X%
 1#
 b11111111111111111111111111111111 Q&
 1f"
@@ -3119,8 +3060,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx000000000110011001100110000000000110011000000110000001100x Y%
-bx000000000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000000000 X%
 1(
 1f"
 1*
@@ -3151,8 +3092,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0000000000110011001100110000000000110011000000110000001100x Y%
-bx0000000000110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000000000000 X%
 1$
 1=$
 0#
@@ -3177,8 +3118,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00000000000110011001100110000000000110011000000110000001100x Y%
-bx00000000000110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000000000000 X%
 1f"
 1*
 #650000
@@ -3186,10 +3127,8 @@ bx00000000000110011001100110000000000110011000000110000001100x X%
 0*
 #655000
 b0 N&
-1.
-1M&
-bx101011001111000 -#
-bx101011001111000 .#
+b0 -#
+b0 .#
 b10000 A&
 b1001100110011001 ?&
 b10000 9&
@@ -3214,8 +3153,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx000000000000110011001100110000000000110011000000110000001100x Y%
-bx000000000000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000000000000 X%
 1#
 1f"
 1*
@@ -3238,8 +3177,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx0000000000000110011001100110000000000110011000000110000001100x Y%
-bx0000000000000110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000000000000000 X%
 b1110 Q&
 0(
 1f"
@@ -3251,9 +3190,6 @@ b1110 Q&
 b1 H&
 b0 +#
 b0 ,#
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -3274,8 +3210,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx00000000000000110011001100110000000000110011000000110000001100x Y%
-bx00000000000000110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000000000000000 X%
 0D$
 0C$
 0B$
@@ -3309,8 +3245,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx100000000000000110011001100110000000000110011000000110000001100x Y%
-bx100000000000000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000000000000000 X%
 1)
 b1100 Q&
 1f"
@@ -3320,8 +3256,6 @@ b1100 Q&
 0*
 #695000
 b0 H&
-0.
-0M&
 1E&
 1L&
 b10100111 3&
@@ -3339,8 +3273,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx1100000000000000110011001100110000000000110011000000110000001100x Y%
-bx1100000000000000110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000000000000000000 X%
 1%
 0)
 b1011 Q&
@@ -3365,8 +3299,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx11100000000000000110011001100110000000000110011000000110000001100x Y%
-bx11100000000000000110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000000000000000000 X%
 1)
 b1010 Q&
 1f"
@@ -3390,8 +3324,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx111100000000000000110011001100110000000000110011000000110000001100x Y%
-bx111100000000000000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000000000000000000 X%
 0)
 b1001 Q&
 1f"
@@ -3415,8 +3349,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx1111100000000000000110011001100110000000000110011000000110000001100x Y%
-bx1111100000000000000110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000000000000000000000 X%
 1)
 b1000 Q&
 1f"
@@ -3440,8 +3374,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx11111100000000000000110011001100110000000000110011000000110000001100x Y%
-bx11111100000000000000110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000000000000000000000 X%
 0)
 b111 Q&
 1f"
@@ -3465,8 +3399,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx111111100000000000000110011001100110000000000110011000000110000001100x Y%
-bx111111100000000000000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000000000000000000000 X%
 1)
 b110 Q&
 1f"
@@ -3490,8 +3424,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx1111111100000000000000110011001100110000000000110011000000110000001100x Y%
-bx1111111100000000000000110011001100110000000000110011000000110000001100x X%
+bx00000000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx00000000000000000000000000000000000000000000000000000000000000000000000 X%
 0)
 b101 Q&
 1f"
@@ -3515,8 +3449,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx11111111100000000000000110011001100110000000000110011000000110000001100x Y%
-bx11111111100000000000000110011001100110000000000110011000000110000001100x X%
+bx000000000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx000000000000000000000000000000000000000000000000000000000000000000000000 X%
 1)
 b100 Q&
 1f"
@@ -3540,8 +3474,8 @@ bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx ]%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx \%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx [%
 bxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx Z%
-bx111111111100000000000000110011001100110000000000110011000000110000001100x Y%
-bx111111111100000000000000110011001100110000000000110011000000110000001100x X%
+bx0000000000000000000000000000000000000000000000000000000000000000000000000 Y%
+bx0000000000000000000000000000000000000000000000000000000000000000000000000 X%
 0)
 b11 Q&
 1f"
@@ -3565,8 +3499,8 @@ bzx ]%
 bzx \%
 bzx [%
 bzx Z%
-b1111111111100000000000000110011001100110000000000110011000000110000001100x Y%
-b1111111111100000000000000110011001100110000000000110011000000110000001100x X%
+b0 Y%
+b0 X%
 1)
 b10 Q&
 1f"
@@ -3606,8 +3540,8 @@ bz t%
 bz s%
 bz r%
 bz q%
-bx101011001111000 p%
-bx101011001111000 o%
+b0 p%
+b0 o%
 0)
 b1 Q&
 1f"
@@ -3673,13 +3607,6 @@ b1100110 3&
 0*
 #855000
 b1 N&
-1.
-1M&
-b1101011001111000 -#
-b1101011001111000 .#
-0H
-0I
-0-
 b1001100110011001 8&
 b1 9&
 b1 7&
@@ -3692,8 +3619,6 @@ b1 ?&
 1E&
 0J&
 b1100111 3&
-b11111111111000000000000001100110011001100000000001100110000001100000011001 Y%
-b11111111111000000000000001100110011001100000000001100110000001100000011001 X%
 1#
 1f"
 1*
@@ -3711,9 +3636,6 @@ b1110 Q&
 0*
 #875000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -3741,11 +3663,6 @@ b1100 Q&
 0*
 #895000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -3808,8 +3725,6 @@ b1000 Q&
 0*
 #935000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -3845,9 +3760,6 @@ b110 Q&
 0*
 #955000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -3875,11 +3787,6 @@ b100 Q&
 0*
 #975000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -3934,8 +3841,6 @@ b0 Q&
 0*
 #1015000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -3963,9 +3868,6 @@ b1111000 3&
 0*
 #1035000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -3989,9 +3891,6 @@ b1111010 3&
 0*
 #1055000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -4019,9 +3918,6 @@ b1110 Q&
 0*
 #1075000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4047,11 +3943,6 @@ b1100 Q&
 0*
 #1095000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -4162,8 +4053,6 @@ b100 Q&
 0*
 #1175000
 b1001 N&
-1.
-1M&
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -4193,9 +4082,6 @@ b10 Q&
 0*
 #1195000
 b1010 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4223,9 +4109,6 @@ b0 Q&
 0*
 #1215000
 b1010 N&
-0H
-0I
-0-
 b1010 A&
 b1001100110 ?&
 b1010 9&
@@ -4253,9 +4136,6 @@ b10001100 3&
 0*
 #1235000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4277,9 +4157,6 @@ b10001110 3&
 0*
 #1255000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -4307,9 +4184,6 @@ b1110 Q&
 0*
 #1275000
 b1100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4337,9 +4211,6 @@ b1100 Q&
 0*
 #1295000
 b1100 N&
-0H
-0I
-0-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -4369,9 +4240,6 @@ b1010 Q&
 0*
 #1315000
 b1101 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4397,11 +4265,6 @@ b1000 Q&
 0*
 #1335000
 b1101 N&
-0.
-0M&
-0H
-0I
-0-
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -4562,8 +4425,6 @@ b10100010 3&
 0*
 #1455000
 b0 N&
-1.
-1M&
 b10000 A&
 b1001100110011001 ?&
 b10000 9&
@@ -4589,9 +4450,6 @@ b10100100 3&
 0*
 #1475000
 b1 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4622,8 +4480,6 @@ b10100110 3&
 0*
 #1495000
 b0 H&
-0.
-0M&
 1E&
 1L&
 b10100111 3&
@@ -4698,8 +4554,6 @@ b10110000 3&
 0*
 #1595000
 b10110001 3&
-b1101011001111000 p%
-b1101011001111000 o%
 1f"
 1*
 #1600000
@@ -4757,11 +4611,6 @@ b1100110 3&
 0*
 #1655000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b110011001 1
 b110011001 4&
 b110011001 D&
@@ -4770,6 +4619,7 @@ b1 9&
 b1 7&
 b110011001 0
 b110011001 <&
+b110011001 I&
 b110011001 >&
 b1 A&
 b1 ?&
@@ -4794,9 +4644,6 @@ b1101000 3&
 0*
 #1675000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4820,11 +4667,6 @@ b1101010 3&
 0*
 #1695000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -4879,8 +4721,6 @@ bz ;$
 0*
 #1735000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -4912,9 +4752,6 @@ b0 ;$
 0*
 #1755000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -4938,11 +4775,6 @@ b1110010 3&
 0*
 #1775000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -4989,8 +4821,6 @@ b1110110 3&
 0*
 #1815000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -5016,9 +4846,6 @@ b1111000 3&
 0*
 #1835000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -5042,9 +4869,6 @@ b1111010 3&
 0*
 #1855000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -5070,9 +4894,6 @@ b1111100 3&
 0*
 #1875000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -5094,11 +4915,6 @@ b1111110 3&
 0*
 #1895000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -5149,6 +4965,8 @@ b10000010 3&
 0*
 #1935000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -5170,8 +4988,8 @@ b10000011 3&
 0*
 #1945000
 b10000100 3&
-b11111111111000000000000001100110011001100000100001100110000001100000011001 Y%
-b11111111111000000000000001100110011001100000100001100110000001100000011001 X%
+b100000000000000000000000000000 Y%
+b100000000000000000000000000000 X%
 1f"
 1*
 #1950000
@@ -5181,17 +4999,14 @@ b11111111111000000000000001100110011001100000100001100110000001100000011001 X%
 b1001 H&
 b100000000 +#
 b100000000 ,#
-0H
-0I
-0-
 0L&
 1F&
 1K&
 0E&
 1J&
 b10000101 3&
-b11111111111000000000000001100110011001100001100001100110000001100000011001 Y%
-b11111111111000000000000001100110011001100001100001100110000001100000011001 X%
+b1100000000000000000000000000000 Y%
+b1100000000000000000000000000000 X%
 0#
 1f"
 1*
@@ -5200,6 +5015,8 @@ b11111111111000000000000001100110011001100001100001100110000001100000011001 X%
 0*
 #1965000
 b10000110 3&
+b11100000000000000000000000000000 Y%
+b11100000000000000000000000000000 X%
 1f"
 1*
 #1970000
@@ -5207,11 +5024,8 @@ b10000110 3&
 0*
 #1975000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
+b10000000 -#
+b10000000 .#
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -5222,6 +5036,8 @@ b100110011 ?&
 1E&
 0J&
 b10000111 3&
+b111100000000000000000000000000000 Y%
+b111100000000000000000000000000000 X%
 1#
 1f"
 1*
@@ -5230,8 +5046,8 @@ b10000111 3&
 0*
 #1985000
 b10001000 3&
-b11111111111000000000000001100110011001101001100001100110000001100000011001 Y%
-b11111111111000000000000001100110011001101001100001100110000001100000011001 X%
+b1111100000000000000000000000000000 Y%
+b1111100000000000000000000000000000 X%
 1f"
 1*
 #1990000
@@ -5249,8 +5065,8 @@ b110000000 ,#
 0E&
 1J&
 b10001001 3&
-b11111111111000000000000001100110011001111001100001100110000001100000011001 Y%
-b11111111111000000000000001100110011001111001100001100110000001100000011001 X%
+b11111100000000000000000000000000000 Y%
+b11111100000000000000000000000000000 X%
 0$
 0=$
 0#
@@ -5261,6 +5077,8 @@ b11111111111000000000000001100110011001111001100001100110000001100000011001 X%
 0*
 #2005000
 b10001010 3&
+b111111100000000000000000000000000000 Y%
+b111111100000000000000000000000000000 X%
 1f"
 1*
 #2010000
@@ -5268,6 +5086,10 @@ b10001010 3&
 0*
 #2015000
 b1010 N&
+0.
+0M&
+b11000000 -#
+b11000000 .#
 0H
 0I
 0-
@@ -5281,6 +5103,8 @@ b1001100110 7&
 1E&
 0J&
 b10001011 3&
+b1111111100000000000000000000000000000 Y%
+b1111111100000000000000000000000000000 X%
 1#
 1f"
 1*
@@ -5296,9 +5120,6 @@ b10001100 3&
 0*
 #2035000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -5320,9 +5141,6 @@ b10001110 3&
 0*
 #2055000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -5350,9 +5168,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -5376,6 +5191,11 @@ b10010010 3&
 0*
 #2095000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -5394,8 +5214,8 @@ b10010011 3&
 0*
 #2105000
 b10010100 3&
-b11111111111000000000000001101110011001111001100001100110000001100000011001 Y%
-b11111111111000000000000001101110011001111001100001100110000001100000011001 X%
+b1000000001111111100000000000000000000000000000 Y%
+b1000000001111111100000000000000000000000000000 X%
 1f"
 1*
 #2110000
@@ -5411,8 +5231,8 @@ b110010000 ,#
 0E&
 1J&
 b10010101 3&
-b11111111111000000000000001111110011001111001100001100110000001100000011001 Y%
-b11111111111000000000000001111110011001111001100001100110000001100000011001 X%
+b11000000001111111100000000000000000000000000000 Y%
+b11000000001111111100000000000000000000000000000 X%
 0#
 1f"
 1*
@@ -5421,6 +5241,8 @@ b11111111111000000000000001111110011001111001100001100110000001100000011001 X%
 0*
 #2125000
 b10010110 3&
+b111000000001111111100000000000000000000000000000 Y%
+b111000000001111111100000000000000000000000000000 X%
 1f"
 1*
 #2130000
@@ -5428,8 +5250,8 @@ b10010110 3&
 0*
 #2135000
 b1101 N&
-0.
-0M&
+b11001000 -#
+b11001000 .#
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -5440,6 +5262,8 @@ b1001100110011 ?&
 1E&
 0J&
 b10010111 3&
+b1111000000001111111100000000000000000000000000000 Y%
+b1111000000001111111100000000000000000000000000000 X%
 1#
 1f"
 1*
@@ -5448,8 +5272,8 @@ b10010111 3&
 0*
 #2145000
 b10011000 3&
-b11111111111000000000000011111110011001111001100001100110000001100000011001 Y%
-b11111111111000000000000011111110011001111001100001100110000001100000011001 X%
+b11111000000001111111100000000000000000000000000000 Y%
+b11111000000001111111100000000000000000000000000000 X%
 1f"
 1*
 #2150000
@@ -5461,17 +5285,14 @@ b1110 H&
 0G&
 b110011000 +#
 b110011000 ,#
-0H
-0I
-0-
 0L&
 1F&
 1K&
 0E&
 1J&
 b10011001 3&
-b11111111111000000000000111111110011001111001100001100110000001100000011001 Y%
-b11111111111000000000000111111110011001111001100001100110000001100000011001 X%
+b111111000000001111111100000000000000000000000000000 Y%
+b111111000000001111111100000000000000000000000000000 X%
 0$
 0=$
 0#
@@ -5482,6 +5303,8 @@ b11111111111000000000000111111110011001111001100001100110000001100000011001 X%
 0*
 #2165000
 b10011010 3&
+b1111111000000001111111100000000000000000000000000000 Y%
+b1111111000000001111111100000000000000000000000000000 X%
 1f"
 1*
 #2170000
@@ -5489,6 +5312,13 @@ b10011010 3&
 0*
 #2175000
 b1110 N&
+0.
+0M&
+b11001100 -#
+b11001100 .#
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -5499,6 +5329,8 @@ b10011001100110 7&
 1E&
 0J&
 b10011011 3&
+b11111111000000001111111100000000000000000000000000000 Y%
+b11111111000000001111111100000000000000000000000000000 X%
 1#
 1f"
 1*
@@ -5608,8 +5440,8 @@ b10100011 3&
 0*
 #2265000
 b10100100 3&
-b11111111111010000000000111111110011001111001100001100110000001100000011001 Y%
-b11111111111010000000000111111110011001111001100001100110000001100000011001 X%
+b10000000011111111000000001111111100000000000000000000000000000 Y%
+b10000000011111111000000001111111100000000000000000000000000000 X%
 1f"
 1*
 #2270000
@@ -5627,8 +5459,8 @@ b110011001 ,#
 0E&
 1J&
 b10100101 3&
-b11111111111110000000000111111110011001111001100001100110000001100000011001 Y%
-b11111111111110000000000111111110011001111001100001100110000001100000011001 X%
+b110000000011111111000000001111111100000000000000000000000000000 Y%
+b110000000011111111000000001111111100000000000000000000000000000 X%
 0D$
 0C$
 0B$
@@ -5646,18 +5478,25 @@ b11111111111110000000000111111110011001111001100001100110000001100000011001 X%
 0*
 #2285000
 b10100110 3&
+b1110000000011111111000000001111111100000000000000000000000000000 Y%
+b1110000000011111111000000001111111100000000000000000000000000000 X%
 1f"
 1*
 #2290000
 0f"
 0*
 #2295000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
 1E&
 1L&
 b10100111 3&
+b11110000000011111111000000001111111100000000000000000000000000000 Y%
+b11110000000011111111000000001111111100000000000000000000000000000 X%
 1%
 1f"
 1*
@@ -5731,6 +5570,8 @@ b10110000 3&
 b10110001 3&
 b110011001 x%
 b110011001 w%
+b11001100 p%
+b11001100 o%
 1f"
 1*
 #2400000
@@ -5788,11 +5629,6 @@ b1100110 3&
 0*
 #2455000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -5818,9 +5654,6 @@ b1101000 3&
 0*
 #2475000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -5844,11 +5677,6 @@ b1101010 3&
 0*
 #2495000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -5903,8 +5731,6 @@ bz ;$
 0*
 #2535000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -5936,9 +5762,6 @@ b0 ;$
 0*
 #2555000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -5962,11 +5785,6 @@ b1110010 3&
 0*
 #2575000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -6013,8 +5831,6 @@ b1110110 3&
 0*
 #2615000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -6040,9 +5856,6 @@ b1111000 3&
 0*
 #2635000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -6066,9 +5879,6 @@ b1111010 3&
 0*
 #2655000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -6094,9 +5904,6 @@ b1111100 3&
 0*
 #2675000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -6118,11 +5925,6 @@ b1111110 3&
 0*
 #2695000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -6173,6 +5975,8 @@ b10000010 3&
 0*
 #2735000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -6201,9 +6005,6 @@ b10000100 3&
 0*
 #2755000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -6225,11 +6026,6 @@ b10000110 3&
 0*
 #2775000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -6280,6 +6076,8 @@ b10001010 3&
 0*
 #2815000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -6308,9 +6106,6 @@ b10001100 3&
 0*
 #2835000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -6332,9 +6127,6 @@ b10001110 3&
 0*
 #2855000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -6362,9 +6154,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -6388,6 +6177,11 @@ b10010010 3&
 0*
 #2895000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -6434,8 +6228,6 @@ b10010110 3&
 0*
 #2935000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -6463,9 +6255,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -6489,6 +6278,11 @@ b10011010 3&
 0*
 #2975000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -6646,6 +6440,9 @@ b10100110 3&
 0f"
 0*
 #3095000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -6780,11 +6577,6 @@ b1100110 3&
 0*
 #3255000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -6810,9 +6602,6 @@ b1101000 3&
 0*
 #3275000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -6836,11 +6625,6 @@ b1101010 3&
 0*
 #3295000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -6895,8 +6679,6 @@ bz ;$
 0*
 #3335000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -6928,9 +6710,6 @@ b0 ;$
 0*
 #3355000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -6954,11 +6733,6 @@ b1110010 3&
 0*
 #3375000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -7005,8 +6779,6 @@ b1110110 3&
 0*
 #3415000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -7032,9 +6804,6 @@ b1111000 3&
 0*
 #3435000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -7058,9 +6827,6 @@ b1111010 3&
 0*
 #3455000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -7086,9 +6852,6 @@ b1111100 3&
 0*
 #3475000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -7110,11 +6873,6 @@ b1111110 3&
 0*
 #3495000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -7165,6 +6923,8 @@ b10000010 3&
 0*
 #3535000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -7193,9 +6953,6 @@ b10000100 3&
 0*
 #3555000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -7217,11 +6974,6 @@ b10000110 3&
 0*
 #3575000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -7272,6 +7024,8 @@ b10001010 3&
 0*
 #3615000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -7300,9 +7054,6 @@ b10001100 3&
 0*
 #3635000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -7324,9 +7075,6 @@ b10001110 3&
 0*
 #3655000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -7354,9 +7102,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -7380,6 +7125,11 @@ b10010010 3&
 0*
 #3695000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -7426,8 +7176,6 @@ b10010110 3&
 0*
 #3735000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -7455,9 +7203,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -7481,6 +7226,11 @@ b10011010 3&
 0*
 #3775000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -7638,6 +7388,9 @@ b10100110 3&
 0f"
 0*
 #3895000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -7772,11 +7525,6 @@ b1100110 3&
 0*
 #4055000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -7802,9 +7550,6 @@ b1101000 3&
 0*
 #4075000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -7828,11 +7573,6 @@ b1101010 3&
 0*
 #4095000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -7887,8 +7627,6 @@ bz ;$
 0*
 #4135000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -7920,9 +7658,6 @@ b0 ;$
 0*
 #4155000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -7946,11 +7681,6 @@ b1110010 3&
 0*
 #4175000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -7997,8 +7727,6 @@ b1110110 3&
 0*
 #4215000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -8024,9 +7752,6 @@ b1111000 3&
 0*
 #4235000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -8050,9 +7775,6 @@ b1111010 3&
 0*
 #4255000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -8078,9 +7800,6 @@ b1111100 3&
 0*
 #4275000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -8102,11 +7821,6 @@ b1111110 3&
 0*
 #4295000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -8157,6 +7871,8 @@ b10000010 3&
 0*
 #4335000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -8185,9 +7901,6 @@ b10000100 3&
 0*
 #4355000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -8209,11 +7922,6 @@ b10000110 3&
 0*
 #4375000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -8264,6 +7972,8 @@ b10001010 3&
 0*
 #4415000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -8292,9 +8002,6 @@ b10001100 3&
 0*
 #4435000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -8316,9 +8023,6 @@ b10001110 3&
 0*
 #4455000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -8346,9 +8050,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -8372,6 +8073,11 @@ b10010010 3&
 0*
 #4495000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -8418,8 +8124,6 @@ b10010110 3&
 0*
 #4535000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -8447,9 +8151,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -8473,6 +8174,11 @@ b10011010 3&
 0*
 #4575000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -8630,6 +8336,9 @@ b10100110 3&
 0f"
 0*
 #4695000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -8764,11 +8473,6 @@ b1100110 3&
 0*
 #4855000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -8794,9 +8498,6 @@ b1101000 3&
 0*
 #4875000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -8820,11 +8521,6 @@ b1101010 3&
 0*
 #4895000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -8879,8 +8575,6 @@ bz ;$
 0*
 #4935000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -8912,9 +8606,6 @@ b0 ;$
 0*
 #4955000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -8938,11 +8629,6 @@ b1110010 3&
 0*
 #4975000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -8989,8 +8675,6 @@ b1110110 3&
 0*
 #5015000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -9016,9 +8700,6 @@ b1111000 3&
 0*
 #5035000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -9042,9 +8723,6 @@ b1111010 3&
 0*
 #5055000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -9070,9 +8748,6 @@ b1111100 3&
 0*
 #5075000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -9094,11 +8769,6 @@ b1111110 3&
 0*
 #5095000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -9149,6 +8819,8 @@ b10000010 3&
 0*
 #5135000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -9177,9 +8849,6 @@ b10000100 3&
 0*
 #5155000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -9201,11 +8870,6 @@ b10000110 3&
 0*
 #5175000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -9256,6 +8920,8 @@ b10001010 3&
 0*
 #5215000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -9284,9 +8950,6 @@ b10001100 3&
 0*
 #5235000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -9308,9 +8971,6 @@ b10001110 3&
 0*
 #5255000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -9338,9 +8998,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -9364,6 +9021,11 @@ b10010010 3&
 0*
 #5295000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -9410,8 +9072,6 @@ b10010110 3&
 0*
 #5335000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -9439,9 +9099,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -9465,6 +9122,11 @@ b10011010 3&
 0*
 #5375000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -9622,6 +9284,9 @@ b10100110 3&
 0f"
 0*
 #5495000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -9756,11 +9421,6 @@ b1100110 3&
 0*
 #5655000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -9786,9 +9446,6 @@ b1101000 3&
 0*
 #5675000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -9812,11 +9469,6 @@ b1101010 3&
 0*
 #5695000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -9871,8 +9523,6 @@ bz ;$
 0*
 #5735000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -9904,9 +9554,6 @@ b0 ;$
 0*
 #5755000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -9930,11 +9577,6 @@ b1110010 3&
 0*
 #5775000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -9981,8 +9623,6 @@ b1110110 3&
 0*
 #5815000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -10008,9 +9648,6 @@ b1111000 3&
 0*
 #5835000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -10034,9 +9671,6 @@ b1111010 3&
 0*
 #5855000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -10062,9 +9696,6 @@ b1111100 3&
 0*
 #5875000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -10086,11 +9717,6 @@ b1111110 3&
 0*
 #5895000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -10141,6 +9767,8 @@ b10000010 3&
 0*
 #5935000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -10169,9 +9797,6 @@ b10000100 3&
 0*
 #5955000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -10193,11 +9818,6 @@ b10000110 3&
 0*
 #5975000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -10248,6 +9868,8 @@ b10001010 3&
 0*
 #6015000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -10276,9 +9898,6 @@ b10001100 3&
 0*
 #6035000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -10300,9 +9919,6 @@ b10001110 3&
 0*
 #6055000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -10330,9 +9946,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -10356,6 +9969,11 @@ b10010010 3&
 0*
 #6095000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -10402,8 +10020,6 @@ b10010110 3&
 0*
 #6135000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -10431,9 +10047,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -10457,6 +10070,11 @@ b10011010 3&
 0*
 #6175000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -10614,6 +10232,9 @@ b10100110 3&
 0f"
 0*
 #6295000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -10748,11 +10369,6 @@ b1100110 3&
 0*
 #6455000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -10778,9 +10394,6 @@ b1101000 3&
 0*
 #6475000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -10804,11 +10417,6 @@ b1101010 3&
 0*
 #6495000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -10863,8 +10471,6 @@ bz ;$
 0*
 #6535000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -10896,9 +10502,6 @@ b0 ;$
 0*
 #6555000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -10922,11 +10525,6 @@ b1110010 3&
 0*
 #6575000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -10973,8 +10571,6 @@ b1110110 3&
 0*
 #6615000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -11000,9 +10596,6 @@ b1111000 3&
 0*
 #6635000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -11026,9 +10619,6 @@ b1111010 3&
 0*
 #6655000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -11054,9 +10644,6 @@ b1111100 3&
 0*
 #6675000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -11078,11 +10665,6 @@ b1111110 3&
 0*
 #6695000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -11133,6 +10715,8 @@ b10000010 3&
 0*
 #6735000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -11161,9 +10745,6 @@ b10000100 3&
 0*
 #6755000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -11185,11 +10766,6 @@ b10000110 3&
 0*
 #6775000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -11240,6 +10816,8 @@ b10001010 3&
 0*
 #6815000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -11268,9 +10846,6 @@ b10001100 3&
 0*
 #6835000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -11292,9 +10867,6 @@ b10001110 3&
 0*
 #6855000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -11322,9 +10894,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -11348,6 +10917,11 @@ b10010010 3&
 0*
 #6895000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -11394,8 +10968,6 @@ b10010110 3&
 0*
 #6935000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -11423,9 +10995,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -11449,6 +11018,11 @@ b10011010 3&
 0*
 #6975000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -11606,6 +11180,9 @@ b10100110 3&
 0f"
 0*
 #7095000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -11740,11 +11317,6 @@ b1100110 3&
 0*
 #7255000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -11770,9 +11342,6 @@ b1101000 3&
 0*
 #7275000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -11796,11 +11365,6 @@ b1101010 3&
 0*
 #7295000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -11855,8 +11419,6 @@ bz ;$
 0*
 #7335000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -11888,9 +11450,6 @@ b0 ;$
 0*
 #7355000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -11914,11 +11473,6 @@ b1110010 3&
 0*
 #7375000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -11965,8 +11519,6 @@ b1110110 3&
 0*
 #7415000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -11992,9 +11544,6 @@ b1111000 3&
 0*
 #7435000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -12018,9 +11567,6 @@ b1111010 3&
 0*
 #7455000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -12046,9 +11592,6 @@ b1111100 3&
 0*
 #7475000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -12070,11 +11613,6 @@ b1111110 3&
 0*
 #7495000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -12125,6 +11663,8 @@ b10000010 3&
 0*
 #7535000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -12153,9 +11693,6 @@ b10000100 3&
 0*
 #7555000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -12177,11 +11714,6 @@ b10000110 3&
 0*
 #7575000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -12232,6 +11764,8 @@ b10001010 3&
 0*
 #7615000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -12260,9 +11794,6 @@ b10001100 3&
 0*
 #7635000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -12284,9 +11815,6 @@ b10001110 3&
 0*
 #7655000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -12314,9 +11842,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -12340,6 +11865,11 @@ b10010010 3&
 0*
 #7695000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -12386,8 +11916,6 @@ b10010110 3&
 0*
 #7735000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -12415,9 +11943,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -12441,6 +11966,11 @@ b10011010 3&
 0*
 #7775000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -12598,6 +12128,9 @@ b10100110 3&
 0f"
 0*
 #7895000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -12732,11 +12265,6 @@ b1100110 3&
 0*
 #8055000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -12762,9 +12290,6 @@ b1101000 3&
 0*
 #8075000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -12788,11 +12313,6 @@ b1101010 3&
 0*
 #8095000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -12847,8 +12367,6 @@ bz ;$
 0*
 #8135000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -12880,9 +12398,6 @@ b0 ;$
 0*
 #8155000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -12906,11 +12421,6 @@ b1110010 3&
 0*
 #8175000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -12957,8 +12467,6 @@ b1110110 3&
 0*
 #8215000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -12984,9 +12492,6 @@ b1111000 3&
 0*
 #8235000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -13010,9 +12515,6 @@ b1111010 3&
 0*
 #8255000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -13038,9 +12540,6 @@ b1111100 3&
 0*
 #8275000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -13062,11 +12561,6 @@ b1111110 3&
 0*
 #8295000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -13117,6 +12611,8 @@ b10000010 3&
 0*
 #8335000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -13145,9 +12641,6 @@ b10000100 3&
 0*
 #8355000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -13169,11 +12662,6 @@ b10000110 3&
 0*
 #8375000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -13224,6 +12712,8 @@ b10001010 3&
 0*
 #8415000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -13252,9 +12742,6 @@ b10001100 3&
 0*
 #8435000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -13276,9 +12763,6 @@ b10001110 3&
 0*
 #8455000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -13306,9 +12790,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -13332,6 +12813,11 @@ b10010010 3&
 0*
 #8495000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -13378,8 +12864,6 @@ b10010110 3&
 0*
 #8535000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -13407,9 +12891,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -13433,6 +12914,11 @@ b10011010 3&
 0*
 #8575000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&
@@ -13590,6 +13076,9 @@ b10100110 3&
 0f"
 0*
 #8695000
+0H
+0I
+0-
 b0 H&
 0.
 0M&
@@ -13724,11 +13213,6 @@ b1100110 3&
 0*
 #8855000
 b1 N&
-1.
-1M&
-0H
-0I
-0-
 b1 9&
 b1 7&
 b1 A&
@@ -13754,9 +13238,6 @@ b1101000 3&
 0*
 #8875000
 b10 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -13780,11 +13261,6 @@ b1101010 3&
 0*
 #8895000
 b10 N&
-0.
-0M&
-0H
-0I
-0-
 b10 A&
 b10 ?&
 b10 9&
@@ -13839,8 +13315,6 @@ bz ;$
 0*
 #8935000
 b11 N&
-1.
-1M&
 b11 9&
 b100 7&
 b11 A&
@@ -13872,9 +13346,6 @@ b0 ;$
 0*
 #8955000
 b100 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -13898,11 +13369,6 @@ b1110010 3&
 0*
 #8975000
 b100 N&
-0.
-0M&
-0H
-0I
-0-
 b100 A&
 b1001 ?&
 b100 9&
@@ -13949,8 +13415,6 @@ b1110110 3&
 0*
 #9015000
 b101 N&
-1.
-1M&
 b101 9&
 b10011 7&
 b101 A&
@@ -13976,9 +13440,6 @@ b1111000 3&
 0*
 #9035000
 b110 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -14002,9 +13463,6 @@ b1111010 3&
 0*
 #9055000
 b110 N&
-0H
-0I
-0-
 b110 A&
 b100110 ?&
 b110 9&
@@ -14030,9 +13488,6 @@ b1111100 3&
 0*
 #9075000
 b111 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -14054,11 +13509,6 @@ b1111110 3&
 0*
 #9095000
 b111 N&
-0.
-0M&
-0H
-0I
-0-
 b111 9&
 b1001100 7&
 b111 A&
@@ -14109,6 +13559,8 @@ b10000010 3&
 0*
 #9135000
 b1000 N&
+1.
+1M&
 1H
 1I
 1-
@@ -14137,9 +13589,6 @@ b10000100 3&
 0*
 #9155000
 b1001 H&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -14161,11 +13610,6 @@ b10000110 3&
 0*
 #9175000
 b1001 N&
-1.
-1M&
-1H
-1I
-1-
 b1001 9&
 b100110011 7&
 b1001 A&
@@ -14216,6 +13660,8 @@ b10001010 3&
 0*
 #9215000
 b1010 N&
+0.
+0M&
 0H
 0I
 0-
@@ -14244,9 +13690,6 @@ b10001100 3&
 0*
 #9235000
 b1011 H&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -14268,9 +13711,6 @@ b10001110 3&
 0*
 #9255000
 b1011 N&
-0H
-0I
-0-
 b1011 9&
 b10011001100 7&
 b1011 A&
@@ -14298,9 +13738,6 @@ b10010000 3&
 b1100 H&
 1/
 1G&
-1H
-1I
-1-
 0L&
 1F&
 1K&
@@ -14324,6 +13761,11 @@ b10010010 3&
 0*
 #9295000
 b1100 N&
+1.
+1M&
+1H
+1I
+1-
 b1100 A&
 b100110011001 ?&
 b1100 9&
@@ -14370,8 +13812,6 @@ b10010110 3&
 0*
 #9335000
 b1101 N&
-0.
-0M&
 b1101 9&
 b1001100110011 7&
 b1101 A&
@@ -14399,9 +13839,6 @@ b10011000 3&
 b1110 H&
 0/
 0G&
-0H
-0I
-0-
 0L&
 1F&
 1K&
@@ -14425,6 +13862,11 @@ b10011010 3&
 0*
 #9375000
 b1110 N&
+0.
+0M&
+0H
+0I
+0-
 b1110 A&
 b10011001100110 ?&
 b1110 9&

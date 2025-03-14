@@ -60,13 +60,14 @@ end
 		.clk(~SCLK_wire),
 		.reset(reset), 
 		.CS(CS_b_wire),
-		.MISO_full(miso_test_reg),
-		//.MISO_full(MISO_b),
+		//.MISO_full(miso_test_reg),
+		.MISO_full(MISO_b),
 		.MISO(MISO_bit_b)
 	);
 
 	ddr_mux ddr_mux (
-		.clk(SCLK_wire),       
+		.clk(SCLK_wire),     
+		.CS(CS_b_wire),  
     	.miso_a(MISO_bit_a),    
     	.miso_b(MISO_bit_b),    
     	.miso_ddr(miso_ddr)  
@@ -268,10 +269,15 @@ endmodule
 
 module ddr_mux (
     input wire clk,    // SCLK
+	input wire CS, 	   // CS
     input wire miso_a, // Input sampled on rising edge
     input wire miso_b, // Input sampled on falling edge
     output reg miso_ddr // 1-bit DDR output
 );
+
+	always @(posedge CS) begin
+        miso_ddr <= 1'b0; // Reset miso_ddr on CS
+    end
 
     always @(posedge clk) begin
         miso_ddr <= miso_a; // Output miso_a on rising edge
