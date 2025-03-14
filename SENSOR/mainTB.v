@@ -115,7 +115,7 @@ dut2(
         // repeat (1) @(posedge clk);
 
         // transmit_spi(data_to_send, clk, CS, MOSI);
-        repeat (250) @(posedge clk);
+        repeat (800) @(posedge clk);
         $finish;
     end
 

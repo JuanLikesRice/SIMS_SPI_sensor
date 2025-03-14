@@ -24,7 +24,7 @@ end
         .clk(clk),
         .reset(reset),
         .MOSI_to_sensor(MOSI_to_sensor), // This you care
-		.MISO_from_sensor(MISO_from_sensor),
+		.MISO_from_sensor(miso_ddr),
         .SCLK_wire(SCLK_wire),// This you care
         .CS_b_wire(CS_b_wire), // This you care
         .sample_CLK_out(sample_CLK_out)
@@ -56,8 +56,8 @@ end
 	);
 
 	shift_reg shift_reg_b (
-		.clk(SCLK_wire),
-		//.clk(~SCLK_wire),
+		//.clk(SCLK_wire),
+		.clk(~SCLK_wire),
 		.reset(reset), 
 		.CS(CS_b_wire),
 		.MISO_full(miso_test_reg),
@@ -238,9 +238,23 @@ module shift_reg (
 	initial begin
 		bit_pointer = 4'b0;
 	end
+	wire special_clk;
+	assign special_clk = clk | CS;
+	wire special_clk_ddr;
+	assign special_clk_ddr = ~clk | CS;
 
 	// Shift Reg MISO bit by bit output
-	always @ (posedge clk or posedge reset or posedge CS) begin
+	// always @ (posedge clk or posedge reset or posedge CS) begin
+	// 	if (reset || CS) begin
+	// 		MISO_bit_reg <= 1'b0;
+	// 		bit_pointer <= 4'b0;
+	// 	end else if (!CS && (bit_pointer < 16)) begin
+	// 		MISO_bit_reg <= MISO_full[15 - bit_pointer];  // MSB first
+	// 		bit_pointer <= bit_pointer + 1;         // Move to the next bit
+	// 	end
+	// end
+
+	always @ (negedge special_clk or posedge reset or posedge CS) begin
 		if (reset || CS) begin
 			MISO_bit_reg <= 1'b0;
 			bit_pointer <= 4'b0;
@@ -399,6 +413,8 @@ output reg  sample_CLK_out
 	reg			MOSI_A, MOSI_B, MOSI_C, MOSI_D, MOSI_E, MOSI_F, MOSI_G, MOSI_H;
 	wire        MISO_A1, MISO_A2;
 
+
+// signals_you_care_about
 	assign MISO_A1 = MISO_from_sensor;
 	assign MISO_A2 = MISO_from_sensor;
 
@@ -441,7 +457,7 @@ output reg  sample_CLK_out
 		
 	reg [5:0] 		channel, channel_MISO;  // varies from 0-34 (amplfier channels 0-31, plus 3 auxiliary commands)
 	reg [15:0] 		MOSI_cmd_A, MOSI_cmd_B, MOSI_cmd_C, MOSI_cmd_D, MOSI_cmd_E, MOSI_cmd_F, MOSI_cmd_G, MOSI_cmd_H;
-	
+	// signals_you_care_about
 	reg [73:0] 		in4x_A1, in4x_A2;
 	reg [73:0] 		in4x_B1, in4x_B2;
 	reg [73:0] 		in4x_C1, in4x_C2;
@@ -612,6 +628,15 @@ output reg  sample_CLK_out
 	wire serial_CLK_auto, serial_LOAD_auto;
     
     		
+	assign delay_A			   		= 4'd0;
+	assign data_stream_1_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign data_stream_2_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign data_stream_3_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign data_stream_4_en_in 		= 1'b1; // 						ep14wirein[0];
+	assign num_data_streams_enabled = 5'd4; //						
+
+
+
 	wire [5:0] num_data_streams_enabled;
 	assign num_data_streams_enabled =
 		data_stream_1_en + data_stream_2_en + data_stream_3_en + data_stream_4_en + 
@@ -868,6 +893,7 @@ output reg  sample_CLK_out
 					end
 
 					SCLK <= 1'b1;
+					// signals_you_care_about
 					in4x_A1[0] <= MISO_A1; in4x_A2[0] <= MISO_A2;
 					// in4x_B1[0] <= MISO_B1; in4x_B2[0] <= MISO_B2;
 					// in4x_C1[0] <= MISO_C1; in4x_C2[0] <= MISO_C2;
@@ -2893,6 +2919,28 @@ output reg  sample_CLK_out
 	
 
 
+	// signals_you_care_about
+
+	// Normal selector
+	MISO_phase_selector MISO_phase_selector_1 (
+		.phase_select(delay_A), .MISO4x(in4x_A1), .MISO(in_A1));	
+
+	MISO_phase_selector MISO_phase_selector_2 (
+		.phase_select(delay_A), .MISO4x(in4x_A2), .MISO(in_A2));	
+
+
+	// DDR selector
+	MISO_DDR_phase_selector MISO_DDR_phase_selector_1 (
+		.phase_select(delay_A), .MISO4x(in4x_A1), .MISO(in_DDR_A1));	
+
+	MISO_DDR_phase_selector MISO_DDR_phase_selector_2 (
+		.phase_select(delay_A), .MISO4x(in4x_A2), .MISO(in_DDR_A2));	
+
+    // lookup_table_case #(.OUT_WIDTH(7)) lookup_table_case (
+    //     .in(reg_value),
+    //     .out(address_ofset)
+    // );
+
 
 
 
@@ -3046,5 +3094,62 @@ module command_selector (
 endmodule
 
 
+
+
+
+
+
+module MISO_phase_selector(
+	input wire [3:0] 		phase_select,	// MISO sampling phase lag to compensate for headstage cable delay
+	input wire [73:0] 	MISO4x,			// 4x oversampled MISO input
+	output reg [15:0] 	MISO				// 16-bit MISO output
+	);
+
+	always @(*) begin
+		case (phase_select)
+			0:       MISO <= {MISO4x[0],  MISO4x[4],  MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60]};
+			1:       MISO <= {MISO4x[1],  MISO4x[5],  MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61]};
+			2:       MISO <= {MISO4x[2],  MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62]};
+			3:       MISO <= {MISO4x[3],  MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63]};
+			4:       MISO <= {MISO4x[4],  MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64]};
+			5:       MISO <= {MISO4x[5],  MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65]};
+			6:       MISO <= {MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66]};
+			7:       MISO <= {MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67]};
+			8:       MISO <= {MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64], MISO4x[68]};
+			9:       MISO <= {MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69]};
+			10:      MISO <= {MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66], MISO4x[70]};
+			11:      MISO <= {MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67], MISO4x[71]};
+			default: MISO <= {MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67], MISO4x[71]};
+		endcase
+	end
+	
+endmodule
+
+
+module MISO_DDR_phase_selector(
+	input wire [3:0] 		phase_select,	// MISO sampling phase lag to compensate for headstage cable delay
+	input wire [73:0] 	MISO4x,			// 4x oversampled MISO input
+	output reg [15:0] 	MISO				// 16-bit MISO output
+	);
+	
+	always @(*) begin
+		case (phase_select)
+			0:       MISO <= {MISO4x[2],  MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62]};
+			1:       MISO <= {MISO4x[3],  MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63]};
+			2:       MISO <= {MISO4x[4],  MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64]};
+			3:       MISO <= {MISO4x[5],  MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65]};
+			4:       MISO <= {MISO4x[6],  MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66]};
+			5:       MISO <= {MISO4x[7],  MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67]};
+			6:       MISO <= {MISO4x[8],  MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64], MISO4x[68]};
+			7:       MISO <= {MISO4x[9],  MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69]};
+			8:       MISO <= {MISO4x[10], MISO4x[14], MISO4x[18], MISO4x[22], MISO4x[26], MISO4x[30], MISO4x[34], MISO4x[38], MISO4x[42], MISO4x[46], MISO4x[50], MISO4x[54], MISO4x[58], MISO4x[62], MISO4x[66], MISO4x[70]};
+			9:       MISO <= {MISO4x[11], MISO4x[15], MISO4x[19], MISO4x[23], MISO4x[27], MISO4x[31], MISO4x[35], MISO4x[39], MISO4x[43], MISO4x[47], MISO4x[51], MISO4x[55], MISO4x[59], MISO4x[63], MISO4x[67], MISO4x[71]};
+			10:      MISO <= {MISO4x[12], MISO4x[16], MISO4x[20], MISO4x[24], MISO4x[28], MISO4x[32], MISO4x[36], MISO4x[40], MISO4x[44], MISO4x[48], MISO4x[52], MISO4x[56], MISO4x[60], MISO4x[64], MISO4x[68], MISO4x[72]};
+			11:      MISO <= {MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69], MISO4x[73]};
+			default: MISO <= {MISO4x[13], MISO4x[17], MISO4x[21], MISO4x[25], MISO4x[29], MISO4x[33], MISO4x[37], MISO4x[41], MISO4x[45], MISO4x[49], MISO4x[53], MISO4x[57], MISO4x[61], MISO4x[65], MISO4x[69], MISO4x[73]};
+		endcase
+	end
+	
+endmodule
 
 
