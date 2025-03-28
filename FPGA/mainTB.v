@@ -277,6 +277,8 @@ always @(posedge clk) begin
         @(posedge clk); 
         ep40trigin <= 0;
     end
+  endtask
+
   task modify_ep40trigin(input [31:0] new_value);
     begin
         ep40trigin <= 0;

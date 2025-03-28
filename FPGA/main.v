@@ -80,7 +80,7 @@ wire fpgain_fifoout_ready_refile;
 		.ep24wireout(ep24wireout),
 
 
-		.fpgain_fifoout_ready_refile(fpgain_fifoout_ready_refile)
+		.fpgain_fifoout_ready_refile(fpgain_fifoout_ready_refile),
 		.fpgaout_fifoin_din(   fpgaout_fifoin_din),
 		.fpgaout_fifoin_wr_en( fpgaout_fifoin_wr_en)
 		// .MISO_from_sensor(MISO),
@@ -88,8 +88,8 @@ wire fpgain_fifoout_ready_refile;
 
 	);
 
-// wire [31:0] fpgaout_fifoin;
-// wire [31:0] fpgaout_fifoin;
+wire [31:0] fpgaout_fifoin_din;
+wire fpgaout_fifoin_wr_en;
 wire dataclk;
 assign dataclk = clk;
 assign fpgain_fifoout_ready_refile = 1'b1;
@@ -98,21 +98,21 @@ assign fpgain_fifoout_ready_refile = 1'b1;
 
 
 
-fifo_gen your_instance_name (
-  .rst(ep00wirein[0]),                      // input wire rst
-  .wr_clk(dataclk),                // input wire wr_clk
-  .rd_clk(dataclk),                // input wire rd_clk
-  .din(fpgaout_fifoin_din),                      // input wire [31 : 0] din
-  .wr_en(wr_en),                  // input wire wr_en
-  .rd_en(rd_en),                  // input wire rd_en
-  .dout(dout),                    // output wire [31 : 0] dout
-  .full(full),                    // output wire full
-  .empty(empty),                  // output wire empty
-  .rd_data_count(rd_data_count),  // output wire [10 : 0] rd_data_count
-  .wr_data_count(wr_data_count),  // output wire [10 : 0] wr_data_count
-  .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
-  .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
-);
+// fifo_gen your_instance_name (
+//   .rst(ep00wirein[0]),                      // input wire rst
+//   .wr_clk(dataclk),                // input wire wr_clk
+//   .rd_clk(dataclk),                // input wire rd_clk
+//   .din(fpgaout_fifoin_din),                      // input wire [31 : 0] din
+//   .wr_en(wr_en),                  // input wire wr_en
+//   .rd_en(rd_en),                  // input wire rd_en
+//   .dout(dout),                    // output wire [31 : 0] dout
+//   .full(full),                    // output wire full
+//   .empty(empty),                  // output wire empty
+//   .rd_data_count(rd_data_count),  // output wire [10 : 0] rd_data_count
+//   .wr_data_count(wr_data_count),  // output wire [10 : 0] wr_data_count
+//   .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
+//   .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
+// );
 
 
 
