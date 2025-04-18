@@ -143,7 +143,7 @@ end
         repeat ( 50) @(posedge clk);
         modify_ep00wirein(32'h00000000);
         modify_ep41trigin(32'h00000001);
-        repeat (81*transmission_cycles) @(posedge clk);
+        repeat (81*transmission_cycles*2) @(posedge clk);
         modify_ep05wirein(32'd5);/// reset
         modify_ep41trigin(32'h00000001);
         repeat (81*transmission_cycles) @(posedge clk);

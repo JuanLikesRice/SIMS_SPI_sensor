@@ -64,7 +64,8 @@ wire fpgain_fifoout_ready_refile;
         .dataclk(clk),
         // .reset(reset),
        .MOSI_to_sensor(MOSI_to_sensor), // This you care
-		.MISO_from_sensor(MOSI_to_sensor),
+		.MISO_from_sensor(MISO_from_sensor),
+		// .MISO_from_sensor(MOSI_to_sensor),
        .SCLK_wire(SCLK_wire),// This you care
        .CS_b_wire(CS_b_wire), // This you care()
 		.ep00wirein(ep00wirein),
@@ -94,6 +95,15 @@ wire dataclk;
 assign dataclk = clk;
 assign fpgain_fifoout_ready_refile = 1'b1;
 
+
+
+sensor_Mosi_I sensor_Mosi_A ( 
+.clk_i(SCLK_wire),
+.reset_i(reset),
+.CS_i(CS_b_wire),
+.MOSI_i(MOSI_to_sensor),
+.MISO_o(MISO_from_sensor)
+	);
 
 
 
@@ -144,6 +154,91 @@ assign fpgain_fifoout_ready_refile = 1'b1;
 	// );
 	// Your module goes here
 
+// wire miso_ddr;
+// wire MISO_bit_a;
+// wire MISO_bit_b;
+
+// reg [15:0] MISO_a, MISO_b;
+
+// // Test MOSI for sensor B for DDR
+// reg [15:0] miso_test_reg; 
+
+// initial begin
+// 	miso_test_reg = 16'b1010_1100_1111_0001; 
+// end
+
+
+// 	sensor_emulator sensor_emulator_a (
+// 		.clk(SCLK_wire),
+// 		.reset(reset), 
+// 		.CS(CS_b_wire),
+// 		.MOSI(MOSI_to_sensor),
+// 		.MISO(MISO_a)
+// 	);
+	
+// 	sensor_emulator sensor_emulator_b (
+// 		.clk(SCLK_wire),
+// 		.reset(reset), 
+// 		.CS(CS_b_wire),
+// 		.MOSI(MOSI_to_sensor),
+// 		.MISO(MISO_b)
+// 	);
+
+// 	shift_reg shift_reg_a (
+// 		.clk(SCLK_wire),
+// 		//.clk(SCLK_wire),
+// 		.reset(reset), 
+// 		.CS(CS_b_wire),
+// 		.MISO_full(MISO_a),
+// 		.MISO(MISO_bit_a)
+// 	);
+
+// 	shift_reg shift_reg_b (
+// 		//.clk(SCLK_wire),
+// 		.clk(~SCLK_wire),
+// 		.reset(reset), 
+// 		.CS(CS_b_wire),
+// 		//.MISO_full(miso_test_reg),
+// 		.MISO_full(MISO_b),
+// 		.MISO(MISO_bit_b)
+// 	);
+
+// 	ddr_mux ddr_mux (
+// 		.clk(SCLK_wire),     
+// 		.CS(CS_b_wire),  
+//     	.miso_a(MISO_bit_a),    
+//     	.miso_b(MISO_bit_b),    
+//     	.miso_ddr(miso_ddr)  
+// 	);
+
+
+endmodule
+
+
+
+module sensor_Mosi_I ( 
+	
+	
+	input wire  clk_i, 
+	input wire  reset_i, 
+	input wire  CS_i, 
+	input wire  MOSI_i, 
+	output wire MISO_o 
+	
+	);
+
+wire SCLK_wire;
+wire reset,CS_b_wire;
+
+
+assign SCLK_wire = clk_i;
+assign reset 			= reset_i;
+assign CS_b_wire 		= CS_i;
+assign MOSI_to_sensor 	= MOSI_i;
+assign MISO_o 			= miso_ddr;
+
+
+wire MOSI_to_sensor;
 wire miso_ddr;
 wire MISO_bit_a;
 wire MISO_bit_b;
@@ -153,12 +248,12 @@ reg [15:0] MISO_a, MISO_b;
 // Test MOSI for sensor B for DDR
 reg [15:0] miso_test_reg; 
 
-initial begin
-	miso_test_reg = 16'b1010_1100_1111_0001; 
-end
+// initial begin
+// 	miso_test_reg = 16'b1010_1100_1111_0001; 
+// end
 
 
-	sensor_emulator sensor_emulator_a (
+	sensor_emulator #( .offset(0)) sensor_emulator_a (
 		.clk(SCLK_wire),
 		.reset(reset), 
 		.CS(CS_b_wire),
@@ -166,7 +261,7 @@ end
 		.MISO(MISO_a)
 	);
 	
-	sensor_emulator sensor_emulator_b (
+	sensor_emulator #( .offset(32)) sensor_emulator_b (
 		.clk(SCLK_wire),
 		.reset(reset), 
 		.CS(CS_b_wire),
@@ -202,10 +297,22 @@ end
 	);
 
 
-endmodule
+	endmodule
 
 
-module sensor_emulator #(  parameter mem_size = 4096 ) (
+
+
+
+
+
+
+
+
+
+
+
+
+module sensor_emulator #(  parameter offset = 0 ) (
 input wire clk,
 input wire reset, 
 input wire CS,
@@ -301,7 +408,14 @@ always @ (posedge clk or posedge reset) begin
 
 			// MISO library
 			casez (MOSI_stored_reg[15:12]) // CHANGE to 16 bit case
-				4'b00??: MISO_reg <= conv_reg[MOSI_stored_reg[13:8]]; // CONVERT --> MISO_reg becomes value from conv_reg[channel]
+				// 4'b00??: MISO_reg <= conv_reg[MOSI_stored_reg[13:8]]; // CONVERT --> MISO_reg becomes value from conv_reg[channel]
+				4'b00??: begin MISO_reg <= conv_reg[MOSI_stored_reg[13:8]] + offset;
+					$display("%d Convert %b, %d",offset, MOSI_stored_reg[15:12],conv_reg[MOSI_stored_reg[13:8]]+offset);
+				end
+				
+				
+				
+				
 				4'b10??: begin
 					MISO_reg <= {8'b1, MOSI_stored_reg[7:0]}; // WRITE --> MISO_reg echoes data byte to be written
 					$display("WRITE");
@@ -769,7 +883,8 @@ input  wire                      MISO2_A
 	assign dataclk_M =                     ep03wirein[15:8];
 	assign dataclk_D =                     ep03wirein[7:0];
 
-	assign delay_A = 						ep04wirein[3:0];
+	// assign delay_A = 						ep04wirein[3:0];
+	// assign delay_A = 						0;
 	assign SPI_start = 					    ep41trigin[0];
 
 	assign ep22wireout = 				   { 16'b0, 15'b0, SPI_running };
@@ -906,8 +1021,10 @@ input  wire                      MISO2_A
 	assign num_data_streams_enabled = 5'd4; //						
 
 
-	assign data_stream_1 = result_A1;
+	assign data_stream_1 =     result_A1;
 	assign data_stream_2 = result_DDR_A1;
+	// assign data_stream_1 =     result_A1[15:2];
+	// assign data_stream_2 = result_DDR_A1[15:2];
 	assign data_stream_3 = result_A2;
 	assign data_stream_4 = result_DDR_A2;
 
@@ -3507,46 +3624,88 @@ module custom_command_selector (
 	output reg [15:0] 	MOSI_cmd
 	);
 
+	// always @(*) begin
+	// 	case (channel)
+	// 		0:       MOSI_cmd <= { 16'd0 };
+	// 		1:       MOSI_cmd <= { 16'd1 };
+	// 		2:       MOSI_cmd <= { 16'd2 };
+	// 		3:       MOSI_cmd <= { 16'd3 };
+	// 		4:       MOSI_cmd <= { 16'd4 };
+	// 		5:       MOSI_cmd <= { 16'd5 };
+	// 		6:       MOSI_cmd <= { 16'd6 };
+	// 		7:       MOSI_cmd <= { 16'd7 };
+	// 		8:       MOSI_cmd <= { 16'd8 };
+	// 		9:       MOSI_cmd <= { 16'd9 };
+	// 		10:      MOSI_cmd <= { 16'd10};
+	// 		11:      MOSI_cmd <= { 16'd11};
+	// 		12:      MOSI_cmd <= { 16'd12};
+	// 		13:      MOSI_cmd <= { 16'd13};
+	// 		14:      MOSI_cmd <= { 16'd14};
+	// 		15:      MOSI_cmd <= { 16'd15};
+	// 		16:      MOSI_cmd <= { 16'd16};
+	// 		17:      MOSI_cmd <= { 16'd17};
+	// 		18:      MOSI_cmd <= { 16'd18};
+	// 		19:      MOSI_cmd <= { 16'd19};
+	// 		20:      MOSI_cmd <= { 16'd20};
+	// 		21:      MOSI_cmd <= { 16'd21};
+	// 		22:      MOSI_cmd <= { 16'd22};
+	// 		23:      MOSI_cmd <= { 16'd23};
+	// 		24:      MOSI_cmd <= { 16'd24};
+	// 		25:      MOSI_cmd <= { 16'd25};
+	// 		26:      MOSI_cmd <= { 16'd26};
+	// 		27:      MOSI_cmd <= { 16'd27};
+	// 		28:      MOSI_cmd <= { 16'd28};
+	// 		29:      MOSI_cmd <= { 16'd29};
+	// 		30:      MOSI_cmd <= { 16'd30};
+	// 		31:      MOSI_cmd <= { 16'd31};
+	// 		32:		 MOSI_cmd <= { 16'd32};
+	// 		33:		 MOSI_cmd <= { 16'd33};
+	// 		34:		 MOSI_cmd <= { 16'd34};
+	// 		default: MOSI_cmd <= 16'b0;
+	// 		endcase
+	// end	
+
+
 	always @(*) begin
 		case (channel)
-			0:       MOSI_cmd <= { 16'd0 };
-			1:       MOSI_cmd <= { 16'd1 };
-			2:       MOSI_cmd <= { 16'd2 };
-			3:       MOSI_cmd <= { 16'd3 };
-			4:       MOSI_cmd <= { 16'd4 };
-			5:       MOSI_cmd <= { 16'd5 };
-			6:       MOSI_cmd <= { 16'd6 };
-			7:       MOSI_cmd <= { 16'd7 };
-			8:       MOSI_cmd <= { 16'd8 };
-			9:       MOSI_cmd <= { 16'd9 };
-			10:      MOSI_cmd <= { 16'd10};
-			11:      MOSI_cmd <= { 16'd11};
-			12:      MOSI_cmd <= { 16'd12};
-			13:      MOSI_cmd <= { 16'd13};
-			14:      MOSI_cmd <= { 16'd14};
-			15:      MOSI_cmd <= { 16'd15};
-			16:      MOSI_cmd <= { 16'd16};
-			17:      MOSI_cmd <= { 16'd17};
-			18:      MOSI_cmd <= { 16'd18};
-			19:      MOSI_cmd <= { 16'd19};
-			20:      MOSI_cmd <= { 16'd20};
-			21:      MOSI_cmd <= { 16'd21};
-			22:      MOSI_cmd <= { 16'd22};
-			23:      MOSI_cmd <= { 16'd23};
-			24:      MOSI_cmd <= { 16'd24};
-			25:      MOSI_cmd <= { 16'd25};
-			26:      MOSI_cmd <= { 16'd26};
-			27:      MOSI_cmd <= { 16'd27};
-			28:      MOSI_cmd <= { 16'd28};
-			29:      MOSI_cmd <= { 16'd29};
-			30:      MOSI_cmd <= { 16'd30};
-			31:      MOSI_cmd <= { 16'd31};
-			32:		 MOSI_cmd <= { 16'd32};
-			33:		 MOSI_cmd <= { 16'd33};
-			34:		 MOSI_cmd <= { 16'd34};
+			0:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			1:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			2:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			3:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			4:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			5:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			6:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			7:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			8:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			9:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			10:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			11:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			12:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			13:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			14:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			15:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			16:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			17:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			18:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			19:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			20:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			21:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			22:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			23:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			24:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			25:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			26:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			27:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			28:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			29:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			30:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			31:      MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			// 32:		MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+			// 33:		MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
+			// 34:		MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd; // If we detect a write to Register 3, overridge the digout value.
 			default: MOSI_cmd <= 16'b0;
-			endcase
-	end	
+			endcase	
+	end
 	
 endmodule
 
