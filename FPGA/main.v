@@ -51,7 +51,8 @@ output wire [31:0] ep24wireout
 
 wire  reset;
 wire MOSI_to_sensor;
-wire  MISO_from_sensor;
+wire  MISO_from_sensor_1;
+wire  MISO_from_sensor_2;
 wire  SCLK_wire;
 wire  CS_b_wire;
 wire  sample_CLK_out;
@@ -63,8 +64,9 @@ wire fpgain_fifoout_ready_refile;
         // .dataclk(clk),
         .dataclk(clk),
         // .reset(reset),
-       .MOSI_to_sensor(MOSI_to_sensor), // This you care
-		.MISO_from_sensor(MISO_from_sensor),
+       .MOSI_to_sensor_1(MOSI_to_sensor), // This you care
+		.MISO_from_sensor_1(MISO_from_sensor_1),
+		.MISO_from_sensor_2(MISO_from_sensor_2),
 		// .MISO_from_sensor(MOSI_to_sensor),
        .SCLK_wire(SCLK_wire),// This you care
        .CS_b_wire(CS_b_wire), // This you care()
@@ -102,7 +104,8 @@ sensor_Mosi_I sensor_Mosi_A (
 .reset_i(reset),
 .CS_i(CS_b_wire),
 .MOSI_i(MOSI_to_sensor),
-.MISO_o(MISO_from_sensor)
+.MISO_1(MISO_from_sensor_1),
+.MISO_2(MISO_from_sensor_2)
 	);
 
 
@@ -216,6 +219,9 @@ endmodule
 
 
 
+
+
+
 module sensor_Mosi_I ( 
 	
 	
@@ -223,30 +229,43 @@ module sensor_Mosi_I (
 	input wire  reset_i, 
 	input wire  CS_i, 
 	input wire  MOSI_i, 
-	output wire MISO_o 
+	output wire MISO_1, 
+	output wire MISO_2
 	
 	);
 
+
+wire miso_ddr2;
+wire MISO_bit_a2;
+wire MISO_bit_b2;
+
+wire [15:0] MISO_a, MISO_b;
+wire [15:0] MISO_a2, MISO_b2;
+
+// Test MOSI for sensor B for DDR
+wire [15:0] miso_test_reg; 
+
+
 wire SCLK_wire;
 wire reset,CS_b_wire;
-
-
-assign SCLK_wire = clk_i;
-assign reset 			= reset_i;
-assign CS_b_wire 		= CS_i;
-assign MOSI_to_sensor 	= MOSI_i;
-assign MISO_o 			= miso_ddr;
-
-
 wire MOSI_to_sensor;
 wire miso_ddr;
 wire MISO_bit_a;
 wire MISO_bit_b;
 
-reg [15:0] MISO_a, MISO_b;
+assign SCLK_wire = clk_i;
+assign reset 			= reset_i;
+assign CS_b_wire 		= CS_i;
+assign MOSI_to_sensor 	= MOSI_i;
+assign MISO_1 			= miso_ddr;
+assign MISO_2 			= miso_ddr2;
 
-// Test MOSI for sensor B for DDR
-reg [15:0] miso_test_reg; 
+
+
+
+
+
+
 
 // initial begin
 // 	miso_test_reg = 16'b1010_1100_1111_0001; 
@@ -297,12 +316,53 @@ reg [15:0] miso_test_reg;
 	);
 
 
+
+// second line below 
+	sensor_emulator #( .offset(64)) sensor_emulator_a2 (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO_a2)
+	);
+	
+	sensor_emulator #( .offset(96)) sensor_emulator_b2 (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO_b2)
+	);
+
+
+	shift_reg shift_reg_a2 (
+		.clk(SCLK_wire),
+		//.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MISO_full(MISO_a2),
+		.MISO(MISO_bit_a2)
+	);
+
+	shift_reg shift_reg_b2 (
+		//.clk(SCLK_wire),
+		.clk(~SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		//.MISO_full(miso_test_reg),
+		.MISO_full(MISO_b2),
+		.MISO(MISO_bit_b2)
+	);
+
+	ddr_mux ddr_mux2 (
+		.clk(SCLK_wire),     
+		.CS(CS_b_wire),  
+    	.miso_a(MISO_bit_a2),    
+    	.miso_b(MISO_bit_b2),    
+    	.miso_ddr(miso_ddr2)  
+	);
+
 	endmodule
-
-
-
-
-
 
 
 
@@ -317,7 +377,7 @@ input wire clk,
 input wire reset, 
 input wire CS,
 input wire MOSI,
-output reg [15:0] MISO
+output wire [15:0] MISO
 //output wire MISO
 );
 /*
@@ -410,6 +470,7 @@ always @ (posedge clk or posedge reset) begin
 			casez (MOSI_stored_reg[15:12]) // CHANGE to 16 bit case
 				// 4'b00??: MISO_reg <= conv_reg[MOSI_stored_reg[13:8]]; // CONVERT --> MISO_reg becomes value from conv_reg[channel]
 				4'b00??: begin MISO_reg <= conv_reg[MOSI_stored_reg[13:8]] + offset;
+					# offset;
 					$display("%d Convert %b, %d",offset, MOSI_stored_reg[15:12],conv_reg[MOSI_stored_reg[13:8]]+offset);
 				end
 				
@@ -467,7 +528,7 @@ module shift_reg (
 	input wire clk,
 	input wire reset,
 	input wire CS,
-	input reg [15:0] MISO_full,
+	input wire [15:0] MISO_full,
 	output wire MISO
 );
 	reg MISO_bit_reg;
@@ -513,20 +574,21 @@ module ddr_mux (
 	input wire CS, 	   // CS
     input wire miso_a, // Input sampled on rising edge
     input wire miso_b, // Input sampled on falling edge
-    output reg miso_ddr // 1-bit DDR output
+    output wire miso_ddr // 1-bit DDR output
 );
 
-	always @(posedge CS) begin
-        miso_ddr <= 1'b0; // Reset miso_ddr on CS
-    end
-
-    always @(posedge clk) begin
-        miso_ddr <= miso_a; // Output miso_a on rising edge
-    end
-
-    always @(negedge clk) begin
-        miso_ddr <= miso_b; // Output miso_b on falling edge
-    end
+	wire miso_ddr_a;
+    assign     miso_ddr_a = clk ? miso_a : miso_b; // Output miso_a or miso_b on CS high
+    assign     miso_ddr = CS ? 1'b0 : miso_ddr_a; // Output miso_a or miso_b on CS high
+	// always @(posedge CS) begin
+    //     miso_ddr <= 1'b0; // Reset miso_ddr on CS
+    // end
+    // always @(posedge clk) begin
+    //     miso_ddr <= miso_a; // Output miso_a on rising edge
+    // end
+    // always @(negedge clk) begin
+    //     miso_ddr <= miso_b; // Output miso_b on falling edge
+    // end
 
 endmodule
 
@@ -539,8 +601,11 @@ module FPGA (
 input wire  dataclk,
 // input wire  reset, 
 
-input wire MISO_from_sensor,
-output wire MOSI_to_sensor,
+input wire MISO_from_sensor_1,
+output wire  MOSI_to_sensor_1,
+input wire MISO_from_sensor_2,
+output wire  MOSI_to_sensor_2,
+
 
 input  wire [31:0] ep00wirein,
 input  wire [31:0] ep01wirein,
@@ -896,7 +961,8 @@ input  wire                      MISO2_A
 	assign SCLK_wire = SCLK;
 	// assign SPI_start = 1;
 	assign DSP_settle = 0;
-	assign MOSI_to_sensor = MOSI_A;
+	assign MOSI_to_sensor_1 = MOSI_A;
+	assign MOSI_to_sensor_2 = MOSI_A;
 
 
 
@@ -1033,8 +1099,8 @@ input  wire                      MISO2_A
 	assign SCLK_A = SCLK;
 	assign MOSI1_A = MOSI_A;
 	assign MOSI2_A = 1'b0;
-	assign MISO1_A = MISO_from_sensor;
-	assign MISO2_A = MISO_from_sensor;
+	assign MISO1_A = MISO_from_sensor_1;
+	assign MISO2_A = MISO_from_sensor_2;
 	assign MISO_A1 = MISO1_A;
 	assign MISO_A2 = MISO2_A;
 

@@ -1,5 +1,5 @@
 
-`timescale 1ns / 1ps
+`timescale 1ps / 1ps
 `include "params.vh"
 
 module mainTB//;
@@ -119,7 +119,7 @@ end
 
 
 
-    always #5 clk = ~clk; // 100 MHz clock
+    always #50000 clk = ~clk; // 100 MHz clock
 
     initial begin : init
         //logic [32*8-1:0] vcdfile;
