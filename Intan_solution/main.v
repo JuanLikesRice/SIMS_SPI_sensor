@@ -132,6 +132,9 @@ module main
 
 
 
+
+
+
 /**?*****************************************************************************
 
 JG code here _A
@@ -577,20 +580,41 @@ JG code here _B
 	wire serial_CLK_auto, serial_LOAD_auto;
     
     
-    // assign CS_b_A  = CS_b;
-	// assign SCLK_A  = SCLK;
-	// assign MOSI1_A = MOSI_A;
+    // assign CS_b_A  = 1'b0;
+	// assign SCLK_A  = 1'b0;
+	// assign MOSI1_A = 1'b0;
 	// assign MOSI2_A = 1'b0;
-	// assign MISO_A1 = MISO1_A;
-	// assign MISO_A2 = MISO2_A;
-	
-    assign CS_b_A  = 1'b0;
-	assign SCLK_A  = 1'b0;
-	assign MOSI1_A = 1'b0;
-	assign MOSI2_A = 1'b0;
 
-	assign MISO_A1 = 1'b1;
-	assign MISO_A2 = 1'b1;
+	// assign MISO_A1 = 1'b1;
+	// assign MISO_A2 = 1'b1;
+
+wire reset_sensor;
+assign reset_sensor = 0;
+
+sensor_Mosi_I sensor_Mosi_A ( 
+.clk_i(     SCLK_A),
+.reset_i(   reset_sensor),
+.CS_i(      CS_b_A),
+.MOSI_i(    MOSI1_A),
+.MISO_1(    MISO1_A),
+.MISO_2(    MISO2_A)
+
+);
+
+    assign CS_b_A  = CS_b;
+	assign SCLK_A  = SCLK;
+	assign MOSI1_A = MOSI_A;
+	assign MOSI2_A = 1'b0;
+	assign MISO_A1 = MISO1_A;
+	assign MISO_A2 = MISO2_A;
+	
+    // assign CS_b_A  = 1'b0;
+	// assign SCLK_A  = 1'b0;
+	// assign MOSI1_A = 1'b0;
+	// assign MOSI2_A = 1'b0;
+
+	// assign MISO_A1 = 1'b1;
+	// assign MISO_A2 = 1'b1;
 
 
 	// assign CS_b_B  = CS_b;
@@ -717,7 +741,7 @@ JG code here _B
 		loop_aux_cmd_index_3 <=			ep0cwirein[29:20];
 	end
 
-	assign led_in =  		   			{data_stream_1_en,data_stream_1[6:0]};//num_words_in_FIFO[7:0]; //ep0dwirein[7:0];
+	assign led_in =  		   			{data_stream_1_en,data_stream_2_en,data_stream_3_en,data_stream_4_en,delay_A[3:0]};//num_words_in_FIFO[7:0]; //ep0dwirein[7:0];
 
 	assign DAC_reref_channel_sel =	    ep0ewirein[4:0];
 	assign DAC_reref_stream_sel =		ep0ewirein[9:5];
@@ -3875,15 +3899,15 @@ JG code here _B
 		.phase_select(delay_H), .MISO4x(in4x_H2), .MISO(in_DDR_H2));
 
 
-	assign data_stream_1 = {1'b1,15'd1};
-	assign data_stream_2 = {1'b1,15'd2};
-	assign data_stream_3 = {1'b1,15'd3};
-	assign data_stream_4 = {1'b1,15'd4};
+	// assign data_stream_1 = {1'b1,15'd1};
+	// assign data_stream_2 = {1'b1,15'd2};
+	// assign data_stream_3 = {1'b1,15'd3};
+	// assign data_stream_4 = {1'b1,15'd4};
 
-	// assign data_stream_1 = result_A1;
-	// assign data_stream_2 = result_DDR_A1;
-	// assign data_stream_3 = result_A2;
-	// assign data_stream_4 = result_DDR_A2;
+	assign data_stream_1 = result_A1;
+	assign data_stream_2 = result_DDR_A1;
+	assign data_stream_3 = result_A2;
+	assign data_stream_4 = result_DDR_A2;
 	assign data_stream_5 = result_B1;
 	assign data_stream_6 = result_DDR_B1;
 	assign data_stream_7 = result_B2;
@@ -4064,3 +4088,400 @@ module command_selector (
 	end	
 	
 endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*         EMULATOR BELOW      */
+
+
+
+module sensor_Mosi_I ( 
+	
+	
+	input wire  clk_i, 
+	input wire  reset_i, 
+	input wire  CS_i, 
+	input wire  MOSI_i, 
+	output wire MISO_1, 
+	output wire MISO_2
+	
+	);
+
+
+wire miso_ddr2;
+wire MISO_bit_a2;
+wire MISO_bit_b2;
+
+wire [15:0] MISO_a, MISO_b;
+wire [15:0] MISO_a2, MISO_b2;
+
+// Test MOSI for sensor B for DDR
+wire [15:0] miso_test_reg; 
+
+
+wire SCLK_wire;
+wire reset,CS_b_wire;
+wire MOSI_to_sensor;
+wire miso_ddr;
+wire MISO_bit_a;
+wire MISO_bit_b;
+
+assign SCLK_wire = clk_i;
+assign reset 			= reset_i;
+assign CS_b_wire 		= CS_i;
+assign MOSI_to_sensor 	= MOSI_i;
+assign MISO_1 			= miso_ddr;
+assign MISO_2 			= miso_ddr2;
+
+
+
+
+
+
+
+
+// initial begin
+// 	miso_test_reg = 16'b1010_1100_1111_0001; 
+// end
+
+
+	sensor_emulator #( .offset(0)) sensor_emulator_a (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO_a)
+	);
+	
+	sensor_emulator #( .offset(32)) sensor_emulator_b (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO_b)
+	);
+
+	shift_reg shift_reg_a (
+		.clk(SCLK_wire),
+		//.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MISO_full(MISO_a),
+		.MISO(MISO_bit_a)
+	);
+
+	shift_reg shift_reg_b (
+		//.clk(SCLK_wire),
+		.clk(~SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		//.MISO_full(miso_test_reg),
+		.MISO_full(MISO_b),
+		.MISO(MISO_bit_b)
+	);
+
+	ddr_mux ddr_mux (
+		.clk(SCLK_wire),     
+		.CS(CS_b_wire),  
+    	.miso_a(MISO_bit_a),    
+    	.miso_b(MISO_bit_b),    
+    	.miso_ddr(miso_ddr)  
+	);
+
+
+
+// second line below 
+	sensor_emulator #( .offset(64)) sensor_emulator_a2 (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO_a2)
+	);
+	
+	sensor_emulator #( .offset(96)) sensor_emulator_b2 (
+		.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MOSI(MOSI_to_sensor),
+		.MISO(MISO_b2)
+	);
+
+
+	shift_reg shift_reg_a2 (
+		.clk(SCLK_wire),
+		//.clk(SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		.MISO_full(MISO_a2),
+		.MISO(MISO_bit_a2)
+	);
+
+	shift_reg shift_reg_b2 (
+		//.clk(SCLK_wire),
+		.clk(~SCLK_wire),
+		.reset(reset), 
+		.CS(CS_b_wire),
+		//.MISO_full(miso_test_reg),
+		.MISO_full(MISO_b2),
+		.MISO(MISO_bit_b2)
+	);
+
+	ddr_mux ddr_mux2 (
+		.clk(SCLK_wire),     
+		.CS(CS_b_wire),  
+    	.miso_a(MISO_bit_a2),    
+    	.miso_b(MISO_bit_b2),    
+    	.miso_ddr(miso_ddr2)  
+	);
+
+	endmodule
+
+
+
+
+
+module sensor_emulator #(  parameter offset = 0 ) (
+input wire clk,
+input wire reset, 
+input wire CS,
+input wire MOSI,
+output wire [15:0] MISO
+//output wire MISO
+);
+/*
+- Command is 16 bits wide
+- Read one bit of command per CLK cycle
+- Make bit counter to divide bits by 16 and distinguish commands
+- MISO is 2 cycles behind MOSI and is DDR (32 bits by cycle)
+
+MOSI command selector:
+case (channel)
+			0:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			1:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+			2:       MOSI_cmd <= { 2'b00, channel, 7'b0000000, DSP_settle };
+            ...
+            MOSI_cmd <= (aux_cmd[15:8] == 8'h83) ? {aux_cmd[15:1], digout_override} : aux_cmd;
+*/
+
+reg [15:0] MOSI_current_reg;
+reg [15:0] MOSI_stored_reg;
+reg [15:0] MISO_reg;
+reg MISO_bit_reg;
+reg [4:0] bit_count;
+reg [3:0] bit_pointer;
+reg [7:0] read_reg [63:0]; // 64 long reg file, byte long each -> stores on-chip registers where they are READ-only from 40 - 64
+reg [15:0] conv_reg [31:0]; // 32 long reg file, 2 byte long each
+
+// Populate reg file values and zero other registers
+integer i;
+initial begin
+	bit_pointer = 4'b0;
+	// CONVERT Reg File Initialization
+	for (i=0; i < 32; i=i+1)begin 
+            conv_reg[i] <= i;  
+    end
+
+    // READ-Only Reg File Initialization
+    // On-chip registers:
+    // 0 - 39
+    for (i=0; i < 40; i=i+1)begin 
+            read_reg[i] <= i;  
+    end
+
+    // On-chip Read Only registers:
+    // 40 - 44
+    read_reg[40] = 8'b01001001; // I 
+    read_reg[41] = 8'b01001110; // N
+    read_reg[42] = 8'b01010100; // T
+    read_reg[43] = 8'b01000001; // A
+    read_reg[44] = 8'b01001110; // N
+
+    // 45 - 59
+    for (i=45; i < 60; i=i+1)begin 
+            read_reg[i] <= i;  
+    end
+
+    // 60 - 63
+    read_reg[60] = 8'b00000001;
+    read_reg[61] = 8'b00100000;
+    read_reg[62] = 8'b00010000; // maybe should be 64 but datasheet gave only two options (32 or 16)
+    read_reg[63] = 8'b00000001; // same as above but RHD2132 is 1 and RHD2216 is 1
+
+    MOSI_current_reg = 16'b0;
+    MOSI_stored_reg = 16'b0;
+	MISO_reg = 16'b0;
+    bit_count = 5'b0;
+end
+
+assign MISO = MISO_reg;
+// assign MISO = 0101010101010101;
+//assign MISO = MISO_bit_reg;
+
+// Command tracking and storing block
+always @ (posedge clk or posedge reset) begin
+    
+    if (reset || CS) begin
+        MOSI_current_reg <= 16'b0;
+        bit_count <= 5'b0;
+    end else if (!CS) begin
+        MOSI_current_reg <= {MOSI_current_reg[14:0], MOSI};
+
+        // Increment bit counter up to 16
+        if (bit_count < 16) begin
+            bit_count <= bit_count + 1; // Increment after CS high and posedge after 1 cycle
+        end else begin // MOSI_current_reg's 16 bits are filled with a full command
+            bit_count <= 5'b00001;
+			MOSI_stored_reg <= MOSI_current_reg; 
+        	MOSI_current_reg <= {15'b0, MOSI};
+
+			// MISO library
+			casez (MOSI_stored_reg[15:12]) // CHANGE to 16 bit case
+				// 4'b00??: MISO_reg <= conv_reg[MOSI_stored_reg[13:8]]; // CONVERT --> MISO_reg becomes value from conv_reg[channel]
+				4'b00??: begin MISO_reg <= conv_reg[MOSI_stored_reg[13:8]] + offset;
+					// # offset;
+					// $display("%d Convert %b, %d",offset, MOSI_stored_reg[15:12],conv_reg[MOSI_stored_reg[13:8]]+offset);
+				end				
+				
+				4'b10??: begin
+					MISO_reg <= {8'b1, MOSI_stored_reg[7:0]}; // WRITE --> MISO_reg echoes data byte to be written
+					// $display("WRITE");
+				end
+				4'b11??: begin
+					MISO_reg <= {8'b0, read_reg[MOSI_stored_reg[13:8]]}; // READ --> MISO_reg becomes concatenated value of 0's and read_reg[channel]
+					// $display("READ %b", read_reg[MOSI_stored_reg[13:8]]);
+				end
+				4'b0101: begin
+					MISO_reg <= 16'b0; // CALIBRATE --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
+					// $display("CALIBRATE");
+				end
+				4'b0110: begin
+					MISO_reg <= 16'b0; // CLEAR --> MISO_reg becomes 0, MSB is 1 if 2's complement mode disabled
+					// $display("CLEAR");
+				end
+				default: MISO_reg <= 16'b0;
+			endcase
+
+            //$display("bit_count %d MOSI_current_reg %b",bit_count, MOSI_current_reg); // Fix MOSI_current_reg
+
+        end
+    end
+end
+
+/*
+// Shift Reg MISO bit by bit output
+always @ (posedge clk or posedge reset or posedge CS) begin
+    if (reset || CS) begin
+        MISO_bit_reg <= 1'b0;
+		bit_pointer <= 4'b0;
+    end else if (!CS && (bit_pointer < 16)) begin
+		MISO_bit_reg <= MISO_reg[15 - bit_pointer];  // MSB first
+        bit_pointer <= bit_pointer + 1;         // Move to the next bit
+	end
+end
+*/
+
+/*
+always @ (posedge CS) begin
+ $display("CS is high %h", MOSI_current_reg);
+end
+*/
+
+endmodule
+
+
+
+
+
+
+module shift_reg (
+	input wire clk,
+	input wire reset,
+	input wire CS,
+	input wire [15:0] MISO_full,
+	output wire MISO
+);
+	reg MISO_bit_reg;
+	reg [3:0] bit_pointer;
+	//reg [15:0] MISO_reg;
+	assign MISO = MISO_bit_reg;
+	//assign MISO_reg = MISO_full;
+	initial begin
+		bit_pointer = 4'b0;
+	end
+	wire special_clk;
+	assign special_clk = clk | CS;
+	wire special_clk_ddr;
+	assign special_clk_ddr = ~clk | CS;
+	// Shift Reg MISO bit by bit output
+	// always @ (posedge clk or posedge reset or posedge CS) begin
+	// 	if (reset || CS) begin
+	// 		MISO_bit_reg <= 1'b0;
+	// 		bit_pointer <= 4'b0;
+	// 	end else if (!CS && (bit_pointer < 16)) begin
+	// 		MISO_bit_reg <= MISO_full[15 - bit_pointer];  // MSB first
+	// 		bit_pointer <= bit_pointer + 1;         // Move to the next bit
+	// 	end
+	// end
+	always @ (negedge special_clk or posedge reset or posedge CS) begin
+		if (reset || CS) begin
+			MISO_bit_reg <= 1'b0;
+			bit_pointer <= 4'b0;
+		end else if (!CS && (bit_pointer < 16)) begin
+			MISO_bit_reg <= MISO_full[15 - bit_pointer];  // MSB first
+			bit_pointer <= bit_pointer + 1;         // Move to the next bit
+		end
+	end
+endmodule
+
+
+
+module ddr_mux (
+    input wire clk,    // SCLK
+	input wire CS, 	   // CS
+    input wire miso_a, // Input sampled on rising edge
+    input wire miso_b, // Input sampled on falling edge
+    output wire miso_ddr // 1-bit DDR output
+);
+
+	wire miso_ddr_a;
+    assign     miso_ddr_a = clk ? miso_a : miso_b; // Output miso_a or miso_b on CS high
+    assign     miso_ddr = CS ? 1'b0 : miso_ddr_a; // Output miso_a or miso_b on CS high
+	// always @(posedge CS) begin
+    //     miso_ddr <= 1'b0; // Reset miso_ddr on CS
+    // end
+    // always @(posedge clk) begin
+    //     miso_ddr <= miso_a; // Output miso_a on rising edge
+    // end
+    // always @(negedge clk) begin
+    //     miso_ddr <= miso_b; // Output miso_b on falling edge
+    // end
+
+endmodule
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*         EMULATOR ABOVE      */
