@@ -3899,43 +3899,88 @@ sensor_Mosi_I sensor_Mosi_A (
 		.phase_select(delay_H), .MISO4x(in4x_H2), .MISO(in_DDR_H2));
 
 
-	// assign data_stream_1 = {1'b1,15'd1};
-	// assign data_stream_2 = {1'b1,15'd2};
-	// assign data_stream_3 = {1'b1,15'd3};
-	// assign data_stream_4 = {1'b1,15'd4};
 
-	assign data_stream_1 = result_A1;
-	assign data_stream_2 = result_DDR_A1;
-	assign data_stream_3 = result_A2;
-	assign data_stream_4 = result_DDR_A2;
-	assign data_stream_5 = result_B1;
-	assign data_stream_6 = result_DDR_B1;
-	assign data_stream_7 = result_B2;
-	assign data_stream_8 = result_DDR_B2;
-	assign data_stream_9 = result_C1;
-	assign data_stream_10 = result_DDR_C1;
-	assign data_stream_11 = result_C2;
-	assign data_stream_12 = result_DDR_C2;
-	assign data_stream_13 = result_D1;
-	assign data_stream_14 = result_DDR_D1;
-	assign data_stream_15 = result_D2;
-	assign data_stream_16 = result_DDR_D2;
-	assign data_stream_17 = result_E1;
-	assign data_stream_18 = result_DDR_E1;
-	assign data_stream_19 = result_E2;
-	assign data_stream_20 = result_DDR_E2;
-	assign data_stream_21 = result_F1;
-	assign data_stream_22 = result_DDR_F1;
-	assign data_stream_23 = result_F2;
-	assign data_stream_24 = result_DDR_F2;
-	assign data_stream_25 = result_G1;
-	assign data_stream_26 = result_DDR_G1;
-	assign data_stream_27 = result_G2;
-	assign data_stream_28 = result_DDR_G2;
-	assign data_stream_29 = result_H1;
-	assign data_stream_30 = result_DDR_H1;
-	assign data_stream_31 = result_H2;
-	assign data_stream_32 = result_DDR_H2;
+
+
+	wire [15:0] Hard_coded_data_stream_1 ; 
+	wire [15:0] Hard_coded_data_stream_2 ; 
+	wire [15:0] Hard_coded_data_stream_3 ; 
+	wire [15:0] Hard_coded_data_stream_4 ; 
+	assign Hard_coded_data_stream_1 = {1'b1,15'd1};
+	assign Hard_coded_data_stream_2 = {1'b1,15'd2};
+	assign Hard_coded_data_stream_3 = {1'b1,15'd3};
+	assign Hard_coded_data_stream_4 = {1'b1,15'd4};
+
+	wire 	hard_code_stream_control;
+	assign 	hard_code_stream_control = ep0fwirein[0];
+		
+	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_1 : result_A1;
+	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_2 : result_DDR_A1;
+	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_3 : result_A2;
+	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_4 : result_DDR_A2;
+
+
+	//	ORIGINAL CODE
+	//  assign data_stream_1 = result_A1;
+	//  assign data_stream_2 = result_DDR_A1;
+	//  assign data_stream_3 = result_A2;
+	//  assign data_stream_4 = result_DDR_A2;
+	assign data_stream_5 =  16'b0;
+	assign data_stream_6 =  16'b0;
+	assign data_stream_7 =  16'b0;
+	assign data_stream_8 =  16'b0;
+	assign data_stream_9 =  16'b0;
+	assign data_stream_10 = 16'b0;
+	assign data_stream_11 = 16'b0;
+	assign data_stream_12 = 16'b0;
+	assign data_stream_13 = 16'b0;
+	assign data_stream_14 = 16'b0;
+	assign data_stream_15 = 16'b0;
+	assign data_stream_16 = 16'b0;
+	assign data_stream_17 = 16'b0;
+	assign data_stream_18 = 16'b0;
+	assign data_stream_19 = 16'b0;
+	assign data_stream_20 = 16'b0;
+	assign data_stream_21 = 16'b0;
+	assign data_stream_22 = 16'b0;
+	assign data_stream_23 = 16'b0;
+	assign data_stream_24 = 16'b0;
+	assign data_stream_25 = 16'b0;
+	assign data_stream_26 = 16'b0;
+	assign data_stream_27 = 16'b0;
+	assign data_stream_28 = 16'b0;
+	assign data_stream_29 = 16'b0;
+	assign data_stream_30 = 16'b0;
+	assign data_stream_31 = 16'b0;
+	assign data_stream_32 = 16'b0;
+	// assign data_stream_5 = result_B1;
+	// assign data_stream_6 = result_DDR_B1;
+	// assign data_stream_7 = result_B2;
+	// assign data_stream_8 = result_DDR_B2;
+	// assign data_stream_9 = result_C1;
+	// assign data_stream_10 = result_DDR_C1;
+	// assign data_stream_11 = result_C2;
+	// assign data_stream_12 = result_DDR_C2;
+	// assign data_stream_13 = result_D1;
+	// assign data_stream_14 = result_DDR_D1;
+	// assign data_stream_15 = result_D2;
+	// assign data_stream_16 = result_DDR_D2;
+	// assign data_stream_17 = result_E1;
+	// assign data_stream_18 = result_DDR_E1;
+	// assign data_stream_19 = result_E2;
+	// assign data_stream_20 = result_DDR_E2;
+	// assign data_stream_21 = result_F1;
+	// assign data_stream_22 = result_DDR_F1;
+	// assign data_stream_23 = result_F2;
+	// assign data_stream_24 = result_DDR_F2;
+	// assign data_stream_25 = result_G1;
+	// assign data_stream_26 = result_DDR_G1;
+	// assign data_stream_27 = result_G2;
+	// assign data_stream_28 = result_DDR_G2;
+	// assign data_stream_29 = result_H1;
+	// assign data_stream_30 = result_DDR_H1;
+	// assign data_stream_31 = result_H2;
+	// assign data_stream_32 = result_DDR_H2;
     
     /* Standard Opal Kelly end */
     // Instantiate the okHost and connect endpoints.
@@ -3967,7 +4012,7 @@ sensor_Mosi_I sensor_Mosi_A (
 	okWireIn     wi0c (.okHE(okHE),                            .ep_addr(8'h0c), .ep_dataout(ep0cwirein)); // loop_aux_cmd_index_1, loop_aux_cmd_index_2, loop_aux_cmd_index_3
 	okWireIn     wi0d (.okHE(okHE),                            .ep_addr(8'h0d), .ep_dataout(ep0dwirein)); // led_in
 	okWireIn     wi0e (.okHE(okHE),                            .ep_addr(8'h0e), .ep_dataout(ep0ewirein)); // DAC_reref_channel_sel,DAC_reref_stream_sel,DAC_reref_mode
-	okWireIn     wi0f (.okHE(okHE),                            .ep_addr(8'h0f), .ep_dataout(ep0fwirein)); // NC
+	okWireIn     wi0f (.okHE(okHE),                            .ep_addr(8'h0f), .ep_dataout(ep0fwirein)); // used for  mux control
 	okWireIn     wi10 (.okHE(okHE),                            .ep_addr(8'h10), .ep_dataout(ep10wirein)); // NC
 	okWireIn     wi11 (.okHE(okHE),                            .ep_addr(8'h11), .ep_dataout(ep11wirein)); // NC
 	okWireIn     wi12 (.okHE(okHE),                            .ep_addr(8'h12), .ep_dataout(ep12wirein)); // NC
@@ -3984,7 +4029,7 @@ sensor_Mosi_I sensor_Mosi_A (
 	okWireIn     wi1c (.okHE(okHE),                            .ep_addr(8'h1c), .ep_dataout(ep1cwirein)); // DAC_channel_sel_7, DAC_stream_sel_7, DAC_en_7
 	okWireIn     wi1d (.okHE(okHE),                            .ep_addr(8'h1d), .ep_dataout(ep1dwirein)); // DAC_channel_sel_8, DAC_stream_sel_8, DAC_en_8
 	okWireIn     wi1e (.okHE(okHE),                            .ep_addr(8'h1e), .ep_dataout(ep1ewirein)); // DAC_manual
-	okWireIn     wi1f (.okHE(okHE),                            .ep_addr(8'h1f), .ep_dataout(ep1fwirein)); // HPF_en, 
+	okWireIn     wi1f (.okHE(okHE),                            .ep_addr(8'h1f), .ep_dataout(ep1fwirein)); // control signals in tamdom with ep40trigin 
 	
 	okTriggerIn  ti40 (.okHE(okHE),                            .ep_addr(8'h40), .ep_clk(okClk),  .ep_trigger(ep40trigin)); // MMCM_prog_trigger,RAM_we_1,RAM_we_2,RAM_we_3,
 
@@ -4023,7 +4068,7 @@ sensor_Mosi_I sensor_Mosi_A (
 	okWireOut    wo3a (.okHE(okHE), .okEH(okEHx[ 26*65 +: 65 ]), .ep_addr(8'h3a), .ep_datain(ep3awireout)); // NC
 	okWireOut    wo3b (.okHE(okHE), .okEH(okEHx[ 27*65 +: 65 ]), .ep_addr(8'h3b), .ep_datain(ep3bwireout)); // NC
 	okWireOut    wo3c (.okHE(okHE), .okEH(okEHx[ 28*65 +: 65 ]), .ep_addr(8'h3c), .ep_datain(ep3cwireout)); // NC
-	okWireOut    wo3d (.okHE(okHE), .okEH(okEHx[ 29*65 +: 65 ]), .ep_addr(8'h3d), .ep_datain(ep3dwireout)); // NC
+	okWireOut    wo3d (.okHE(okHE), .okEH(okEHx[ 29*65 +: 65 ]), .ep_addr(8'h3d), .ep_datain(ep3dwireout)); // used for debug ep00
 	okWireOut    wo3e (.okHE(okHE), .okEH(okEHx[ 30*65 +: 65 ]), .ep_addr(8'h3e), .ep_datain(ep3ewireout)); // { 16'b0, BOARD_ID };
 	okWireOut    wo3f (.okHE(okHE), .okEH(okEHx[ 31*65 +: 65 ]), .ep_addr(8'h3f), .ep_datain(ep3fwireout)); // { 16'b0, BOARD_VERSION };
 	

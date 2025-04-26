@@ -1,0 +1,687 @@
+RHXController: BytesPerWord:2
+RHXController: MaxNumBlocksToRead:56
+RHXController: usbBufferSize:16285696
+RHXController: Allocating    16.2857 MBytes for USB buffer.
+Attempting to connect to device '2436001CQA'
+Opal Kelly device firmware version: 1.30
+Opal Kelly device serial number: 2436001CQA
+Opal Kelly device ID string: Opal Kelly XEM7310
+
+Rhythm configuration file successfully loaded.  Rhythm version number: 1
+
+WIRE_IN, EP 0       Value 1
+WIRE_IN, EP 0       Value 0 // Reset 
+
+WIRE_IN, EP 31      Value 256
+Trigger_in EP 64    Value 9
+WIRE_IN, EP 31      Value 32
+Trigger_in EP 64    Value 10
+WIRE_IN, EP 3       Value 10777
+wire_IN, EP 8       Value 0
+wire_IN, EP 8       Value 0
+wire_IN, EP 8       Value 0
+wire_IN, EP 8       Value 0
+wire_IN, EP 8       Value 0
+wire_IN, EP 8       Value 0
+wire_IN, EP 8       Value 0
+wire_IN, EP 8       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 9       Value 0
+wire_IN, EP 10      Value 0
+wire_IN, EP 10      Value 0
+wire_IN, EP 10      Value 0
+wire_IN, EP 10      Value 0
+wire_IN, EP 10      Value 0
+wire_IN, EP 10      Value 0
+wire_IN, EP 10      Value 0
+wire_IN, EP 10      Value 0
+WIRE_IN, EP 12      Value 0
+WIRE_IN, EP 11      Value 0
+WIRE_IN, EP 12      Value 0
+WIRE_IN, EP 11      Value 0
+WIRE_IN, EP 12      Value 0
+WIRE_IN, EP 11      Value 0
+WIRE_IN, EP 0       Value 2
+WIRE_IN, EP 1       Value 4294967295
+WIRE_IN, EP DELAY  0x00000004    Value : 0x00000001   MASK:  0x0000000f
+WIRE_IN, EP DELAY  0x00000004    Value : 0x00000010   MASK:  0x000000f0
+WIRE_IN, EP DELAY  0x00000004    Value : 0x00000100   MASK:  0x00000f00
+WIRE_IN, EP DELAY  0x00000004    Value : 0x00001000   MASK:  0x0000f000
+WIRE_IN, EP DELAY  0x00000004    Value : 0x00010000   MASK:  0x000f0000
+WIRE_IN, EP DELAY  0x00000004    Value : 0x00100000   MASK:  0x00f00000
+WIRE_IN, EP DELAY  0x00000004    Value : 0x01000000   MASK:  0x0f000000
+WIRE_IN, EP DELAY  0x00000004    Value : 0x10000000   MASK:  0xf0000000
+WIRE_IN, EP 0       Value 0
+WIRE_IN, EP 20      Value 0
+WIRE_IN, EP DataStream  0x00000014    Value : 0x00000001   MASK:  0x00000001
+wire_IN, EP 21      Value 0
+WIRE_IN, EP 22      Value 0
+WIRE_IN, EP 23      Value 0
+WIRE_IN, EP 24      Value 0
+WIRE_IN, EP 25      Value 0
+WIRE_IN, EP 26      Value 0
+WIRE_IN, EP 27      Value 0
+WIRE_IN, EP 28      Value 0
+WIRE_IN, EP 29      Value 0
+WIRE_IN, EP dacChannel 0 Value 0
+WIRE_IN, EP dacChannel 1 Value 0
+WIRE_IN, EP dacChannel 2 Value 0
+WIRE_IN, EP dacChannel 3 Value 0
+WIRE_IN, EP dacChannel 4 Value 0
+WIRE_IN, EP dacChannel 5 Value 0
+WIRE_IN, EP dacChannel 6 Value 0
+WIRE_IN, EP dacChannel 7 Value 0
+WIRE_IN, EP dacChannel 0 Value 0
+WIRE_IN, EP dacChannel 1 Value 0
+WIRE_IN, EP dacChannel 2 Value 0
+WIRE_IN, EP dacChannel 3 Value 0
+WIRE_IN, EP dacChannel 4 Value 0
+WIRE_IN, EP dacChannel 5 Value 0
+WIRE_IN, EP dacChannel 6 Value 0
+WIRE_IN, EP dacChannel 7 Value 0
+WIRE_IN, EP 30      Value 32768
+WIRE_IN, EP 0       Value 0
+WIRE_IN, EP 0       Value 06
+WIRE_IN, EP 0       Value 8
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP 31      Value 0
+WIRE_IN, EP DataStream  0x00000014    Value : 0x00000002   MASK:  0x00000002
+WIRE_IN, EP DataStream  0x00000014    Value : 0x00000004   MASK:  0x00000004
+WIRE_IN, EP DataStream  0x00000014    Value : 0x00000008   MASK:  0x00000008
+WIRE_IN, EP DELAY  0x00000004    Value : 0x00000001   MASK:  0x0000000f
+WIRE_IN, EP 13 Value 1
+WIRE_IN, EP 1 Value 128
+WIRE_IN, EP 0 Value 0
+Trigger_in EP 65 Value 0
+NUM_STREAMS: 4
+TYPE: 1
+
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+Expected 0th byte: 83 ... actual 0th byte: 205
+
+Expected 0th byte: S ... actual 0th byte: ═
+Expected 1st byte: * ... actual 1st byte: ═Expected 2nd byte:  ... actual 2nd byte: ═Expected 3rd byte: 8 ... actual 3rd byte: ═Expected 4th byte: ¬ ... actual 4th byte: ═Expected 5th byte: * ... actual 5th byte: ═Expected 6th byte: ó ... actual 6th byte: ═Expected 7th byte: ╫ ... actual 7th byte: ═
+RHD 2000 Data Block contents:
+  ROM contents:
+    Chip Name: ════════
+    Company Name:═════
+    Intan Chip ID: 52685
+    Number of Amps: 52685
+    Unipolar/Bipolar Amps: UNKNOWN
+    Die Revision: 52685
+    Future Expansion Register: 52685
+  RAM contents:
+    ADC reference BW:      3
+    amp fast settle:       0
+    amp Vref enable:       0
+    ADC comparator bias:   3
+    ADC comparator select: 1
+    VDD sense enable:      1
+    ADC buffer bias:       13
+    MUX bias:              13
+    MUX load:              6
+    tempS2, tempS1:        0,1
+    tempen:                1
+    digout HiZ:            0
+    digout:                1
+    weak MISO:             1
+    twoscomp:              1
+    absmode:               0
+    DSPen:                 0
+    DSP cutoff freq:       13
+    Zcheck DAC power:      1
+    Zcheck load:           0
+    Zcheck scale:          1
+    Zcheck conn all:       1
+    Zcheck sel pol:        0
+    Zcheck en:             1
+    Zcheck DAC:            205
+    Zcheck select:         13
+    ADC aux1 en            1
+    ADC aux2 en            1
+    ADC aux3 en            1
+    offchip RH1:           1
+    offchip RH2:           1
+    offchip RL:            1
+    RH1 DAC1, DAC2:        13 13 = 410.70 kOhm
+    RH2 DAC1, DAC2:        13 13 = 516.89 kOhm
+    RL DAC1, DAC2, DAC3:   77 13 1 = 3218.13 kOhm
+    amp power[31:0]:       11001101 11001101 11001101 11001101
+
+
+wire_IN, EP 10 Value 0
+WIRE_IN, EP 1 Value 20000
+Trigger_in EP 65 Value 0
+
+Expected 0th byte: 83 ... actual 0th byte: 0
+
+Expected 0th byte: S ... actual 0th byte: 
