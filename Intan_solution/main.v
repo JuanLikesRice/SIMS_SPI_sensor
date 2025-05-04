@@ -27,13 +27,20 @@ module main
 	output wire         ddr3_reset_n,
     
     // SPI
-    // output wire                              CS_b_A,
-    // output wire                              SCLK_A,
-    // output wire                              MOSI1_A,
-	//  output wire										MOSI2_A,
-    // input  wire                              MISO1_A,
-    // input  wire                              MISO2_A,
+    output wire                              CS_b_A,
+    output wire                              SCLK_A,
+    output wire                              MOSI1_A,
+	 output wire							 MOSI2_A,
+    input  wire                              MISO1_A,
+    input  wire                              MISO2_A,
 	
+	input	wire                            external_CS_b_A ,
+	input	wire                            external_SCLK_A ,
+	input	wire                            external_MOSI1_A,
+	input	wire							external_MOSI2_A,
+    output wire                             external_MISO1_A,
+    output wire                             external_MISO2_A,
+
     // output wire                              CS_b_B,
     // output wire                              SCLK_B,
     // output wire                              MOSI1_B,
@@ -141,12 +148,12 @@ JG code here _A
   *?*****************************************************************************/
 
 
-	wire                              CS_b_A;
-	wire                              SCLK_A;
-	wire                              MOSI1_A;
-	  wire										MOSI2_A;
-	wire                              MISO1_A;
-	wire                              MISO2_A;
+	// wire                              CS_b_A;
+	// wire                              SCLK_A;
+	// wire                              MOSI1_A;
+	//   wire										MOSI2_A;
+	// wire                              MISO1_A;
+	// wire                              MISO2_A;
 
 	wire                              CS_b_B;
 	wire                              SCLK_B;
@@ -588,35 +595,62 @@ JG code here _B
 	// assign MISO_A1 = 1'b1;
 	// assign MISO_A2 = 1'b1;
 
-wire reset_sensor;
+// ep0fwirein
+wire   spi_signal_control,reset_sensor;	
+assign spi_signal_control = ep0fwirein[1];
 assign reset_sensor = 0;
 
-sensor_Mosi_I sensor_Mosi_A ( 
-.clk_i(     SCLK_A),
-.reset_i(   reset_sensor),
-.CS_i(      CS_b_A),
-.MOSI_i(    MOSI1_A),
-.MISO_1(    MISO1_A),
-.MISO_2(    MISO2_A)
+wire	muxed_CS_b_A ,	    muxed_SCLK_A,	   muxed_MOSI1_A,	   muxed_MOSI2_A,  	 muxed_MISO1_A,		muxed_MISO2_A;
+wire	internal_CS_b_A ,internal_SCLK_A,	internal_MOSI1_A,	internal_MOSI2_A, internal_MISO1_A,	 internal_MISO2_A;
+// wire	external_CS_b_A ,external_SCLK_A,	external_MOSI1_A,	external_MOSI2_A, external_MISO1_A,	 external_MISO2_A;
 
+//Outputs to sensor_Mosi_External module, external to FPGA
+assign CS_b_A  = CS_b;
+assign SCLK_A  = SCLK;
+assign MOSI1_A = MOSI_A;
+assign MOSI2_A = 1'b0;
+
+//Outputs to sensor_Mosi_Internal module, Internal to FPGA
+assign internal_CS_b_A  = CS_b;
+assign internal_SCLK_A  = SCLK;
+assign internal_MOSI1_A = MOSI_A;
+assign internal_MOSI2_A = 1'b0;
+
+// inputs to FPGA
+assign MISO_A1 = spi_signal_control ? MISO1_A	:	internal_MISO1_A;
+assign MISO_A2 = spi_signal_control ? MISO2_A	:	internal_MISO2_A;
+	
+// spi_signal_control
+sensor_Mosi_I sensor_Mosi_Internal_A ( 
+.clk_i(     internal_SCLK_A),
+.reset_i(   reset_sensor),
+.CS_i(      internal_CS_b_A),
+.MOSI_i(    internal_MOSI1_A),
+.MISO_1(    internal_MISO1_A),
+.MISO_2(    internal_MISO2_A)
 );
 
-    assign CS_b_A  = CS_b;
-	assign SCLK_A  = SCLK;
-	assign MOSI1_A = MOSI_A;
-	assign MOSI2_A = 1'b0;
-	assign MISO_A1 = MISO1_A;
-	assign MISO_A2 = MISO2_A;
-	
+
+wire   reset_sensor_signal_control;	
+assign reset_sensor_signal_control = ep0fwirein[2];
+
+sensor_Mosi_I sensor_Mosi_external_A ( 
+.clk_i(     external_SCLK_A),
+.reset_i(   reset_sensor_signal_control),
+.CS_i(      external_CS_b_A),
+.MOSI_i(    external_MOSI1_A),
+.MISO_1(    external_MISO1_A),
+.MISO_2(    external_MISO2_A)
+);
+
+
+
     // assign CS_b_A  = 1'b0;
 	// assign SCLK_A  = 1'b0;
 	// assign MOSI1_A = 1'b0;
 	// assign MOSI2_A = 1'b0;
-
 	// assign MISO_A1 = 1'b1;
 	// assign MISO_A2 = 1'b1;
-
-
 	// assign CS_b_B  = CS_b;
 	// assign SCLK_B  = SCLK;
 	// assign MOSI1_B = MOSI_B;
@@ -3913,11 +3947,11 @@ sensor_Mosi_I sensor_Mosi_A (
 
 	wire 	hard_code_stream_control;
 	assign 	hard_code_stream_control = ep0fwirein[0];
-		
+
 	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_1 : result_A1;
-	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_2 : result_DDR_A1;
-	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_3 : result_A2;
-	assign 	data_stream_1 = hard_code_stream_control ? Hard_coded_data_stream_4 : result_DDR_A2;
+	assign 	data_stream_2 = hard_code_stream_control ? Hard_coded_data_stream_2 : result_DDR_A1;
+	assign 	data_stream_3 = hard_code_stream_control ? Hard_coded_data_stream_3 : result_A2;
+	assign 	data_stream_4 = hard_code_stream_control ? Hard_coded_data_stream_4 : result_DDR_A2;
 
 
 	//	ORIGINAL CODE
