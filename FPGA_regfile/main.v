@@ -2,8 +2,10 @@
  #(  parameter mem_size = 4096 ) 
  (
 	input clk,
-	input wire  [31:0]  ep41trigin, 
-	output wire [31:0] ep20wireout
+	input wire  [31:0]  ep10wirein, 
+	output wire [31:0] 	ep26wireout,
+	input wire  [6:0]  	Index_number, 
+	output wire [6:0]  	Index_number_remapped
 );
 
 	wire  write_enable;
@@ -14,13 +16,14 @@
     wire  [6:0] out;
     wire  [6:0] out_debug;
 
-	assign ep20wireout = { 16'b0 ,1'b0,out, 1'b0, out_debug};
+	assign ep26wireout = { 16'b0 ,1'b0,out, 1'b0, out_debug};
 
-	assign 	data  			= ep41trigin[6:0];
-	assign 	reset 			= ep41trigin[7];
-	assign 	wr_addr 		= ep41trigin[14:8];
-	assign 	write_enable 	= ep41trigin[15];
-	assign 	in 				= ep41trigin[22:16];
+	assign 	data  			= ep10wirein[6:0];
+	assign 	reset 			= ep10wirein[7];
+	assign 	wr_addr 		= ep10wirein[14:8];
+	assign 	write_enable 	= ep10wirein[15];
+	assign 	in 				= Index_number;
+	assign 	Index_number_remapped = out; // Direct lookup using input as an index
 
     remap_7bit_regfile uut (
         .clk(			clk),
@@ -74,7 +77,7 @@ integer j,k;
 	end
     always @(*) begin
         out_debug_r <= reg_128x7bit_map[wr_addr]; // Direct lookup using input as an index
-        out_r 		<= reg_128x7bit_map[in]; // Direct lookup using input as an index
+        out_r 		<= reg_128x7bit_map[in];      // Direct lookup using input as an index
     end
     // end
     // always @(*) begin

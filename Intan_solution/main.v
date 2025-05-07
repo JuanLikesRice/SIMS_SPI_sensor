@@ -1024,7 +1024,7 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	assign ep25wireout = 				   { 16'b0, 12'b0, board_mode };
 
 	// Unused; future expansion
-	assign ep26wireout = 				  32'h00000000;
+	// assign ep26wireout = 				  32'h00000000;
 	assign ep27wireout = 				  32'h00000000;
 	assign ep28wireout = 				  32'h00000000;
 	assign ep29wireout = 				  32'h00000000;
@@ -4016,6 +4016,18 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	// assign data_stream_31 = result_H2;
 	// assign data_stream_32 = result_DDR_H2;
     
+
+wire [6:0]Index_number, Index_number_remapped;
+
+regfile_remapper regfile_remapper (
+.clk(			dataclk),
+.ep10wirein(	ep10wirein), 
+.ep26wireout(	ep26wireout),
+.Index_number(	Index_number ), 
+.Index_number_remapped(	Index_number_remapped)
+    );
+
+
     /* Standard Opal Kelly end */
     // Instantiate the okHost and connect endpoints.
     okHost okHI(
@@ -4047,7 +4059,7 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	okWireIn     wi0d (.okHE(okHE),                            .ep_addr(8'h0d), .ep_dataout(ep0dwirein)); // led_in
 	okWireIn     wi0e (.okHE(okHE),                            .ep_addr(8'h0e), .ep_dataout(ep0ewirein)); // DAC_reref_channel_sel,DAC_reref_stream_sel,DAC_reref_mode
 	okWireIn     wi0f (.okHE(okHE),                            .ep_addr(8'h0f), .ep_dataout(ep0fwirein)); // used for  mux control
-	okWireIn     wi10 (.okHE(okHE),                            .ep_addr(8'h10), .ep_dataout(ep10wirein)); // NC
+	okWireIn     wi10 (.okHE(okHE),                            .ep_addr(8'h10), .ep_dataout(ep10wirein)); // REGFILE Control
 	okWireIn     wi11 (.okHE(okHE),                            .ep_addr(8'h11), .ep_dataout(ep11wirein)); // NC
 	okWireIn     wi12 (.okHE(okHE),                            .ep_addr(8'h12), .ep_dataout(ep12wirein)); // NC
 	okWireIn     wi13 (.okHE(okHE),                            .ep_addr(8'h13), .ep_dataout(ep13wirein)); // NC
@@ -4079,7 +4091,7 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	okWireOut    wo25 (.okHE(okHE), .okEH(okEHx[ 5*65 +: 65 ]),  .ep_addr(8'h25), .ep_datain(ep25wireout));	// ep25 = 	{ 16'b0, 12'b0, board_mode };
 
 
-	okWireOut    wo26 (.okHE(okHE), .okEH(okEHx[ 6*65 +: 65 ]),  .ep_addr(8'h26), .ep_datain(ep26wireout)); // NC
+	okWireOut    wo26 (.okHE(okHE), .okEH(okEHx[ 6*65 +: 65 ]),  .ep_addr(8'h26), .ep_datain(ep26wireout)); // REGFILE data out
 	okWireOut    wo27 (.okHE(okHE), .okEH(okEHx[ 7*65 +: 65 ]),  .ep_addr(8'h27), .ep_datain(ep27wireout)); // NC
 	okWireOut    wo28 (.okHE(okHE), .okEH(okEHx[ 8*65 +: 65 ]),  .ep_addr(8'h28), .ep_datain(ep28wireout)); // NC
 	okWireOut    wo29 (.okHE(okHE), .okEH(okEHx[ 9*65 +: 65 ]),  .ep_addr(8'h29), .ep_datain(ep29wireout)); // NC
@@ -4172,6 +4184,96 @@ endmodule
 
 
 
+
+
+
+
+ module regfile_remapper 
+ #(  parameter mem_size = 4096 ) 
+ (
+	input clk,
+	input wire  [31:0]  ep10wirein, 
+	output wire [31:0] 	ep26wireout,
+	input wire  [6:0]  	Index_number, 
+	output wire [6:0]  	Index_number_remapped
+);
+
+	wire  write_enable;
+	wire  reset;
+	wire  [6:0] data;
+	wire  [6:0] wr_addr;
+    wire  [6:0] in;
+    wire  [6:0] out;
+    wire  [6:0] out_debug;
+
+	assign ep26wireout = { 16'b0 ,1'b0,out, 1'b0, out_debug};
+
+	assign 	data  			= ep10wirein[6:0];
+	assign 	reset 			= ep10wirein[7];
+	assign 	wr_addr 		= ep10wirein[14:8];
+	assign 	write_enable 	= ep10wirein[15];
+	assign 	in 				= Index_number;
+	assign 	Index_number_remapped = out; // Direct lookup using input as an index
+
+    remap_7bit_regfile uut (
+        .clk(			clk),
+        .write_enable(	write_enable),
+		.reset(			reset),
+        .data(			data),
+        .wr_addr(		wr_addr),
+        .in(			in),
+        .out(			out),
+		.out_debug(out_debug)
+    );
+
+endmodule
+
+
+module remap_7bit_regfile (
+
+	input clk,
+	input wire write_enable,
+	input wire reset,
+	input wire  [6:0] data,
+	input wire  [6:0] wr_addr,
+    input wire  [6:0] in,       
+    output wire [6:0] out,            
+    output wire [6:0] out_debug       
+);
+
+    reg [6:0] out_r, out_debug_r;
+	reg [31:0] reg_128x7bit_map [0:127];
+
+	assign out 		 = out_r;
+	assign out_debug = out_debug_r;	
+
+integer j,k;
+
+	initial begin
+		for (j=0; j<128; j=j+1) begin
+			reg_128x7bit_map[j] <= 0;
+		end
+	end
+
+	always @(posedge clk) begin
+		if (reset)begin 
+			for (k=0; k<128; k=k+1) begin
+				reg_128x7bit_map[k] <= 0;
+			end
+		end else if (write_enable) begin
+			reg_128x7bit_map[wr_addr] <= data;
+		end
+		
+	end
+    always @(*) begin
+        out_debug_r <= reg_128x7bit_map[wr_addr]; // Direct lookup using input as an index
+        out_r 		<= reg_128x7bit_map[in];      // Direct lookup using input as an index
+    end
+    // end
+    // always @(*) begin
+
+endmodule
+    
 
 
 
