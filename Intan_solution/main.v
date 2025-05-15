@@ -478,6 +478,7 @@ JG code here _B
 	assign stubbed_data_stream_ADC_6 = 16'b0000_0000_0000_0000;
 	assign stubbed_data_stream_ADC_7 = 16'b0000_0000_0000_0000;
 	assign stubbed_data_stream_ADC_8 = 16'b0000_0000_0000_0000;
+	
 
 
 	wire				TTL_out_mode;
@@ -1025,7 +1026,7 @@ sensor_Mosi_I sensor_Mosi_external_A (
 
 	// Unused; future expansion
 	// assign ep26wireout = 				  32'h00000000;
-	assign ep27wireout = 				  32'h00000000;
+	// assign ep27wireout = 				  32'h00000000;
 	assign ep28wireout = 				  32'h00000000;
 	assign ep29wireout = 				  32'h00000000;
 	assign ep2awireout = 				  32'h00000000;
@@ -1145,7 +1146,8 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	wire external_fast_settle_rising_edge, external_fast_settle_falling_edge;
 	assign external_fast_settle_rising_edge = external_fast_settle_prev == 1'b0 && external_fast_settle == 1'b1;
 	assign external_fast_settle_falling_edge = external_fast_settle_prev == 1'b1 && external_fast_settle == 1'b0;
-	
+	reg [15:0] data_in_dual_bank_reg_file;
+
 	// If the user has enabled external fast settling of amplifiers, inject commands to set fast settle
 	// (bit D[5] in RAM Register 0) on a rising edge and reset fast settle on a falling edge of the control
 	// signal.  We only inject commands in the auxcmd1 slot, since this is typically used only for setting
@@ -1251,7 +1253,8 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	assign data_stream_filler = 16'd0;
 	
 	reg [3:0] word_counter_16bit = 0;
-    
+	reg 	  reg_file_enable;
+	reg [2:0] reg_value;
 	integer main_state;
 	localparam
                 ms_wait    = 99,
@@ -4149,7 +4152,12 @@ sensor_Mosi_I sensor_Mosi_external_A (
 		.phase_select(delay_H), .MISO4x(in4x_H2), .MISO(in_DDR_H2));
 
 
+	wire [6:0] address_ofset;
 
+    lookup_table_case #(.OUT_WIDTH(7)) lookup_table_case (
+        .in(reg_value),
+        .out(address_ofset)
+    );
 
 
 	wire [15:0] Hard_coded_data_stream_1 ; 
@@ -4233,30 +4241,28 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	// assign data_stream_32 = result_DDR_H2;
     
 
-wire [6:0]Index_number, Index_number_remapped;
+wire [6:0]  Index_number_remapped;
+	reg  [6:0] address_index_readout;
 
 regfile_remapper regfile_remapper (
 .clk(			dataclk),
 .ep10wirein(	ep10wirein), 
 .ep26wireout(	ep26wireout),
-.Index_number(	Index_number ), 
+.Index_number(	address_index_readout), 
 .Index_number_remapped(	Index_number_remapped)
     );
 
 
 
-	wire [6:0] address_ofset;
 	wire [6:0] address_write;
 	wire address_bank;
 		
 	wire halt_wire;
 	wire write_enable_regfile;
 	wire halt_write;
-	reg [15:0] data_in_dual_bank_reg_file;
 
     wire    last_address_written;
 	wire [6:0] rd_addr0, rd_addr1;
-	reg  [6:0] address_index_readout;
 	wire [15:0] data_out0, data_out1;
 
 	
@@ -4268,6 +4274,8 @@ regfile_remapper regfile_remapper (
 	reg [31:0] 	fpgaout_fifoin_din_r;
 	reg 		fpgaout_fifoin_wr_en_r;
 
+	wire [31:0]  fpgaout_fifoin_din;
+	wire fpgaout_fifoin_wr_en;
 
 
 	assign	address_write = address_ofset + channel_MISO;
@@ -4279,6 +4287,7 @@ regfile_remapper regfile_remapper (
 
 
 	assign 	last_address_written = (address_write==7'd127)&&(write_enable_regfile==1'b1);
+	
     dual_bank_regfile dual_bank_regfile (
         .clk(dataclk),
         .rst(reset),
@@ -4293,11 +4302,12 @@ regfile_remapper regfile_remapper (
     );
 
 	assign data_out_regfile_to_fifo = address_bank ? data_out1 : data_out0;
-	assign rd_addr0 = address_index_readout;
-	assign rd_addr1 = address_index_readout;
+	assign rd_addr0 = Index_number_remapped;
+	assign rd_addr1 = Index_number_remapped;
+	wire         fpgain_fifoout_ready_refile;
 
 always @(*) begin	
-	address_index_readout_max <= ep05wirein[6:0];
+	address_index_readout_max <= ep12wirein[6:0];
 end
 
 always @(posedge dataclk) begin
@@ -4306,7 +4316,7 @@ always @(posedge dataclk) begin
 		data_valid_readout <= 1'b0;
 	end else if (last_address_written)begin
 		address_index_readout <= 16'b0;
-		data_valid_readout <= 1'b1;
+		data_valid_readout <= 1'b1; /// changed here 
 	end else if (fpgain_fifoout_ready_refile &&(address_index_readout < address_index_readout_max)) begin
 		address_index_readout <= address_index_readout + 1;
 		data_valid_readout <= 1'b1;
@@ -4320,7 +4330,7 @@ assign fpgaout_fifoin_din     = fpgaout_fifoin_din_r  ;
 assign fpgaout_fifoin_wr_en   = fpgaout_fifoin_wr_en_r;
 always @(*) begin
 	fpgaout_fifoin_wr_en_r <=		data_valid_readout;
-	fpgaout_fifoin_din_r   <= {address_index_readout,data_out_regfile_to_fifo};
+	fpgaout_fifoin_din_r   <= {Index_number_remapped,data_out_regfile_to_fifo};
 end
 
 
@@ -4333,30 +4343,29 @@ data_in_dual_bank_reg_file <= 0;
 end
 
 
-
-
 wire   trigger_fifo_rst;
-assign trigger_fifo_rst = (ep11wirein[0]);
+assign trigger_fifo_rst = (ep00wirein[0]);
 
 wire [15:0] rd_data_count,wr_data_count;
-wire         fpgain_fifoout_ready_refile;
-wire [31:0]  fpgaout_fifoin_din;
-wire fpgaout_fifoin_wr_en;
+
+wire FIFO_read_from_RFRM, pipeout_rdy_RFRM;
 wire rd_en_fifo, full, empty,wr_rst_busy,rd_rst_busy;
 
-assign pipeout_rdy = ~empty;
+assign pipeout_rdy_RFRM = ~empty;
 assign fpgain_fifoout_ready_refile = ~full;
-assign ep24wireout_readout = rd_data_count[15:0];
+assign ep27wireout = rd_data_count[15:0];
 
+
+wire [31:0] FIFO_data_out_RFRM;
 
 fifo_generator_0 fifo_hehe (
   .rst(trigger_fifo_rst),                      // input wire rst
-  .wr_clk(clk),                // input wire wr_clk
-  .rd_clk(clk),                // input wire rd_clk
+  .wr_clk(dataclk),                // input wire wr_clk
+  .rd_clk(okClk),                // input wire rd_clk
   .din(     fpgaout_fifoin_din),                      // input wire [31 : 0] din
   .wr_en(   fpgaout_fifoin_wr_en),                  // input wire wr_en
-  .rd_en(   FIFO_read_from),                  // input wire rd_en
-  .dout(    FIFO_data_out),                    // output wire [31 : 0] dout
+  .rd_en(   FIFO_read_from_RFRM),                  // input wire rd_en
+  .dout(    FIFO_data_out_RFRM),                    // output wire [31 : 0] dout
   .full(full),                    // output wire full
   .empty(empty),                  // output wire empty
   .rd_data_count(rd_data_count),  // output wire [15 : 0] rd_data_count
@@ -4366,7 +4375,22 @@ fifo_generator_0 fifo_hehe (
 );
 
 
-
+// //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
+// fifo_generator_0 your_instance_name (
+//   .rst(rst),                      // input wire rst
+//   .wr_clk(wr_clk),                // input wire wr_clk
+//   .rd_clk(rd_clk),                // input wire rd_clk
+//   .din(din),                      // input wire [31 : 0] din
+//   .wr_en(wr_en),                  // input wire wr_en
+//   .rd_en(rd_en),                  // input wire rd_en
+//   .dout(dout),                    // output wire [31 : 0] dout
+//   .full(full),                    // output wire full
+//   .empty(empty),                  // output wire empty
+//   .rd_data_count(rd_data_count),  // output wire [15 : 0] rd_data_count
+//   .wr_data_count(wr_data_count),  // output wire [15 : 0] wr_data_count
+//   .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
+//   .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
+// );
 
 
 
@@ -4383,8 +4407,8 @@ fifo_generator_0 fifo_hehe (
         .okEH(okEH)
     );
     
-	wire [65*33-1:0] 	okEHx;
-	okWireOR # (.N(33)) wireOR (okEH, okEHx);
+	wire [65*34-1:0] 	okEHx;
+	okWireOR # (.N(34)) wireOR (okEH, okEHx);
 
 	okWireIn     wi00 (.okHE(okHE),                            .ep_addr(8'h00), .ep_dataout(ep00wirein));
 	okWireIn     wi01 (.okHE(okHE),                            .ep_addr(8'h01), .ep_dataout(ep01wirein)); // Time_step	
@@ -4403,8 +4427,8 @@ fifo_generator_0 fifo_hehe (
 	okWireIn     wi0e (.okHE(okHE),                            .ep_addr(8'h0e), .ep_dataout(ep0ewirein)); // DAC_reref_channel_sel,DAC_reref_stream_sel,DAC_reref_mode
 	okWireIn     wi0f (.okHE(okHE),                            .ep_addr(8'h0f), .ep_dataout(ep0fwirein)); // used for  mux control
 	okWireIn     wi10 (.okHE(okHE),                            .ep_addr(8'h10), .ep_dataout(ep10wirein)); // REGFILE Control
-	okWireIn     wi11 (.okHE(okHE),                            .ep_addr(8'h11), .ep_dataout(ep11wirein)); // NC
-	okWireIn     wi12 (.okHE(okHE),                            .ep_addr(8'h12), .ep_dataout(ep12wirein)); // NC
+	okWireIn     wi11 (.okHE(okHE),                            .ep_addr(8'h11), .ep_dataout(ep11wirein)); // rst fifo
+	okWireIn     wi12 (.okHE(okHE),                            .ep_addr(8'h12), .ep_dataout(ep12wirein)); // address_index_readout_max
 	okWireIn     wi13 (.okHE(okHE),                            .ep_addr(8'h13), .ep_dataout(ep13wirein)); // NC
 	okWireIn     wi14 (.okHE(okHE),                            .ep_addr(8'h14), .ep_dataout(ep14wirein)); // data_stream_1_en_in - data_stream_31_en_in
 	okWireIn     wi15 (.okHE(okHE),                            .ep_addr(8'h15), .ep_dataout(ep15wirein)); // TTL_out_user
@@ -4435,7 +4459,7 @@ fifo_generator_0 fifo_hehe (
 
 
 	okWireOut    wo26 (.okHE(okHE), .okEH(okEHx[ 6*65 +: 65 ]),  .ep_addr(8'h26), .ep_datain(ep26wireout)); // REGFILE data out
-	okWireOut    wo27 (.okHE(okHE), .okEH(okEHx[ 7*65 +: 65 ]),  .ep_addr(8'h27), .ep_datain(ep27wireout)); // NC
+	okWireOut    wo27 (.okHE(okHE), .okEH(okEHx[ 7*65 +: 65 ]),  .ep_addr(8'h27), .ep_datain(ep27wireout)); // remap_fifo_data_counts_out
 	okWireOut    wo28 (.okHE(okHE), .okEH(okEHx[ 8*65 +: 65 ]),  .ep_addr(8'h28), .ep_datain(ep28wireout)); // NC
 	okWireOut    wo29 (.okHE(okHE), .okEH(okEHx[ 9*65 +: 65 ]),  .ep_addr(8'h29), .ep_datain(ep29wireout)); // NC
 	okWireOut    wo2a (.okHE(okHE), .okEH(okEHx[ 10*65 +: 65 ]), .ep_addr(8'h2a), .ep_datain(ep2awireout)); // NC
@@ -4468,8 +4492,6 @@ fifo_generator_0 fifo_hehe (
 	okBTPipeOut    poa0 (.okHE(okHE), .okEH(okEHx[ 32*65 +: 65 ]), .ep_addr(8'ha0), .ep_read(FIFO_read_from), 
 		.ep_blockstrobe(), .ep_datain({FIFO_data_out[15:0], FIFO_data_out[31:16]}), .ep_ready(pipeout_rdy));
 	
-
-
 
 	okBTPipeOut    poa1 (.okHE(okHE), .okEH(okEHx[ 33*65 +: 65 ]), .ep_addr(8'ha1), .ep_read(FIFO_read_from_RFRM), .ep_blockstrobe(), .ep_datain(FIFO_data_out_RFRM), .ep_ready(pipeout_rdy_RFRM));
 
@@ -4579,6 +4601,33 @@ endmodule
 endmodule
 
 
+
+
+
+
+module lookup_table_case #(
+    parameter OUT_WIDTH = 8  // Default output width (can be changed)
+)(
+    input wire [2:0] in,       // 3-bit input
+    output reg [OUT_WIDTH-1:0] out  // Parameterized output width
+);
+
+    always @(*) begin
+        case (in)
+            3'b000: out = 8'h00; // Example: 0
+            3'b001: out = 8'h20;// Example: All 1s
+            3'b010: out = 8'h40;              // Example: 0b10101010
+            3'b011: out = 8'h60;              // Example: 0b01010101
+            3'b100: out = 8'hFF;              // Example: 0b00001111
+            3'b101: out = 8'hFF;              // Example: 0b11110000
+            3'b110: out = 8'hFF;              // Example: 0b00110011
+            3'b111: out = 8'hFF;              // Example: 0b11001100
+            default: out = {OUT_WIDTH{1'b0}}; // Default case
+        endcase
+    end
+
+endmodule
+
 module remap_7bit_regfile (
 
 	input clk,
@@ -4601,14 +4650,14 @@ integer j,k;
 
 	initial begin
 		for (j=0; j<128; j=j+1) begin
-			reg_128x7bit_map[j] <= 0;
+			reg_128x7bit_map[j] <= j;
 		end
 	end
 
 	always @(posedge clk) begin
 		if (reset)begin 
 			for (k=0; k<128; k=k+1) begin
-				reg_128x7bit_map[k] <= 0;
+				reg_128x7bit_map[k] <= k;
 			end
 		end else if (write_enable) begin
 			reg_128x7bit_map[wr_addr] <= data;
@@ -4627,6 +4676,57 @@ endmodule
 
 
 
+
+
+module dual_bank_regfile (
+    input wire clk,
+    input wire rst,
+    input wire we,                    // Write enable
+    input wire bank_sel,              // Bank select for writing (0: Bank 0, 1: Bank 1)
+    input wire [6:0] wr_addr,         // 7-bit write address (128 entries)
+    input wire [15:0] data_in,        // Data to write
+    input wire [6:0] rd_addr0,        // Read address for Bank 0
+    input wire [6:0] rd_addr1,        // Read address for Bank 1
+    output wire [15:0] data_out0,     // Data output from Bank 0
+    output wire [15:0] data_out1      // Data output from Bank 1
+);
+
+
+    reg [15:0] bank0 [127:0];  // 128 x 16-bit register bank 0
+    reg [15:0] bank1 [127:0];  // 128 x 16-bit register bank 1
+
+
+
+integer i,j;
+initial begin 
+
+	for (j = 0; j < 128; j = j + 1) begin
+		bank0[j] <= 16'b0;
+		bank1[j] <= 16'b0;
+	end
+
+end
+
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            for (i = 0; i < 128; i = i + 1) begin
+                bank0[i] <= 16'b0;
+                bank1[i] <= 16'b0;
+            end
+        end else if (we) begin
+            // Write operation
+            if (bank_sel)
+                bank1[wr_addr] <= data_in;  // Write to Bank 1
+            else
+                bank0[wr_addr] <= data_in;  // Write to Bank 0
+        end
+    end
+
+    assign data_out0 = bank0[rd_addr0];  // Read from Bank 0
+    assign data_out1 = bank1[rd_addr1];  // Read from Bank 1
+
+endmodule
 
 
 
