@@ -478,6 +478,7 @@ JG code here _B
 	assign stubbed_data_stream_ADC_6 = 16'b0000_0000_0000_0000;
 	assign stubbed_data_stream_ADC_7 = 16'b0000_0000_0000_0000;
 	assign stubbed_data_stream_ADC_8 = 16'b0000_0000_0000_0000;
+	
 
 
 	wire				TTL_out_mode;
@@ -1026,8 +1027,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	// Unused; future expansion
 	// assign ep26wireout = 				  32'h00000000;
 	// assign ep27wireout = 				  32'h00000000;
-	// assign ep29wireout = 				  32'h00000000;
-	// assign ep2awireout = 				  32'h00000000;
+	assign ep28wireout = 				  32'h00000000;
+	assign ep29wireout = 				  32'h00000000;
+	assign ep2awireout = 				  32'h00000000;
 	assign ep2bwireout = 				  32'h00000000;
 	assign ep2cwireout = 				  32'h00000000;
 	assign ep2dwireout = 				  32'h00000000;
@@ -1144,7 +1146,8 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	wire external_fast_settle_rising_edge, external_fast_settle_falling_edge;
 	assign external_fast_settle_rising_edge = external_fast_settle_prev == 1'b0 && external_fast_settle == 1'b1;
 	assign external_fast_settle_falling_edge = external_fast_settle_prev == 1'b1 && external_fast_settle == 1'b0;
-	
+	reg [15:0] data_in_dual_bank_reg_file;
+
 	// If the user has enabled external fast settling of amplifiers, inject commands to set fast settle
 	// (bit D[5] in RAM Register 0) on a rising edge and reset fast settle on a falling edge of the control
 	// signal.  We only inject commands in the auxcmd1 slot, since this is typically used only for setting
@@ -1250,11 +1253,8 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	assign data_stream_filler = 16'd0;
 	
 	reg [3:0] word_counter_16bit = 0;
-    reg [2:0] reg_value;
 	reg 	  reg_file_enable;
-
-
-
+	reg [2:0] reg_value;
 	integer main_state;
 	localparam
                 ms_wait    = 99,
@@ -1361,9 +1361,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 				  
 	always @(posedge dataclk) begin
 		if (reset) begin
-            reg_file_enable <= 1'b0;
-            reg_value       <= 3'd5;
-			main_state <= ms_wait;
+								reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_wait;
 			timestamp <= 0;
 			sample_CLK_out <= 0;
 			channel <= 0;
@@ -1384,8 +1384,8 @@ sensor_Mosi_I sensor_Mosi_external_A (
 			SCLK <= 1'b0;
 			FIFO_data_in <= 16'b0;
 			FIFO_write_to <= 1'b0;
-            reg_file_enable <= 1'b0;
-            reg_value       <= 3'd5;
+
+			
 
 			case (main_state)
 			
@@ -1483,7 +1483,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					SPI_running <= 1'b0;
 
 					if (SPI_start) begin
-						main_state <= ms_cs_n;
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_n;
 					end
 				end
 
@@ -1498,7 +1500,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					MOSI_cmd_G <= MOSI_cmd_selected_G;
 					MOSI_cmd_H <= MOSI_cmd_selected_H;
 					CS_b <= 1'b1;
-					main_state <= ms_clk1_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk1_a;
 				end
 
 				ms_clk1_a: begin
@@ -1547,7 +1551,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					MOSI_F <= MOSI_cmd_F[15];
 					MOSI_G <= MOSI_cmd_G[15];
 					MOSI_H <= MOSI_cmd_H[15];
-					main_state <= ms_clk1_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk1_b;
 				end
 
 				ms_clk1_b: begin
@@ -1565,7 +1571,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 						FIFO_write_to <= 1'b1;
 					end
 
-					main_state <= ms_clk1_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk1_c;
 				end
 
 				ms_clk1_c: begin
@@ -1592,7 +1600,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[0] <= MISO_F1; in4x_F2[0] <= MISO_F2;
 					in4x_G1[0] <= MISO_G1; in4x_G2[0] <= MISO_G2;
 					in4x_H1[0] <= MISO_H1; in4x_H2[0] <= MISO_H2;					
-					main_state <= ms_clk1_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk1_d;
 				end
 				
 				ms_clk1_d: begin
@@ -1618,7 +1628,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[1] <= MISO_F1; in4x_F2[1] <= MISO_F2;
 					in4x_G1[1] <= MISO_G1; in4x_G2[1] <= MISO_G2;
 					in4x_H1[1] <= MISO_H1; in4x_H2[1] <= MISO_H2;					
-					main_state <= ms_clk2_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk2_a;
 				end
 
 				ms_clk2_a: begin
@@ -1651,7 +1663,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[2] <= MISO_F1; in4x_F2[2] <= MISO_F2;
 					in4x_G1[2] <= MISO_G1; in4x_G2[2] <= MISO_G2;
 					in4x_H1[2] <= MISO_H1; in4x_H2[2] <= MISO_H2;
-					main_state <= ms_clk2_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk2_b;
 				end
 
 				ms_clk2_b: begin
@@ -1676,7 +1690,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[3] <= MISO_F1; in4x_F2[3] <= MISO_F2;
 					in4x_G1[3] <= MISO_G1; in4x_G2[3] <= MISO_G2;
 					in4x_H1[3] <= MISO_H1; in4x_H2[3] <= MISO_H2;
-					main_state <= ms_clk2_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk2_c;
 				end
 
 				ms_clk2_c: begin
@@ -1702,7 +1718,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[4] <= MISO_F1; in4x_F2[4] <= MISO_F2;
 					in4x_G1[4] <= MISO_G1; in4x_G2[4] <= MISO_G2;
 					in4x_H1[4] <= MISO_H1; in4x_H2[4] <= MISO_H2;
-					main_state <= ms_clk2_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk2_d;
 				end
 				
 				ms_clk2_d: begin
@@ -1716,10 +1734,15 @@ sensor_Mosi_I sensor_Mosi_external_A (
 
 					if (data_stream_1_en == 1'b1) begin
 						FIFO_data_in <= data_stream_1;
+						data_in_dual_bank_reg_file <= data_stream_1;
 						FIFO_write_to <= 1'b1;
-                        reg_file_enable <= 1'b1;
-                        reg_value       <= 3'd0;
-            			end
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd0;
+					end else begin
+						reg_file_enable <= 1'b0;
+						reg_value       <= 3'd5;
+					end
+
 
 					SCLK <= 1'b1;
 					in4x_A1[5] <= MISO_A1; in4x_A2[5] <= MISO_A2;
@@ -1730,7 +1753,7 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[5] <= MISO_F1; in4x_F2[5] <= MISO_F2;
 					in4x_G1[5] <= MISO_G1; in4x_G2[5] <= MISO_G2;
 					in4x_H1[5] <= MISO_H1; in4x_H2[5] <= MISO_H2;
-					main_state <= ms_clk3_a;
+					main_state <=  ms_clk3_a;
 				end
 				
 				ms_clk3_a: begin
@@ -1742,12 +1765,21 @@ sensor_Mosi_I sensor_Mosi_external_A (
 						RAM_bank_sel_rd <= aux_cmd_bank_3_D;
 					end
 
+					// if (data_stream_2_en == 1'b1) begin
+					// 	FIFO_data_in <= data_stream_2;
+					// 	FIFO_write_to <= 1'b1;
+					// end
 					if (data_stream_2_en == 1'b1) begin
 						FIFO_data_in <= data_stream_2;
+						data_in_dual_bank_reg_file <= data_stream_2;
 						FIFO_write_to <= 1'b1;
-                        reg_file_enable <= 1'b1;
-                        reg_value       <= 3'd1;
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd1;
+					end else begin 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					end
+
 
 					MOSI_A <= MOSI_cmd_A[13];
 					MOSI_B <= MOSI_cmd_B[13];
@@ -1765,7 +1797,8 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[6] <= MISO_F1; in4x_F2[6] <= MISO_F2;
 					in4x_G1[6] <= MISO_G1; in4x_G2[6] <= MISO_G2;
 					in4x_H1[6] <= MISO_H1; in4x_H2[6] <= MISO_H2;
-					main_state <= ms_clk3_b;
+
+					main_state <=  ms_clk3_b;
 				end
 
 				ms_clk3_b: begin
@@ -1776,11 +1809,19 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					end else if (channel == 33) begin
 						aux_cmd_D <= RAM_data_out_3;
 					end
+					// if (data_stream_3_en == 1'b1) begin
+					// 	FIFO_data_in <= data_stream_3;
+					// 	FIFO_write_to <= 1'b1;
+					// end
 					if (data_stream_3_en == 1'b1) begin
 						FIFO_data_in <= data_stream_3;
+						data_in_dual_bank_reg_file <= data_stream_3;
 						FIFO_write_to <= 1'b1;
-                        reg_file_enable <= 1'b1;
-                        reg_value       <= 3'd2;
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd2;
+					end else begin 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					end
 
 					in4x_A1[7] <= MISO_A1; in4x_A2[7] <= MISO_A2;
@@ -1791,7 +1832,8 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[7] <= MISO_F1; in4x_F2[7] <= MISO_F2;
 					in4x_G1[7] <= MISO_G1; in4x_G2[7] <= MISO_G2;
 					in4x_H1[7] <= MISO_H1; in4x_H2[7] <= MISO_H2;					
-					main_state <= ms_clk3_c;
+
+					main_state <=  ms_clk3_c;
 				end
 
 				ms_clk3_c: begin
@@ -1802,12 +1844,22 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					end else if (channel == 33) begin
 						RAM_bank_sel_rd <= aux_cmd_bank_3_E;
 					end
+					// if (data_stream_4_en == 1'b1) begin
+					// 	FIFO_data_in <= data_stream_4;
+					// 	FIFO_write_to <= 1'b1;
+					// end
 					if (data_stream_4_en == 1'b1) begin
 						FIFO_data_in <= data_stream_4;
+						data_in_dual_bank_reg_file <= data_stream_4;
 						FIFO_write_to <= 1'b1;
-                        reg_file_enable <= 1'b1;
-                        reg_value       <= 3'd2;
+						reg_file_enable <= 1'b1;
+						reg_value       <= 3'd3;
+					end else begin 
+					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
 					end
+
+
 
 					SCLK <= 1'b1;
 					in4x_A1[8] <= MISO_A1; in4x_A2[8] <= MISO_A2;
@@ -1818,7 +1870,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[8] <= MISO_F1; in4x_F2[8] <= MISO_F2;
 					in4x_G1[8] <= MISO_G1; in4x_G2[8] <= MISO_G2;
 					in4x_H1[8] <= MISO_H1; in4x_H2[8] <= MISO_H2;
-					main_state <= ms_clk3_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk3_d;
 				end
 				
 				ms_clk3_d: begin
@@ -1843,7 +1897,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[9] <= MISO_F1; in4x_F2[9] <= MISO_F2;
 					in4x_G1[9] <= MISO_G1; in4x_G2[9] <= MISO_G2;
 					in4x_H1[9] <= MISO_H1; in4x_H2[9] <= MISO_H2;
-					main_state <= ms_clk4_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk4_a;
 				end
 
 				ms_clk4_a: begin
@@ -1875,7 +1931,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[10] <= MISO_F1; in4x_F2[10] <= MISO_F2;
 					in4x_G1[10] <= MISO_G1; in4x_G2[10] <= MISO_G2;
 					in4x_H1[10] <= MISO_H1; in4x_H2[10] <= MISO_H2;	
-					main_state <= ms_clk4_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk4_b;
 				end
 
 				ms_clk4_b: begin
@@ -1899,7 +1957,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[11] <= MISO_F1; in4x_F2[11] <= MISO_F2;
 					in4x_G1[11] <= MISO_G1; in4x_G2[11] <= MISO_G2;
 					in4x_H1[11] <= MISO_H1; in4x_H2[11] <= MISO_H2;
-					main_state <= ms_clk4_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk4_c;
 				end
 
 				ms_clk4_c: begin
@@ -1924,7 +1984,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[12] <= MISO_F1; in4x_F2[12] <= MISO_F2;
 					in4x_G1[12] <= MISO_G1; in4x_G2[12] <= MISO_G2;
 					in4x_H1[12] <= MISO_H1; in4x_H2[12] <= MISO_H2;
-					main_state <= ms_clk4_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk4_d;
 				end
 				
 				ms_clk4_d: begin
@@ -1949,7 +2011,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[13] <= MISO_F1; in4x_F2[13] <= MISO_F2;
 					in4x_G1[13] <= MISO_G1; in4x_G2[13] <= MISO_G2;
 					in4x_H1[13] <= MISO_H1; in4x_H2[13] <= MISO_H2;	
-					main_state <= ms_clk5_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk5_a;
 				end
 				
 				ms_clk5_a: begin
@@ -1981,7 +2045,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[14] <= MISO_F1; in4x_F2[14] <= MISO_F2;
 					in4x_G1[14] <= MISO_G1; in4x_G2[14] <= MISO_G2;
 					in4x_H1[14] <= MISO_H1; in4x_H2[14] <= MISO_H2;
-					main_state <= ms_clk5_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk5_b;
 				end
 
 				ms_clk5_b: begin
@@ -2005,7 +2071,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[15] <= MISO_F1; in4x_F2[15] <= MISO_F2;
 					in4x_G1[15] <= MISO_G1; in4x_G2[15] <= MISO_G2;
 					in4x_H1[15] <= MISO_H1; in4x_H2[15] <= MISO_H2;
-					main_state <= ms_clk5_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk5_c;
 				end
 
 				ms_clk5_c: begin
@@ -2023,7 +2091,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[16] <= MISO_F1; in4x_F2[16] <= MISO_F2;
 					in4x_G1[16] <= MISO_G1; in4x_G2[16] <= MISO_G2;
 					in4x_H1[16] <= MISO_H1; in4x_H2[16] <= MISO_H2;
-					main_state <= ms_clk5_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk5_d;
 				end
 				
 				ms_clk5_d: begin
@@ -2041,7 +2111,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[17] <= MISO_F1; in4x_F2[17] <= MISO_F2;
 					in4x_G1[17] <= MISO_G1; in4x_G2[17] <= MISO_G2;
 					in4x_H1[17] <= MISO_H1; in4x_H2[17] <= MISO_H2;
-					main_state <= ms_clk6_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk6_a;
 				end
 				
 				ms_clk6_a: begin
@@ -2066,7 +2138,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[18] <= MISO_F1; in4x_F2[18] <= MISO_F2;
 					in4x_G1[18] <= MISO_G1; in4x_G2[18] <= MISO_G2;
 					in4x_H1[18] <= MISO_H1; in4x_H2[18] <= MISO_H2;					
-					main_state <= ms_clk6_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk6_b;
 				end
 
 				ms_clk6_b: begin
@@ -2083,7 +2157,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[19] <= MISO_F1; in4x_F2[19] <= MISO_F2;
 					in4x_G1[19] <= MISO_G1; in4x_G2[19] <= MISO_G2;
 					in4x_H1[19] <= MISO_H1; in4x_H2[19] <= MISO_H2;						
-					main_state <= ms_clk6_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk6_c;
 				end
 
 				ms_clk6_c: begin
@@ -2101,7 +2177,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[20] <= MISO_F1; in4x_F2[20] <= MISO_F2;
 					in4x_G1[20] <= MISO_G1; in4x_G2[20] <= MISO_G2;
 					in4x_H1[20] <= MISO_H1; in4x_H2[20] <= MISO_H2;					
-					main_state <= ms_clk6_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk6_d;
 				end
 				
 				ms_clk6_d: begin
@@ -2119,7 +2197,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[21] <= MISO_F1; in4x_F2[21] <= MISO_F2;
 					in4x_G1[21] <= MISO_G1; in4x_G2[21] <= MISO_G2;
 					in4x_H1[21] <= MISO_H1; in4x_H2[21] <= MISO_H2;					
-					main_state <= ms_clk7_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk7_a;
 				end
 				
 				ms_clk7_a: begin
@@ -2144,7 +2224,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[22] <= MISO_F1; in4x_F2[22] <= MISO_F2;
 					in4x_G1[22] <= MISO_G1; in4x_G2[22] <= MISO_G2;
 					in4x_H1[22] <= MISO_H1; in4x_H2[22] <= MISO_H2;					
-					main_state <= ms_clk7_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk7_b;
 				end
 
 				ms_clk7_b: begin
@@ -2161,7 +2243,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[23] <= MISO_F1; in4x_F2[23] <= MISO_F2;
 					in4x_G1[23] <= MISO_G1; in4x_G2[23] <= MISO_G2;
 					in4x_H1[23] <= MISO_H1; in4x_H2[23] <= MISO_H2;					
-					main_state <= ms_clk7_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk7_c;
 				end
 
 				ms_clk7_c: begin
@@ -2179,7 +2263,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[24] <= MISO_F1; in4x_F2[24] <= MISO_F2;
 					in4x_G1[24] <= MISO_G1; in4x_G2[24] <= MISO_G2;
 					in4x_H1[24] <= MISO_H1; in4x_H2[24] <= MISO_H2;					
-					main_state <= ms_clk7_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk7_d;
 				end
 				
 				ms_clk7_d: begin
@@ -2197,7 +2283,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[25] <= MISO_F1; in4x_F2[25] <= MISO_F2;
 					in4x_G1[25] <= MISO_G1; in4x_G2[25] <= MISO_G2;
 					in4x_H1[25] <= MISO_H1; in4x_H2[25] <= MISO_H2;					
-					main_state <= ms_clk8_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk8_a;
 				end
 
 				ms_clk8_a: begin
@@ -2222,7 +2310,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[26] <= MISO_F1; in4x_F2[26] <= MISO_F2;
 					in4x_G1[26] <= MISO_G1; in4x_G2[26] <= MISO_G2;
 					in4x_H1[26] <= MISO_H1; in4x_H2[26] <= MISO_H2;					
-					main_state <= ms_clk8_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk8_b;
 				end
 
 				ms_clk8_b: begin
@@ -2239,7 +2329,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[27] <= MISO_F1; in4x_F2[27] <= MISO_F2;
 					in4x_G1[27] <= MISO_G1; in4x_G2[27] <= MISO_G2;
 					in4x_H1[27] <= MISO_H1; in4x_H2[27] <= MISO_H2;					
-					main_state <= ms_clk8_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk8_c;
 				end
 
 				ms_clk8_c: begin
@@ -2257,7 +2349,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[28] <= MISO_F1; in4x_F2[28] <= MISO_F2;
 					in4x_G1[28] <= MISO_G1; in4x_G2[28] <= MISO_G2;
 					in4x_H1[28] <= MISO_H1; in4x_H2[28] <= MISO_H2;						
-					main_state <= ms_clk8_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk8_d;
 				end
 				
 				ms_clk8_d: begin
@@ -2275,7 +2369,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[29] <= MISO_F1; in4x_F2[29] <= MISO_F2;
 					in4x_G1[29] <= MISO_G1; in4x_G2[29] <= MISO_G2;
 					in4x_H1[29] <= MISO_H1; in4x_H2[29] <= MISO_H2;						
-					main_state <= ms_clk9_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk9_a;
 				end
 
 				ms_clk9_a: begin
@@ -2300,7 +2396,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[30] <= MISO_F1; in4x_F2[30] <= MISO_F2;
 					in4x_G1[30] <= MISO_G1; in4x_G2[30] <= MISO_G2;
 					in4x_H1[30] <= MISO_H1; in4x_H2[30] <= MISO_H2;						
-					main_state <= ms_clk9_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk9_b;
 				end
 
 				ms_clk9_b: begin
@@ -2317,7 +2415,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[31] <= MISO_F1; in4x_F2[31] <= MISO_F2;
 					in4x_G1[31] <= MISO_G1; in4x_G2[31] <= MISO_G2;
 					in4x_H1[31] <= MISO_H1; in4x_H2[31] <= MISO_H2;					
-					main_state <= ms_clk9_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk9_c;
 				end
 
 				ms_clk9_c: begin
@@ -2335,7 +2435,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[32] <= MISO_F1; in4x_F2[32] <= MISO_F2;
 					in4x_G1[32] <= MISO_G1; in4x_G2[32] <= MISO_G2;
 					in4x_H1[32] <= MISO_H1; in4x_H2[32] <= MISO_H2;
-					main_state <= ms_clk9_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk9_d;
 				end
 				
 				ms_clk9_d: begin
@@ -2353,7 +2455,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[33] <= MISO_F1; in4x_F2[33] <= MISO_F2;
 					in4x_G1[33] <= MISO_G1; in4x_G2[33] <= MISO_G2;
 					in4x_H1[33] <= MISO_H1; in4x_H2[33] <= MISO_H2;						
-					main_state <= ms_clk10_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk10_a;
 				end
 
 				ms_clk10_a: begin
@@ -2378,7 +2482,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[34] <= MISO_F1; in4x_F2[34] <= MISO_F2;
 					in4x_G1[34] <= MISO_G1; in4x_G2[34] <= MISO_G2;
 					in4x_H1[34] <= MISO_H1; in4x_H2[34] <= MISO_H2;					
-					main_state <= ms_clk10_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk10_b;
 				end
 
 				ms_clk10_b: begin
@@ -2395,7 +2501,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[35] <= MISO_F1; in4x_F2[35] <= MISO_F2;
 					in4x_G1[35] <= MISO_G1; in4x_G2[35] <= MISO_G2;
 					in4x_H1[35] <= MISO_H1; in4x_H2[35] <= MISO_H2;						
-					main_state <= ms_clk10_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk10_c;
 				end
 
 				ms_clk10_c: begin
@@ -2413,7 +2521,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[36] <= MISO_F1; in4x_F2[36] <= MISO_F2;
 					in4x_G1[36] <= MISO_G1; in4x_G2[36] <= MISO_G2;
 					in4x_H1[36] <= MISO_H1; in4x_H2[36] <= MISO_H2;
-					main_state <= ms_clk10_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk10_d;
 				end
 				
 				ms_clk10_d: begin
@@ -2426,7 +2536,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[37] <= MISO_F1; in4x_F2[37] <= MISO_F2;
 					in4x_G1[37] <= MISO_G1; in4x_G2[37] <= MISO_G2;
 					in4x_H1[37] <= MISO_H1; in4x_H2[37] <= MISO_H2;
-					main_state <= ms_clk11_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk11_a;
 				end
 
 				ms_clk11_a: begin
@@ -2446,7 +2558,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[38] <= MISO_F1; in4x_F2[38] <= MISO_F2;
 					in4x_G1[38] <= MISO_G1; in4x_G2[38] <= MISO_G2;
 					in4x_H1[38] <= MISO_H1; in4x_H2[38] <= MISO_H2;
-					main_state <= ms_clk11_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk11_b;
 				end
 
 				ms_clk11_b: begin
@@ -2458,7 +2572,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[39] <= MISO_F1; in4x_F2[39] <= MISO_F2;
 					in4x_G1[39] <= MISO_G1; in4x_G2[39] <= MISO_G2;
 					in4x_H1[39] <= MISO_H1; in4x_H2[39] <= MISO_H2;
-					main_state <= ms_clk11_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk11_c;
 				end
 
 				ms_clk11_c: begin
@@ -2471,7 +2587,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[40] <= MISO_F1; in4x_F2[40] <= MISO_F2;
 					in4x_G1[40] <= MISO_G1; in4x_G2[40] <= MISO_G2;
 					in4x_H1[40] <= MISO_H1; in4x_H2[40] <= MISO_H2;	
-					main_state <= ms_clk11_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk11_d;
 				end
 				
 				ms_clk11_d: begin
@@ -2484,7 +2602,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[41] <= MISO_F1; in4x_F2[41] <= MISO_F2;
 					in4x_G1[41] <= MISO_G1; in4x_G2[41] <= MISO_G2;
 					in4x_H1[41] <= MISO_H1; in4x_H2[41] <= MISO_H2;					
-					main_state <= ms_clk12_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk12_a;
 				end
 
 				ms_clk12_a: begin
@@ -2504,7 +2624,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[42] <= MISO_F1; in4x_F2[42] <= MISO_F2;
 					in4x_G1[42] <= MISO_G1; in4x_G2[42] <= MISO_G2;
 					in4x_H1[42] <= MISO_H1; in4x_H2[42] <= MISO_H2;
-					main_state <= ms_clk12_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk12_b;
 				end
 
 				ms_clk12_b: begin
@@ -2516,7 +2638,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[43] <= MISO_F1; in4x_F2[43] <= MISO_F2;
 					in4x_G1[43] <= MISO_G1; in4x_G2[43] <= MISO_G2;
 					in4x_H1[43] <= MISO_H1; in4x_H2[43] <= MISO_H2;						
-					main_state <= ms_clk12_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk12_c;
 				end
 
 				ms_clk12_c: begin
@@ -2529,7 +2653,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[44] <= MISO_F1; in4x_F2[44] <= MISO_F2;
 					in4x_G1[44] <= MISO_G1; in4x_G2[44] <= MISO_G2;
 					in4x_H1[44] <= MISO_H1; in4x_H2[44] <= MISO_H2;					
-					main_state <= ms_clk12_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk12_d;
 				end
 				
 				ms_clk12_d: begin
@@ -2542,7 +2668,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[45] <= MISO_F1; in4x_F2[45] <= MISO_F2;
 					in4x_G1[45] <= MISO_G1; in4x_G2[45] <= MISO_G2;
 					in4x_H1[45] <= MISO_H1; in4x_H2[45] <= MISO_H2;
-					main_state <= ms_clk13_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk13_a;
 				end
 
 				ms_clk13_a: begin
@@ -2562,7 +2690,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[46] <= MISO_F1; in4x_F2[46] <= MISO_F2;
 					in4x_G1[46] <= MISO_G1; in4x_G2[46] <= MISO_G2;
 					in4x_H1[46] <= MISO_H1; in4x_H2[46] <= MISO_H2;					
-					main_state <= ms_clk13_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk13_b;
 				end
 
 				ms_clk13_b: begin
@@ -2574,7 +2704,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[47] <= MISO_F1; in4x_F2[47] <= MISO_F2;
 					in4x_G1[47] <= MISO_G1; in4x_G2[47] <= MISO_G2;
 					in4x_H1[47] <= MISO_H1; in4x_H2[47] <= MISO_H2;	
-					main_state <= ms_clk13_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk13_c;
 				end
 
 				ms_clk13_c: begin
@@ -2587,7 +2719,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[48] <= MISO_F1; in4x_F2[48] <= MISO_F2;
 					in4x_G1[48] <= MISO_G1; in4x_G2[48] <= MISO_G2;
 					in4x_H1[48] <= MISO_H1; in4x_H2[48] <= MISO_H2;
-					main_state <= ms_clk13_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk13_d;
 				end
 				
 				ms_clk13_d: begin
@@ -2600,7 +2734,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[49] <= MISO_F1; in4x_F2[49] <= MISO_F2;
 					in4x_G1[49] <= MISO_G1; in4x_G2[49] <= MISO_G2;
 					in4x_H1[49] <= MISO_H1; in4x_H2[49] <= MISO_H2;					
-					main_state <= ms_clk14_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk14_a;
 				end
 
 				ms_clk14_a: begin
@@ -2620,7 +2756,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[50] <= MISO_F1; in4x_F2[50] <= MISO_F2;
 					in4x_G1[50] <= MISO_G1; in4x_G2[50] <= MISO_G2;
 					in4x_H1[50] <= MISO_H1; in4x_H2[50] <= MISO_H2;						
-					main_state <= ms_clk14_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk14_b;
 				end
 
 				ms_clk14_b: begin
@@ -2632,7 +2770,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[51] <= MISO_F1; in4x_F2[51] <= MISO_F2;
 					in4x_G1[51] <= MISO_G1; in4x_G2[51] <= MISO_G2;
 					in4x_H1[51] <= MISO_H1; in4x_H2[51] <= MISO_H2;						
-					main_state <= ms_clk14_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk14_c;
 				end
 
 				ms_clk14_c: begin
@@ -2645,7 +2785,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[52] <= MISO_F1; in4x_F2[52] <= MISO_F2;
 					in4x_G1[52] <= MISO_G1; in4x_G2[52] <= MISO_G2;
 					in4x_H1[52] <= MISO_H1; in4x_H2[52] <= MISO_H2;						
-					main_state <= ms_clk14_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk14_d;
 				end
 				
 				ms_clk14_d: begin	
@@ -2658,7 +2800,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[53] <= MISO_F1; in4x_F2[53] <= MISO_F2;
 					in4x_G1[53] <= MISO_G1; in4x_G2[53] <= MISO_G2;
 					in4x_H1[53] <= MISO_H1; in4x_H2[53] <= MISO_H2;					
-					main_state <= ms_clk15_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk15_a;
 				end
 
 				ms_clk15_a: begin
@@ -2678,7 +2822,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[54] <= MISO_F1; in4x_F2[54] <= MISO_F2;
 					in4x_G1[54] <= MISO_G1; in4x_G2[54] <= MISO_G2;
 					in4x_H1[54] <= MISO_H1; in4x_H2[54] <= MISO_H2;					
-					main_state <= ms_clk15_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk15_b;
 				end
 
 				ms_clk15_b: begin
@@ -2690,7 +2836,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[55] <= MISO_F1; in4x_F2[55] <= MISO_F2;
 					in4x_G1[55] <= MISO_G1; in4x_G2[55] <= MISO_G2;
 					in4x_H1[55] <= MISO_H1; in4x_H2[55] <= MISO_H2;						
-					main_state <= ms_clk15_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk15_c;
 				end
 
 				ms_clk15_c: begin
@@ -2703,7 +2851,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[56] <= MISO_F1; in4x_F2[56] <= MISO_F2;
 					in4x_G1[56] <= MISO_G1; in4x_G2[56] <= MISO_G2;
 					in4x_H1[56] <= MISO_H1; in4x_H2[56] <= MISO_H2;	
-					main_state <= ms_clk15_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk15_d;
 				end
 				
 				ms_clk15_d: begin
@@ -2716,7 +2866,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[57] <= MISO_F1; in4x_F2[57] <= MISO_F2;
 					in4x_G1[57] <= MISO_G1; in4x_G2[57] <= MISO_G2;
 					in4x_H1[57] <= MISO_H1; in4x_H2[57] <= MISO_H2;
-					main_state <= ms_clk16_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk16_a;
 				end
 
 				ms_clk16_a: begin
@@ -2736,7 +2888,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[58] <= MISO_F1; in4x_F2[58] <= MISO_F2;
 					in4x_G1[58] <= MISO_G1; in4x_G2[58] <= MISO_G2;
 					in4x_H1[58] <= MISO_H1; in4x_H2[58] <= MISO_H2;					
-					main_state <= ms_clk16_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk16_b;
 				end
 
 				ms_clk16_b: begin
@@ -2748,7 +2902,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[59] <= MISO_F1; in4x_F2[59] <= MISO_F2;
 					in4x_G1[59] <= MISO_G1; in4x_G2[59] <= MISO_G2;
 					in4x_H1[59] <= MISO_H1; in4x_H2[59] <= MISO_H2;					
-					main_state <= ms_clk16_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk16_c;
 				end
 
 				ms_clk16_c: begin
@@ -2761,7 +2917,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[60] <= MISO_F1; in4x_F2[60] <= MISO_F2;
 					in4x_G1[60] <= MISO_G1; in4x_G2[60] <= MISO_G2;
 					in4x_H1[60] <= MISO_H1; in4x_H2[60] <= MISO_H2;	
-					main_state <= ms_clk16_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk16_d;
 				end
 				
 				ms_clk16_d: begin
@@ -2774,7 +2932,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[61] <= MISO_F1; in4x_F2[61] <= MISO_F2;
 					in4x_G1[61] <= MISO_G1; in4x_G2[61] <= MISO_G2;
 					in4x_H1[61] <= MISO_H1; in4x_H2[61] <= MISO_H2;					
-					main_state <= ms_clk17_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk17_a;
 				end
 
 				ms_clk17_a: begin
@@ -2799,7 +2959,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[62] <= MISO_F1; in4x_F2[62] <= MISO_F2;
 					in4x_G1[62] <= MISO_G1; in4x_G2[62] <= MISO_G2;
 					in4x_H1[62] <= MISO_H1; in4x_H2[62] <= MISO_H2;	
-					main_state <= ms_clk17_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_clk17_b;
 				end
 
 				ms_clk17_b: begin
@@ -2816,7 +2978,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[63] <= MISO_F1; in4x_F2[63] <= MISO_F2;
 					in4x_G1[63] <= MISO_G1; in4x_G2[63] <= MISO_G2;
 					in4x_H1[63] <= MISO_H1; in4x_H2[63] <= MISO_H2;					
-					main_state <= ms_cs_a;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_a;
 				end
 
 				ms_cs_a: begin
@@ -2834,7 +2998,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[64] <= MISO_F1; in4x_F2[64] <= MISO_F2;
 					in4x_G1[64] <= MISO_G1; in4x_G2[64] <= MISO_G2;
 					in4x_H1[64] <= MISO_H1; in4x_H2[64] <= MISO_H2;					
-					main_state <= ms_cs_b;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_b;
 				end
 
 				ms_cs_b: begin
@@ -2852,7 +3018,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[65] <= MISO_F1; in4x_F2[65] <= MISO_F2;
 					in4x_G1[65] <= MISO_G1; in4x_G2[65] <= MISO_G2;
 					in4x_H1[65] <= MISO_H1; in4x_H2[65] <= MISO_H2;					
-					main_state <= ms_cs_c;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_c;
 				end
 
 				ms_cs_c: begin
@@ -2870,7 +3038,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[66] <= MISO_F1; in4x_F2[66] <= MISO_F2;
 					in4x_G1[66] <= MISO_G1; in4x_G2[66] <= MISO_G2;
 					in4x_H1[66] <= MISO_H1; in4x_H2[66] <= MISO_H2;						
-					main_state <= ms_cs_d;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_d;
 				end
 				
 				ms_cs_d: begin
@@ -2888,7 +3058,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[67] <= MISO_F1; in4x_F2[67] <= MISO_F2;
 					in4x_G1[67] <= MISO_G1; in4x_G2[67] <= MISO_G2;
 					in4x_H1[67] <= MISO_H1; in4x_H2[67] <= MISO_H2;
-					main_state <= ms_cs_e;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_e;
 				end
 				
 				ms_cs_e: begin
@@ -2906,7 +3078,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[68] <= MISO_F1; in4x_F2[68] <= MISO_F2;
 					in4x_G1[68] <= MISO_G1; in4x_G2[68] <= MISO_G2;
 					in4x_H1[68] <= MISO_H1; in4x_H2[68] <= MISO_H2;
-					main_state <= ms_cs_f;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_f;
 				end
 				
 				ms_cs_f: begin
@@ -2924,7 +3098,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[69] <= MISO_F1; in4x_F2[69] <= MISO_F2;
 					in4x_G1[69] <= MISO_G1; in4x_G2[69] <= MISO_G2;
 					in4x_H1[69] <= MISO_H1; in4x_H2[69] <= MISO_H2;					
-					main_state <= ms_cs_g;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_g;
 				end
 				
 				ms_cs_g: begin
@@ -2942,7 +3118,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[70] <= MISO_F1; in4x_F2[70] <= MISO_F2;
 					in4x_G1[70] <= MISO_G1; in4x_G2[70] <= MISO_G2;
 					in4x_H1[70] <= MISO_H1; in4x_H2[70] <= MISO_H2;
-					main_state <= ms_cs_h;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_h;
 				end
 				
 				ms_cs_h: begin
@@ -2960,7 +3138,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[71] <= MISO_F1; in4x_F2[71] <= MISO_F2;
 					in4x_G1[71] <= MISO_G1; in4x_G2[71] <= MISO_G2;
 					in4x_H1[71] <= MISO_H1; in4x_H2[71] <= MISO_H2;
-					main_state <= ms_cs_i;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_i;
 				end
 				
 				ms_cs_i: begin
@@ -2978,7 +3158,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[72] <= MISO_F1; in4x_F2[72] <= MISO_F2;
 					in4x_G1[72] <= MISO_G1; in4x_G2[72] <= MISO_G2;
 					in4x_H1[72] <= MISO_H1; in4x_H2[72] <= MISO_H2;	
-					main_state <= ms_cs_j;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_j;
 				end
 				
 				ms_cs_j: begin
@@ -2996,7 +3178,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					in4x_F1[73] <= MISO_F1; in4x_F2[73] <= MISO_F2;
 					in4x_G1[73] <= MISO_G1; in4x_G2[73] <= MISO_G2;
 					in4x_H1[73] <= MISO_H1; in4x_H2[73] <= MISO_H2;
-					main_state <= ms_cs_k;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_k;
 				end
 				
 				ms_cs_k: begin
@@ -3022,7 +3206,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					result_DDR_F1 <= in_DDR_F1; result_DDR_F2 <= in_DDR_F2;
 					result_DDR_G1 <= in_DDR_G1; result_DDR_G2 <= in_DDR_G2;
 					result_DDR_H1 <= in_DDR_H1; result_DDR_H2 <= in_DDR_H2;
-					main_state <= ms_cs_l;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_l;
 				end
 				
 				ms_cs_l: begin
@@ -3419,7 +3605,9 @@ sensor_Mosi_I sensor_Mosi_external_A (
 						timestamp <= timestamp + 1;
 					end
 					CS_b <= 1'b1;			
-					main_state <= ms_cs_m;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_m;
 				end
 				
 				ms_cs_m: begin
@@ -3437,16 +3625,24 @@ sensor_Mosi_I sensor_Mosi_external_A (
 					
 					if (channel == 34) begin
 						if (SPI_run_continuous) begin		// run continuously if SPI_run_continuous == 1
-							main_state <= ms_cs_n;
+												reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_n;
 						end else begin
 							if (timestamp == max_timestep || max_timestep == 32'b0) begin  // stop if max_timestep reached, or if max_timestep == 0
-							     main_state <= ms_finish_256bit_word_0;
+							     					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_finish_256bit_word_0;
 							end else begin
-								main_state <= ms_cs_n;
+													reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_n;
 							end
 						end
 					end else begin
-						main_state <= ms_cs_n;
+											reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_cs_n;
 					end
 				end
 				
@@ -3454,19 +3650,27 @@ sensor_Mosi_I sensor_Mosi_external_A (
 				    if (word_counter_16bit != 4'b0000) begin
 				        FIFO_data_in <= 16'b0;
 				        FIFO_write_to <= 1'b1;
-				        main_state <= ms_finish_256bit_word_1;
+				        					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_finish_256bit_word_1;
 				    end else begin
-				        main_state <= ms_wait;
+				        					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_wait;
 				    end
 				end
 				
 				ms_finish_256bit_word_1: begin
 				    // Wait for 1 clock cycle to give time for counter to increment before returning to ms_finish_256bit_word_0
-				    main_state <= ms_finish_256bit_word_0;
+				    					reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_finish_256bit_word_0;
 				end
 								
 				default: begin
-					main_state <= ms_wait;
+										reg_file_enable <= 1'b0;
+					reg_value       <= 3'd5;
+					main_state <=  ms_wait;
 				end
 				
 			endcase
@@ -3948,7 +4152,12 @@ sensor_Mosi_I sensor_Mosi_external_A (
 		.phase_select(delay_H), .MISO4x(in4x_H2), .MISO(in_DDR_H2));
 
 
+	wire [6:0] address_ofset;
 
+    lookup_table_case #(.OUT_WIDTH(7)) lookup_table_case (
+        .in(reg_value),
+        .out(address_ofset)
+    );
 
 
 	wire [15:0] Hard_coded_data_stream_1 ; 
@@ -4032,55 +4241,74 @@ sensor_Mosi_I sensor_Mosi_external_A (
 	// assign data_stream_32 = result_DDR_H2;
     
 
+wire [6:0]  Index_number_remapped;
+	reg  [6:0] address_index_readout;
+
+regfile_remapper regfile_remapper (
+.clk(			dataclk),
+.ep10wirein(	ep10wirein), 
+.ep26wireout(	ep26wireout),
+.Index_number(	address_index_readout), 
+.Index_number_remapped(	Index_number_remapped)
+    );
+
+
 
 	wire [6:0] address_write;
 	wire address_bank;
+		
 	wire halt_wire;
 	wire write_enable_regfile;
 	wire halt_write;
+
     wire    last_address_written;
 	wire [6:0] rd_addr0, rd_addr1;
 	wire [15:0] data_out0, data_out1;
-	wire [6:0] address_index_readout_max;
+
+	
+	reg [6:0] address_index_readout_max;
 	reg data_valid_readout;
     wire [15:0] data_out_regfile_to_fifo;
+
+
+	reg [31:0] 	fpgaout_fifoin_din_r;
+	reg 		fpgaout_fifoin_wr_en_r;
+
 	wire [31:0]  fpgaout_fifoin_din;
 	wire fpgaout_fifoin_wr_en;
-	wire         fpgain_fifoout_ready_refile;
-    wire  [6:0]  Index_number_remapped;
-    reg   [6:0]  address_index_readout;
-    wire  [6:0]  address_index_readout_wire;
-	wire [6:0] address_ofset;
-	reg [15:0] data_in_dual_bank_reg_file;
-
-
-
-
-    initial begin 
-    address_index_readout <= 7'd127;
-    data_in_dual_bank_reg_file <= 0;
-    end
-
-    wire   trigger_fifo_rst;
-    wire [15:0] rd_data_count,wr_data_count;
-    wire FIFO_read_from_RFRM, pipeout_rdy_RFRM;
-    wire rd_en_fifo, full, empty,wr_rst_busy,rd_rst_busy;
 
 
 	assign	address_write = address_ofset + channel_MISO;
+
 	assign write_enable_regfile = (~halt_write) && reg_file_enable;
 	assign 	halt_write = (channel_MISO>=32);
 	assign address_bank = timestamp[0];
+
+
+
 	assign 	last_address_written = (address_write==7'd127)&&(write_enable_regfile==1'b1);
 	
+    dual_bank_regfile dual_bank_regfile (
+        .clk(dataclk),
+        .rst(reset),
+        .we(write_enable_regfile),
+        .bank_sel(address_bank),
+        .wr_addr(address_write),
+        .data_in(data_in_dual_bank_reg_file),
+        .rd_addr0(rd_addr0),
+        .rd_addr1(rd_addr0),
+        .data_out0(data_out0),
+        .data_out1(data_out1)
+    );
+
 	assign data_out_regfile_to_fifo = address_bank ? data_out1 : data_out0;
 	assign rd_addr0 = Index_number_remapped;
 	assign rd_addr1 = Index_number_remapped;
-    assign address_index_readout_max = ep12wirein[6:0];
+	wire         fpgain_fifoout_ready_refile;
 
-    assign ep29wireout = {24'b0,fpgain_fifoout_ready_refile,address_index_readout_max};
-    assign ep2awireout = {25'b0,address_index_readout};
-
+always @(*) begin	
+	address_index_readout_max <= ep12wirein[6:0];
+end
 
 always @(posedge dataclk) begin
 	if (reset) begin
@@ -4097,72 +4325,39 @@ always @(posedge dataclk) begin
 	end
 end
 
-reg [31:0] counter_data_valid_readout;
 
-always @(posedge data_valid_readout) begin
-    if (reset) begin
-        counter_data_valid_readout <= 0;
-    end 
-    counter_data_valid_readout <= counter_data_valid_readout + 1;
-
-    end
-assign ep28wireout = 				  counter_data_valid_readout;
-
-
-assign fpgaout_fifoin_din           = {Index_number_remapped,data_out_regfile_to_fifo}  ;
-assign fpgaout_fifoin_wr_en         = data_valid_readout;
-assign trigger_fifo_rst             = (ep00wirein[0]);
-assign pipeout_rdy_RFRM             = ~empty;
-assign fpgain_fifoout_ready_refile  = ~full;
-assign ep27wireout                  = rd_data_count[15:0];
-
-
-// Wires for regfile remapping
-assign address_index_readout_wire = address_index_readout;
+assign fpgaout_fifoin_din     = fpgaout_fifoin_din_r  ;
+assign fpgaout_fifoin_wr_en   = fpgaout_fifoin_wr_en_r;
+always @(*) begin
+	fpgaout_fifoin_wr_en_r <=		data_valid_readout;
+	fpgaout_fifoin_din_r   <= {Index_number_remapped,data_out_regfile_to_fifo};
+end
 
 
 
-    lookup_table_case #(.OUT_WIDTH(7)) lookup_table_case (
-        .in(reg_value),
-        .out(address_ofset)
-    );
+initial begin 
+in4x_A1 <=0;
+in4x_A2 <=0;
+address_index_readout <= 7'd127;
+data_in_dual_bank_reg_file <= 0;
+end
 
 
-// Wires for FIFO
+wire   trigger_fifo_rst;
+assign trigger_fifo_rst = (ep00wirein[0]);
 
-// wires for dual port RAM
+wire [15:0] rd_data_count,wr_data_count;
 
+wire FIFO_read_from_RFRM, pipeout_rdy_RFRM;
+wire rd_en_fifo, full, empty,wr_rst_busy,rd_rst_busy;
 
-
-/// REGFILE INSTANTIATIONS BELOW
-regfile_remapper regfile_remapper (
-.clk(			dataclk),
-.ep10wirein(	ep10wirein), 
-.ep26wireout(	ep26wireout),
-.Index_number(	address_index_readout_wire), 
-.Index_number_remapped(	Index_number_remapped)
-    );
-/// REGFILE INSTANTIATIONS ABOVE
+assign pipeout_rdy_RFRM = ~empty;
+assign fpgain_fifoout_ready_refile = ~full;
+assign ep27wireout = rd_data_count[15:0];
 
 
-// DUAL PORT RAM INSTANTIATIONS BELOW
-    dual_bank_regfile dual_bank_regfile (
-        .clk(dataclk),
-        .rst(reset),
-        .we(write_enable_regfile),
-        .bank_sel(address_bank),
-        .wr_addr(address_write),
-        .data_in(data_in_dual_bank_reg_file),
-        .rd_addr0(rd_addr0),
-        .rd_addr1(rd_addr0),
-        .data_out0(data_out0),
-        .data_out1(data_out1)
-    );
-// DUAL PORT RAM INSTANTIATIONS ABOVE
+wire [31:0] FIFO_data_out_RFRM;
 
-
-
-// FIFO INSTANTIATIONS BELOW
 fifo_generator_0 fifo_hehe (
   .rst(trigger_fifo_rst),                      // input wire rst
   .wr_clk(dataclk),                // input wire wr_clk
@@ -4178,13 +4373,24 @@ fifo_generator_0 fifo_hehe (
   .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
   .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
 );
-// FIFO INSTANTIATIONS ABOVE
 
 
-
-
-
-
+// //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
+// fifo_generator_0 your_instance_name (
+//   .rst(rst),                      // input wire rst
+//   .wr_clk(wr_clk),                // input wire wr_clk
+//   .rd_clk(rd_clk),                // input wire rd_clk
+//   .din(din),                      // input wire [31 : 0] din
+//   .wr_en(wr_en),                  // input wire wr_en
+//   .rd_en(rd_en),                  // input wire rd_en
+//   .dout(dout),                    // output wire [31 : 0] dout
+//   .full(full),                    // output wire full
+//   .empty(empty),                  // output wire empty
+//   .rd_data_count(rd_data_count),  // output wire [15 : 0] rd_data_count
+//   .wr_data_count(wr_data_count),  // output wire [15 : 0] wr_data_count
+//   .wr_rst_busy(wr_rst_busy),      // output wire wr_rst_busy
+//   .rd_rst_busy(rd_rst_busy)      // output wire rd_rst_busy
+// );
 
 
 
@@ -4220,9 +4426,9 @@ fifo_generator_0 fifo_hehe (
 	okWireIn     wi0d (.okHE(okHE),                            .ep_addr(8'h0d), .ep_dataout(ep0dwirein)); // led_in
 	okWireIn     wi0e (.okHE(okHE),                            .ep_addr(8'h0e), .ep_dataout(ep0ewirein)); // DAC_reref_channel_sel,DAC_reref_stream_sel,DAC_reref_mode
 	okWireIn     wi0f (.okHE(okHE),                            .ep_addr(8'h0f), .ep_dataout(ep0fwirein)); // used for  mux control
-	okWireIn     wi10 (.okHE(okHE),                            .ep_addr(8'h10), .ep_dataout(ep10wirein)); // NC
-	okWireIn     wi11 (.okHE(okHE),                            .ep_addr(8'h11), .ep_dataout(ep11wirein)); // NC
-	okWireIn     wi12 (.okHE(okHE),                            .ep_addr(8'h12), .ep_dataout(ep12wirein)); // NC
+	okWireIn     wi10 (.okHE(okHE),                            .ep_addr(8'h10), .ep_dataout(ep10wirein)); // REGFILE Control
+	okWireIn     wi11 (.okHE(okHE),                            .ep_addr(8'h11), .ep_dataout(ep11wirein)); // rst fifo
+	okWireIn     wi12 (.okHE(okHE),                            .ep_addr(8'h12), .ep_dataout(ep12wirein)); // address_index_readout_max
 	okWireIn     wi13 (.okHE(okHE),                            .ep_addr(8'h13), .ep_dataout(ep13wirein)); // NC
 	okWireIn     wi14 (.okHE(okHE),                            .ep_addr(8'h14), .ep_dataout(ep14wirein)); // data_stream_1_en_in - data_stream_31_en_in
 	okWireIn     wi15 (.okHE(okHE),                            .ep_addr(8'h15), .ep_dataout(ep15wirein)); // TTL_out_user
@@ -4253,8 +4459,8 @@ fifo_generator_0 fifo_hehe (
 
 
 	okWireOut    wo26 (.okHE(okHE), .okEH(okEHx[ 6*65 +: 65 ]),  .ep_addr(8'h26), .ep_datain(ep26wireout)); // REGFILE data out
-	okWireOut    wo27 (.okHE(okHE), .okEH(okEHx[ 7*65 +: 65 ]),  .ep_addr(8'h27), .ep_datain(ep27wireout)); // NC
-	okWireOut    wo28 (.okHE(okHE), .okEH(okEHx[ 8*65 +: 65 ]),  .ep_addr(8'h28), .ep_datain(ep28wireout)); // counter_data_valid_readout
+	okWireOut    wo27 (.okHE(okHE), .okEH(okEHx[ 7*65 +: 65 ]),  .ep_addr(8'h27), .ep_datain(ep27wireout)); // remap_fifo_data_counts_out
+	okWireOut    wo28 (.okHE(okHE), .okEH(okEHx[ 8*65 +: 65 ]),  .ep_addr(8'h28), .ep_datain(max_timestep)); // max_timestep
 	okWireOut    wo29 (.okHE(okHE), .okEH(okEHx[ 9*65 +: 65 ]),  .ep_addr(8'h29), .ep_datain(ep29wireout)); // NC
 	okWireOut    wo2a (.okHE(okHE), .okEH(okEHx[ 10*65 +: 65 ]), .ep_addr(8'h2a), .ep_datain(ep2awireout)); // NC
 	okWireOut    wo2b (.okHE(okHE), .okEH(okEHx[ 11*65 +: 65 ]), .ep_addr(8'h2b), .ep_datain(ep2bwireout)); // NC
@@ -4285,10 +4491,9 @@ fifo_generator_0 fifo_hehe (
 	// Flip the 16-bit words in the fifo for compatibility with the USB2 read methods
 	okBTPipeOut    poa0 (.okHE(okHE), .okEH(okEHx[ 32*65 +: 65 ]), .ep_addr(8'ha0), .ep_read(FIFO_read_from), 
 		.ep_blockstrobe(), .ep_datain({FIFO_data_out[15:0], FIFO_data_out[31:16]}), .ep_ready(pipeout_rdy));
-
+	
 
 	okBTPipeOut    poa1 (.okHE(okHE), .okEH(okEHx[ 33*65 +: 65 ]), .ep_addr(8'ha1), .ep_read(FIFO_read_from_RFRM), .ep_blockstrobe(), .ep_datain(FIFO_data_out_RFRM), .ep_ready(pipeout_rdy_RFRM));
-
 
 
 endmodule
@@ -4346,8 +4551,6 @@ module command_selector (
 	end	
 	
 endmodule
-
-
 
 
 
@@ -4524,13 +4727,6 @@ end
     assign data_out1 = bank1[rd_addr1];  // Read from Bank 1
 
 endmodule
-
-
-
-
-
-
-
 
 
 
