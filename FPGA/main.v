@@ -914,7 +914,7 @@ input  wire                      MISO2_A
 	reg [15:0] data_in_dual_bank_reg_file;
 
     wire    last_address_written;
-	wire [6:0] rd_addr0, rd_addr1;
+	wire [6:0] rd_addr, rd_addr0, rd_addr1;
 	reg  [6:0] address_index_readout;
 	wire [15:0] data_out0, data_out1;
 
@@ -1104,15 +1104,10 @@ input  wire                      MISO2_A
 	assign MISO_A1 = MISO1_A;
 	assign MISO_A2 = MISO2_A;
 
-
-
-
-	assign	address_write = address_ofset + channel_MISO;
-
+	assign	address_write 		= address_ofset + channel_MISO;
 	assign write_enable_regfile = (~halt_write) && reg_file_enable;
-	assign 	halt_write = (channel_MISO>=32);
-	assign address_bank = timestamp[0];
-
+	assign 	halt_write 			= (channel_MISO>=32);
+	assign address_bank 		= timestamp[0];
 
 	//signals for regfile
 	//Write signals -->
@@ -1120,8 +1115,8 @@ input  wire                      MISO2_A
 	//address_write
 	//write_enable_regfile
 
-
 	assign 	last_address_written = (address_write==7'd127)&&(write_enable_regfile==1'b1);
+
     dual_bank_regfile dual_bank_regfile (
         .clk(dataclk),
         .rst(reset),
@@ -1129,42 +1124,69 @@ input  wire                      MISO2_A
         .bank_sel(address_bank),
         .wr_addr(address_write),
         .data_in(data_in_dual_bank_reg_file),
-        .rd_addr0(rd_addr0),
-        .rd_addr1(rd_addr0),
+        // .rd_addr0(rd_addr0),
+        .rd_addr(rd_addr),
         .data_out0(data_out0),
         .data_out1(data_out1)
     );
 
 	assign data_out_regfile_to_fifo = address_bank ? data_out1 : data_out0;
-	assign rd_addr0 = address_index_readout;
-	assign rd_addr1 = address_index_readout;
+	assign rd_addr = address_index_readout;
+	// assign rd_addr1 = address_index_readout;
 
 always @(*) begin	
 	address_index_readout_max <= ep05wirein[6:0];
 end
 
+
+
+
+
+// always @(posedge dataclk) begin
+// 	if (reset) begin
+// 		address_index_readout <= 16'd127;
+// 		data_valid_readout <= 1'b0;
+// 	end else if (last_address_written_sync2)begin
+// 		address_index_readout <= 16'b0;
+// 		data_valid_readout <= 1'b1;
+// 	end else if (fpgain_fifoout_ready_refile &&(address_index_readout < address_index_readout_max)) begin
+// 		address_index_readout <= address_index_readout + 1;
+// 		data_valid_readout <= 1'b1;
+// 	end else begin 
+// 		data_valid_readout <= 1'b0;
+// 	end
+// end
+
+
+
+
+reg last_address_written_sync1,last_address_written_sync2;
+always @(posedge dataclk) begin
+  last_address_written_sync1 <= last_address_written;
+  last_address_written_sync2 <= last_address_written_sync1;
+end 
+
+
 always @(posedge dataclk) begin
 	if (reset) begin
 		address_index_readout <= 16'd127;
 		data_valid_readout <= 1'b0;
-	end else if (last_address_written)begin
-		address_index_readout <= 16'b0;
-		data_valid_readout <= 1'b1;
-	end else if (fpgain_fifoout_ready_refile &&(address_index_readout < address_index_readout_max)) begin
-		address_index_readout <= address_index_readout + 1;
-		data_valid_readout <= 1'b1;
-	end else begin 
+	end
+	if (last_address_written) begin
+		address_index_readout 	<= 16'b0;
+		data_valid_readout		<= 1'b1;
+	end 
+	else if (fpgain_fifoout_ready_refile &&(address_index_readout < address_index_readout_max)) begin
+		address_index_readout 	<= address_index_readout + 1;
+		data_valid_readout 		<= 1'b1;
+	end 
+	else if (~fpgain_fifoout_ready_refile | (address_index_readout >= address_index_readout_max)) begin
 		data_valid_readout <= 1'b0;
 	end
 end
 
-
-assign fpgaout_fifoin_din     = fpgaout_fifoin_din_r  ;
-assign fpgaout_fifoin_wr_en   = fpgaout_fifoin_wr_en_r;
-always @(*) begin
-	fpgaout_fifoin_wr_en_r <=		data_valid_readout;
-	fpgaout_fifoin_din_r   <= {address_index_readout,data_out_regfile_to_fifo};
-end
+assign fpgaout_fifoin_din     = {address_index_readout,data_out_regfile_to_fifo};
+assign fpgaout_fifoin_wr_en   = data_valid_readout;
 
 
 
@@ -3891,6 +3913,59 @@ endmodule
 
 
 
+// module dual_bank_regfile (
+//     input wire clk,
+//     input wire rst,
+//     input wire we,                    // Write enable
+//     input wire bank_sel,              // Bank select for writing (0: Bank 0, 1: Bank 1)
+//     input wire [6:0] wr_addr,         // 7-bit write address (128 entries)
+//     input wire [15:0] data_in,        // Data to write
+//     input wire [6:0] rd_addr0,        // Read address for Bank 0
+//     input wire [6:0] rd_addr1,        // Read address for Bank 1
+//     output wire [15:0] data_out0,     // Data output from Bank 0
+//     output wire [15:0] data_out1      // Data output from Bank 1
+// );
+
+
+//     reg [15:0] bank0 [127:0];  // 128 x 16-bit register bank 0
+//     reg [15:0] bank1 [127:0];  // 128 x 16-bit register bank 1
+
+
+
+// integer i,j;
+// initial begin 
+
+// 	for (j = 0; j < 128; j = j + 1) begin
+// 		bank0[j] <= 16'b0;
+// 		bank1[j] <= 16'b0;
+// 	end
+
+// end
+
+
+//     always @(negedge clk) begin
+//     // always @(posedge clk) begin
+//         if (rst) begin
+//             for (i = 0; i < 128; i = i + 1) begin
+//                 bank0[i] <= 16'b0;
+//                 bank1[i] <= 16'b0;
+//             end
+//         end else if (we) begin
+//             // Write operation
+//             if (bank_sel)
+//                 bank1[wr_addr] <= data_in;  // Write to Bank 1
+//             else
+//                 bank0[wr_addr] <= data_in;  // Write to Bank 0
+//         end
+//     end
+
+//     assign data_out0 = bank0[rd_addr0];  // Read from Bank 0
+//     assign data_out1 = bank1[rd_addr1];  // Read from Bank 1
+
+// endmodule
+
+
+
 module dual_bank_regfile (
     input wire clk,
     input wire rst,
@@ -3898,8 +3973,7 @@ module dual_bank_regfile (
     input wire bank_sel,              // Bank select for writing (0: Bank 0, 1: Bank 1)
     input wire [6:0] wr_addr,         // 7-bit write address (128 entries)
     input wire [15:0] data_in,        // Data to write
-    input wire [6:0] rd_addr0,        // Read address for Bank 0
-    input wire [6:0] rd_addr1,        // Read address for Bank 1
+    input wire [6:0] rd_addr,        // Read address for Bank 0
     output wire [15:0] data_out0,     // Data output from Bank 0
     output wire [15:0] data_out1      // Data output from Bank 1
 );
@@ -3912,16 +3986,15 @@ module dual_bank_regfile (
 
 integer i,j;
 initial begin 
-
 	for (j = 0; j < 128; j = j + 1) begin
-		bank0[j] <= 16'b0;
-		bank1[j] <= 16'b0;
+		bank0[j] <= 16'd5;
+		bank1[j] <= 16'd5;
 	end
 
 end
 
 
-    always @(posedge clk or posedge rst) begin
+    always @(negedge clk) begin
         if (rst) begin
             for (i = 0; i < 128; i = i + 1) begin
                 bank0[i] <= 16'b0;
@@ -3929,18 +4002,18 @@ end
             end
         end else if (we) begin
             // Write operation
-            if (bank_sel)
+            if (bank_sel) begin 
                 bank1[wr_addr] <= data_in;  // Write to Bank 1
-            else
+			end else begin 
                 bank0[wr_addr] <= data_in;  // Write to Bank 0
+			end
         end
     end
 
-    assign data_out0 = bank0[rd_addr0];  // Read from Bank 0
-    assign data_out1 = bank1[rd_addr1];  // Read from Bank 1
+    assign data_out0 = bank0[rd_addr];  // Read from Bank 0
+    assign data_out1 = bank1[rd_addr];  // Read from Bank 1
 
 endmodule
-
 
 
 module lookup_table_case #(

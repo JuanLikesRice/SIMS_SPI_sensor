@@ -8,7 +8,7 @@ IVERILOG ?= /usr/bin/iverilog
 all: sim 
 
 sim: main-sim
-	./$< +VCDFILE=sim.vcd +VCDLEVEL=4 | tee sim.log
+	./$< +VCDFILE=sim.vcd +VCDLEVEL=5 | tee sim.log
 
 main-sim: mainTB.v ${DUT} | 
 	${IVERILOG} -g2005-sv -s mainTB  -o $@ $^

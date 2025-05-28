@@ -139,7 +139,7 @@ end
         repeat ( 50) @(posedge clk);
         modify_ep00wirein(32'h00000001);/// reset
         modify_ep00wirein(32'h00000000);/// reset
-        modify_ep05wirein(32'd31);/// reset
+        modify_ep05wirein(32'd05);/// reset
         repeat ( 50) @(posedge clk);
         modify_ep00wirein(32'h00000000);
         modify_ep41trigin(32'h00000001);
